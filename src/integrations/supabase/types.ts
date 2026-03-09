@@ -81,6 +81,186 @@ export type Database = {
           },
         ]
       }
+      checkout_line_items: {
+        Row: {
+          checkout_session_id: string
+          created_at: string
+          id: string
+          is_order_bump: boolean
+          price_id: string
+          product_id: string
+          quantity: number
+          unit_amount: number
+        }
+        Insert: {
+          checkout_session_id: string
+          created_at?: string
+          id?: string
+          is_order_bump?: boolean
+          price_id: string
+          product_id: string
+          quantity?: number
+          unit_amount?: number
+        }
+        Update: {
+          checkout_session_id?: string
+          created_at?: string
+          id?: string
+          is_order_bump?: boolean
+          price_id?: string
+          product_id?: string
+          quantity?: number
+          unit_amount?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "checkout_line_items_checkout_session_id_fkey"
+            columns: ["checkout_session_id"]
+            isOneToOne: false
+            referencedRelation: "checkout_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "checkout_line_items_price_id_fkey"
+            columns: ["price_id"]
+            isOneToOne: false
+            referencedRelation: "prices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "checkout_line_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      checkout_sessions: {
+        Row: {
+          abandoned_at: string | null
+          affiliate_link_id: string | null
+          completed_at: string | null
+          coupon_code: string | null
+          created_at: string
+          currency: string
+          customer_id: string | null
+          discount_amount: number
+          email: string | null
+          expires_at: string | null
+          id: string
+          ip_address: string | null
+          status: string
+          subtotal_amount: number
+          total_amount: number
+          updated_at: string
+          utm_campaign: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          workspace_id: string
+        }
+        Insert: {
+          abandoned_at?: string | null
+          affiliate_link_id?: string | null
+          completed_at?: string | null
+          coupon_code?: string | null
+          created_at?: string
+          currency?: string
+          customer_id?: string | null
+          discount_amount?: number
+          email?: string | null
+          expires_at?: string | null
+          id?: string
+          ip_address?: string | null
+          status?: string
+          subtotal_amount?: number
+          total_amount?: number
+          updated_at?: string
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          workspace_id: string
+        }
+        Update: {
+          abandoned_at?: string | null
+          affiliate_link_id?: string | null
+          completed_at?: string | null
+          coupon_code?: string | null
+          created_at?: string
+          currency?: string
+          customer_id?: string | null
+          discount_amount?: number
+          email?: string | null
+          expires_at?: string | null
+          id?: string
+          ip_address?: string | null
+          status?: string
+          subtotal_amount?: number
+          total_amount?: number
+          updated_at?: string
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "checkout_sessions_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "checkout_sessions_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      customers: {
+        Row: {
+          cpf: string | null
+          created_at: string
+          email: string
+          id: string
+          name: string | null
+          phone: string | null
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          cpf?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          name?: string | null
+          phone?: string | null
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          cpf?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          name?: string | null
+          phone?: string | null
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customers_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       digital_assets: {
         Row: {
           created_at: string
