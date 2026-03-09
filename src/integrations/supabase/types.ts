@@ -314,6 +314,88 @@ export type Database = {
           },
         ]
       }
+      appointments: {
+        Row: {
+          cancel_reason: string | null
+          cancelled_at: string | null
+          created_at: string
+          customer_email: string
+          customer_id: string | null
+          customer_name: string
+          end_time: string
+          id: string
+          meeting_provider: string | null
+          meeting_url: string | null
+          notes: string | null
+          product_id: string
+          scheduled_date: string
+          start_time: string
+          status: string
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          cancel_reason?: string | null
+          cancelled_at?: string | null
+          created_at?: string
+          customer_email: string
+          customer_id?: string | null
+          customer_name: string
+          end_time: string
+          id?: string
+          meeting_provider?: string | null
+          meeting_url?: string | null
+          notes?: string | null
+          product_id: string
+          scheduled_date: string
+          start_time: string
+          status?: string
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          cancel_reason?: string | null
+          cancelled_at?: string | null
+          created_at?: string
+          customer_email?: string
+          customer_id?: string | null
+          customer_name?: string
+          end_time?: string
+          id?: string
+          meeting_provider?: string | null
+          meeting_url?: string | null
+          notes?: string | null
+          product_id?: string
+          scheduled_date?: string
+          start_time?: string
+          status?: string
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "appointments_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "appointments_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "appointments_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_logs: {
         Row: {
           action: string
@@ -354,6 +436,60 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "audit_logs_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      availability_slots: {
+        Row: {
+          created_at: string
+          day_of_week: number
+          duration_minutes: number
+          end_time: string
+          id: string
+          is_active: boolean
+          product_id: string
+          start_time: string
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          day_of_week: number
+          duration_minutes?: number
+          end_time: string
+          id?: string
+          is_active?: boolean
+          product_id: string
+          start_time: string
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          day_of_week?: number
+          duration_minutes?: number
+          end_time?: string
+          id?: string
+          is_active?: boolean
+          product_id?: string
+          start_time?: string
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "availability_slots_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "availability_slots_workspace_id_fkey"
             columns: ["workspace_id"]
             isOneToOne: false
             referencedRelation: "workspaces"

@@ -40,6 +40,8 @@ import Analytics from "./pages/Analytics";
 import Settings from "./pages/Settings";
 import Coupons from "./pages/Coupons";
 import EmailFlows from "./pages/EmailFlows";
+import Appointments from "./pages/Appointments";
+import BookAppointment from "./pages/BookAppointment";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -250,6 +252,18 @@ const App = () => (
                 } 
               />
 
+              {/* Appointments */}
+              <Route 
+                path="/appointments" 
+                element={
+                  <ProtectedRoute>
+                    <DashboardLayout>
+                      <Appointments />
+                    </DashboardLayout>
+                  </ProtectedRoute>
+                } 
+              />
+
               {/* Root redirect */}
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
               
@@ -265,6 +279,9 @@ const App = () => (
               <Route path="/member" element={<MemberDashboard />} />
               <Route path="/member/course/:productId" element={<MemberCourse />} />
               <Route path="/member/billing" element={<MemberBilling />} />
+
+              {/* Booking page — public */}
+              <Route path="/book/:productSlug" element={<BookAppointment />} />
 
               {/* Affiliate — public pages */}
               <Route path="/affiliate/apply/:workspaceSlug" element={<AffiliateApply />} />
