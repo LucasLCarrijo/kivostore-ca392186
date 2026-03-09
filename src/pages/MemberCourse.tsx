@@ -58,6 +58,7 @@ export default function MemberCourse() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [completing, setCompleting] = useState(false);
   const [allCompleted, setAllCompleted] = useState(false);
+  const [generatingCert, setGeneratingCert] = useState(false);
 
   useEffect(() => {
     async function load() {
