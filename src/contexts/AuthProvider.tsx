@@ -1,7 +1,7 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, ReactNode, useRef } from "react";
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 interface AuthContextType {
   user: User | null;
@@ -21,60 +21,63 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const location = useLocation();
+  const initializedRef = useRef(false);
 
   useEffect(() => {
-    // Get initial session
-    const getInitialSession = async () => {
-      try {
-        const { data: { session }, error } = await supabase.auth.getSession();
-        if (error) {
-          console.error("Error getting session:", error);
-        } else {
-          setSession(session);
-          setUser(session?.user ?? null);
-        }
-      } catch (error) {
-        console.error("Error getting initial session:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    if (initializedRef.current) return;
+    initializedRef.current = true;
 
-    getInitialSession();
-
-    // Listen for auth changes
+    // 1. Set up auth state listener FIRST (before getSession)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
 
-        // Handle navigation based on auth state
         if (event === 'SIGNED_IN') {
-          // Check if user has workspace, if not redirect to onboarding
-          if (session?.user) {
-            try {
-              const { data: workspaceMember } = await supabase
-                .from('workspace_members')
-                .select('workspace_id')
-                .eq('user_id', session.user.id)
-                .single();
-              
-              if (workspaceMember) {
-                navigate('/dashboard');
-              } else {
+          // Don't redirect if already on onboarding or a public page
+          const currentPath = window.location.pathname;
+          const publicPaths = ['/onboarding', '/checkout', '/order', '/upsell', '/member', '/affiliate'];
+          const isPublicPath = publicPaths.some(p => currentPath.startsWith(p));
+
+          if (!isPublicPath && session?.user) {
+            // Use setTimeout to avoid Supabase deadlock with RLS
+            setTimeout(async () => {
+              try {
+                const { data: workspaceMember } = await supabase
+                  .from('workspace_members')
+                  .select('workspace_id')
+                  .eq('user_id', session.user.id)
+                  .maybeSingle();
+
+                if (workspaceMember) {
+                  navigate('/dashboard');
+                } else {
+                  navigate('/onboarding');
+                }
+              } catch (error) {
+                console.error("Error checking workspace:", error);
                 navigate('/onboarding');
               }
-            } catch (error) {
-              console.error("Error checking workspace:", error);
-              navigate('/onboarding');
-            }
+            }, 0);
           }
         } else if (event === 'SIGNED_OUT') {
           navigate('/login');
         }
       }
     );
+
+    // 2. Then get initial session
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
+      if (error) {
+        console.error("Error getting session:", error);
+      }
+      // Only set if listener hasn't already fired
+      setSession(prev => prev ?? session);
+      setUser(prev => prev ?? session?.user ?? null);
+      setLoading(false);
+    });
 
     return () => {
       subscription.unsubscribe();
