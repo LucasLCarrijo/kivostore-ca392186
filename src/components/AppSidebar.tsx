@@ -22,6 +22,7 @@ const navigationItems = [
   { title: "Home", url: "/dashboard", icon: Home },
   { title: "Produtos", url: "/products", icon: Package },
   { title: "Minha Loja", url: "/store", icon: Store },
+  { title: "Leads", url: "/leads", icon: UserCheck },
   { title: "Renda", url: "/earnings", icon: DollarSign },
   { title: "Afiliados", url: "/affiliates", icon: Users },
   { title: "Analytics", url: "/analytics", icon: BarChart3 },

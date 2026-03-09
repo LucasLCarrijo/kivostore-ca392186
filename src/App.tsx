@@ -198,6 +198,38 @@ const App = () => (
                 } 
               />
 
+              {/* Leads & CRM */}
+              <Route 
+                path="/leads" 
+                element={
+                  <ProtectedRoute>
+                    <DashboardLayout>
+                      <Leads />
+                    </DashboardLayout>
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/leads/segments" 
+                element={
+                  <ProtectedRoute>
+                    <DashboardLayout>
+                      <LeadSegments />
+                    </DashboardLayout>
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/leads/email" 
+                element={
+                  <ProtectedRoute>
+                    <DashboardLayout>
+                      <LeadEmail />
+                    </DashboardLayout>
+                  </ProtectedRoute>
+                } 
+              />
+
               {/* Root redirect */}
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
               
