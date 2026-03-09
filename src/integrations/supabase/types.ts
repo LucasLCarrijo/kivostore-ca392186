@@ -2778,6 +2778,7 @@ export type Database = {
           logo_url: string | null
           metadata: Json | null
           name: string
+          plan: string
           slug: string
           timezone: string
           updated_at: string
@@ -2789,6 +2790,7 @@ export type Database = {
           logo_url?: string | null
           metadata?: Json | null
           name: string
+          plan?: string
           slug: string
           timezone?: string
           updated_at?: string
@@ -2800,6 +2802,7 @@ export type Database = {
           logo_url?: string | null
           metadata?: Json | null
           name?: string
+          plan?: string
           slug?: string
           timezone?: string
           updated_at?: string
