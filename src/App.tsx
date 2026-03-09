@@ -190,6 +190,11 @@ const App = () => (
               <Route path="/order/success/:orderId" element={<OrderSuccess />} />
               <Route path="/upsell/:offerId" element={<Upsell />} />
               
+              {/* Member area — public (has own auth) */}
+              <Route path="/member/login" element={<MemberLogin />} />
+              <Route path="/member" element={<MemberDashboard />} />
+              <Route path="/member/course/:productId" element={<MemberCourse />} />
+              
               {/* Public storefront — must be before 404 */}
               <Route path="/:slug" element={<PublicStorefront />} />
               
