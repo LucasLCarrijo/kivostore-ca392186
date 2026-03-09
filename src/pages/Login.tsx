@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,7 +15,21 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { toast } = useToast();
+
+  // Handle OAuth error callback
+  useEffect(() => {
+    const error = searchParams.get("error");
+    const errorDescription = searchParams.get("error_description");
+    if (error) {
+      toast({
+        title: "Erro na autenticação com Google",
+        description: errorDescription || "Não foi possível fazer login com Google. Tente novamente.",
+        variant: "destructive",
+      });
+    }
+  }, [searchParams]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();

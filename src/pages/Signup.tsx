@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -20,7 +20,21 @@ export default function Signup() {
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { toast } = useToast();
+
+  // Handle OAuth error callback
+  useEffect(() => {
+    const error = searchParams.get("error");
+    const errorDescription = searchParams.get("error_description");
+    if (error) {
+      toast({
+        title: "Erro na autenticação com Google",
+        description: errorDescription || "Não foi possível criar conta com Google. Tente novamente.",
+        variant: "destructive",
+      });
+    }
+  }, [searchParams]);
 
   // Password strength analysis
   const passwordStrength = password ? zxcvbn(password) : null;
