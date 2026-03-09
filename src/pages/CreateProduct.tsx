@@ -63,6 +63,8 @@ const INITIAL_FORM: ProductFormData = {
   upsellPrice: 0,
   affiliateEnabled: false,
   affiliateCommission: 20,
+  billingInterval: "monthly",
+  trialDays: 0,
 };
 
 const STEP_TITLES = [
