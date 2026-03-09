@@ -203,6 +203,17 @@ const App = () => (
                 } 
               />
 
+              <Route 
+                path="/email-flows" 
+                element={
+                  <ProtectedRoute>
+                    <DashboardLayout>
+                      <EmailFlows />
+                    </DashboardLayout>
+                  </ProtectedRoute>
+                } 
+              />
+
               {/* Leads & CRM */}
               <Route 
                 path="/leads" 
