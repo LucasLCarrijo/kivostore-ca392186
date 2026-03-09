@@ -23,8 +23,6 @@ import {
   Megaphone,
   Calendar,
   GraduationCap,
-  RefreshCw,
-  Link,
   ShoppingBag,
 } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
