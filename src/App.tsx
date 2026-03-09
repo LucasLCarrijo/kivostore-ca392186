@@ -27,6 +27,7 @@ import Upsell from "./pages/Upsell";
 import MemberLogin from "./pages/MemberLogin";
 import MemberDashboard from "./pages/MemberDashboard";
 import MemberCourse from "./pages/MemberCourse";
+import MemberBilling from "./pages/MemberBilling";
 import Affiliates from "./pages/Affiliates";
 import AffiliateApply from "./pages/AffiliateApply";
 import AffiliateDashboard from "./pages/AffiliateDashboard";
