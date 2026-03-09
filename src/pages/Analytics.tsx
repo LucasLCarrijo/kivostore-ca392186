@@ -407,6 +407,20 @@ export default function Analytics() {
           )}
         </CardContent>
       </Card>
+
+      {/* Cart Recovery */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <MetricCard
+          title="Carrinhos Recuperados"
+          value={`${recoveredSessions.length} (${formatCurrency(recoveredRevenue)})`}
+          icon={RefreshCw}
+        />
+        <MetricCard
+          title="Taxa de Recuperação"
+          value={`${recoveryRate}%`}
+          icon={ShoppingCart}
+        />
+      </div>
     </div>
   );
 }
