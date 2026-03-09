@@ -339,6 +339,25 @@ export default function Checkout() {
         {/* Product Summary */}
         <ProductSummary product={product} price={price} />
 
+        {/* Subscription info */}
+        {subPlan && (
+          <div className="p-4 rounded-xl border border-primary/20 bg-primary/5 text-sm">
+            {subPlan.trial_days > 0 ? (
+              <p className="text-foreground font-medium">
+                ✨ Comece grátis por {subPlan.trial_days} dias, depois{" "}
+                {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(price.amount)}
+                {subPlan.billing_interval === "monthly" ? "/mês" : subPlan.billing_interval === "quarterly" ? "/trimestre" : "/ano"}
+              </p>
+            ) : (
+              <p className="text-foreground font-medium">
+                {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(price.amount)}
+                {subPlan.billing_interval === "monthly" ? "/mês" : subPlan.billing_interval === "quarterly" ? "/trimestre" : "/ano"}
+                {" "}— Assinatura recorrente
+              </p>
+            )}
+          </div>
+        )}
+
         {/* Coupon */}
         <CouponSection
           appliedCoupon={appliedCoupon}

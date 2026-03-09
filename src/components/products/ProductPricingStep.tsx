@@ -16,6 +16,8 @@ interface Props {
 }
 
 export function ProductPricingStep({ form, updateForm }: Props) {
+  const isMembership = form.type === "MEMBERSHIP";
+
   const handlePriceChange = (value: string) => {
     const cleaned = value.replace(/[^\d]/g, "");
     updateForm({ price: Number(cleaned) / 100 });
@@ -34,23 +36,67 @@ export function ProductPricingStep({ form, updateForm }: Props) {
 
   return (
     <div className="space-y-6">
-      {/* Free toggle */}
-      <div className="flex items-center justify-between p-4 rounded-xl border border-border bg-card">
-        <div>
-          <p className="font-medium text-foreground">Este é um produto gratuito</p>
-          <p className="text-sm text-muted-foreground">Ideal para lead magnets</p>
+      {/* Free toggle — not for memberships */}
+      {!isMembership && (
+        <div className="flex items-center justify-between p-4 rounded-xl border border-border bg-card">
+          <div>
+            <p className="font-medium text-foreground">Este é um produto gratuito</p>
+            <p className="text-sm text-muted-foreground">Ideal para lead magnets</p>
+          </div>
+          <Switch
+            checked={form.isFree}
+            onCheckedChange={(checked) => updateForm({ isFree: checked })}
+          />
         </div>
-        <Switch
-          checked={form.isFree}
-          onCheckedChange={(checked) => updateForm({ isFree: checked })}
-        />
-      </div>
+      )}
 
-      {!form.isFree && (
+      {/* Membership-specific fields */}
+      {isMembership && (
+        <>
+          <div className="p-4 rounded-xl border border-primary/20 bg-primary/5 space-y-4">
+            <h3 className="font-semibold text-foreground">Configuração da Assinatura</h3>
+
+            <div className="space-y-2">
+              <Label>Intervalo de cobrança</Label>
+              <Select
+                value={form.billingInterval}
+                onValueChange={(v) => updateForm({ billingInterval: v as any })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="monthly">Mensal</SelectItem>
+                  <SelectItem value="quarterly">Trimestral</SelectItem>
+                  <SelectItem value="yearly">Anual</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Trial gratuito (dias)</Label>
+              <p className="text-xs text-muted-foreground">0 = sem trial</p>
+              <Input
+                type="number"
+                min={0}
+                max={90}
+                value={form.trialDays}
+                onChange={(e) => updateForm({ trialDays: parseInt(e.target.value) || 0 })}
+              />
+            </div>
+          </div>
+        </>
+      )}
+
+      {(!form.isFree || isMembership) && (
         <>
           {/* Price */}
           <div className="space-y-2">
-            <Label>Preço (R$) *</Label>
+            <Label>
+              {isMembership
+                ? `Valor ${form.billingInterval === "monthly" ? "mensal" : form.billingInterval === "quarterly" ? "trimestral" : "anual"} (R$) *`
+                : "Preço (R$) *"}
+            </Label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">
                 R$
@@ -62,6 +108,12 @@ export function ProductPricingStep({ form, updateForm }: Props) {
                 onChange={(e) => handlePriceChange(e.target.value)}
               />
             </div>
+            {isMembership && form.price > 0 && form.trialDays > 0 && (
+              <p className="text-sm text-accent">
+                ✨ Comece grátis por {form.trialDays} dias, depois R${formatInputPrice(form.price)}
+                {form.billingInterval === "monthly" ? "/mês" : form.billingInterval === "quarterly" ? "/trimestre" : "/ano"}
+              </p>
+            )}
           </div>
 
           {/* Compare at price */}
@@ -83,49 +135,53 @@ export function ProductPricingStep({ form, updateForm }: Props) {
             </div>
           </div>
 
-          {/* PIX discount */}
-          <div className="space-y-2">
-            <Label>Desconto PIX % (opcional)</Label>
-            <p className="text-xs text-muted-foreground">
-              Ofereça um desconto para pagamento via PIX
-            </p>
-            <div className="relative">
-              <Input
-                type="number"
-                min={0}
-                max={50}
-                placeholder="Ex: 10"
-                value={form.pixDiscount ?? ""}
-                onChange={(e) => {
-                  const v = e.target.value ? Number(e.target.value) : null;
-                  updateForm({ pixDiscount: v });
-                }}
-              />
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">
-                %
-              </span>
+          {/* PIX discount — not for memberships */}
+          {!isMembership && (
+            <div className="space-y-2">
+              <Label>Desconto PIX % (opcional)</Label>
+              <p className="text-xs text-muted-foreground">
+                Ofereça um desconto para pagamento via PIX
+              </p>
+              <div className="relative">
+                <Input
+                  type="number"
+                  min={0}
+                  max={50}
+                  placeholder="Ex: 10"
+                  value={form.pixDiscount ?? ""}
+                  onChange={(e) => {
+                    const v = e.target.value ? Number(e.target.value) : null;
+                    updateForm({ pixDiscount: v });
+                  }}
+                />
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">
+                  %
+                </span>
+              </div>
             </div>
-          </div>
+          )}
 
-          {/* Max installments */}
-          <div className="space-y-2">
-            <Label>Parcelamento máximo</Label>
-            <Select
-              value={String(form.maxInstallments)}
-              onValueChange={(v) => updateForm({ maxInstallments: Number(v) })}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {Array.from({ length: 12 }, (_, i) => i + 1).map((n) => (
-                  <SelectItem key={n} value={String(n)}>
-                    {n}x {n === 1 ? "(à vista)" : ""}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          {/* Max installments — not for memberships */}
+          {!isMembership && (
+            <div className="space-y-2">
+              <Label>Parcelamento máximo</Label>
+              <Select
+                value={String(form.maxInstallments)}
+                onValueChange={(v) => updateForm({ maxInstallments: Number(v) })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {Array.from({ length: 12 }, (_, i) => i + 1).map((n) => (
+                    <SelectItem key={n} value={String(n)}>
+                      {n}x {n === 1 ? "(à vista)" : ""}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
         </>
       )}
     </div>
