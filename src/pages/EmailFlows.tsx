@@ -86,7 +86,7 @@ const generateEmailCopy = async (
 };
 
 export default function EmailFlows() {
-
+  const { currentWorkspace } = useWorkspace();
   const { toast } = useToast();
   const qc = useQueryClient();
   const workspaceId = currentWorkspace?.id;
