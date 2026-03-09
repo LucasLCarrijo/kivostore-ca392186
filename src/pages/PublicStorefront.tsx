@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams, useSearchParams, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { useAffiliateTracking } from "@/hooks/useAffiliateTracking";
 import { formatCurrency } from "@/lib/utils";
 import {
   Instagram,
@@ -206,6 +207,7 @@ function LeadFormBlock({
 export default function PublicStorefront() {
   const { slug } = useParams<{ slug: string }>();
   const [searchParams] = useSearchParams();
+  useAffiliateTracking();
 
   const [storefront, setStorefront] = useState<StorefrontRow | null>(null);
   const [theme, setTheme] = useState<ThemeRow | null>(null);
