@@ -35,6 +35,7 @@ import LeadSegments from "./pages/LeadSegments";
 import LeadEmail from "./pages/LeadEmail";
 import Analytics from "./pages/Analytics";
 import Settings from "./pages/Settings";
+import Coupons from "./pages/Coupons";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -87,6 +88,16 @@ const App = () => (
                 } 
               />
               
+              <Route 
+                path="/coupons" 
+                element={
+                  <ProtectedRoute>
+                    <DashboardLayout>
+                      <Coupons />
+                    </DashboardLayout>
+                  </ProtectedRoute>
+                } 
+              />
               
               {/* Products routes */}
               <Route 
