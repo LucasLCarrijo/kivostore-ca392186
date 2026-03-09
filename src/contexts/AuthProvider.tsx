@@ -28,6 +28,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
     if (initializedRef.current) return;
     initializedRef.current = true;
 
+    let hasRedirectedOnce = false;
+
     // 1. Set up auth state listener FIRST (before getSession)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
@@ -35,14 +37,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
         setUser(session?.user ?? null);
         setLoading(false);
 
-        if (event === 'SIGNED_IN') {
-          // Don't redirect if already on onboarding or a public page
+        // Only redirect on actual new sign-ins, not token refreshes or session restoration
+        if (event === 'SIGNED_IN' && !hasRedirectedOnce) {
+          hasRedirectedOnce = true;
           const currentPath = window.location.pathname;
-          const publicPaths = ['/onboarding', '/checkout', '/order', '/upsell', '/member', '/affiliate'];
-          const isPublicPath = publicPaths.some(p => currentPath.startsWith(p));
+          // Don't redirect if already on a known app page or public page
+          const skipRedirectPaths = ['/onboarding', '/checkout', '/order', '/upsell', '/member', '/affiliate', '/dashboard', '/products', '/earnings', '/coupons', '/store', '/analytics', '/clients', '/settings', '/affiliates', '/email-flows', '/leads'];
+          const shouldSkip = skipRedirectPaths.some(p => currentPath.startsWith(p));
 
-          if (!isPublicPath && session?.user) {
-            // Use setTimeout to avoid Supabase deadlock with RLS
+          if (!shouldSkip && session?.user) {
             setTimeout(async () => {
               try {
                 const { data: workspaceMember } = await supabase
@@ -63,6 +66,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
             }, 0);
           }
         } else if (event === 'SIGNED_OUT') {
+          hasRedirectedOnce = false;
           navigate('/login');
         }
       }
@@ -73,7 +77,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
       if (error) {
         console.error("Error getting session:", error);
       }
-      // Only set if listener hasn't already fired
       setSession(prev => prev ?? session);
       setUser(prev => prev ?? session?.user ?? null);
       setLoading(false);
