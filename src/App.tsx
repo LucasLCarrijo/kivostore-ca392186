@@ -54,6 +54,7 @@ import CircleMembers from "./pages/circle/CircleMembers";
 import CircleLeaderboard from "./pages/circle/CircleLeaderboard";
 import CircleEvents from "./pages/circle/CircleEvents";
 import CircleAdmin from "./pages/circle/CircleAdmin";
+import CirclePostDetail from "./pages/circle/CirclePostDetail";
 
 const queryClient = new QueryClient();
 
