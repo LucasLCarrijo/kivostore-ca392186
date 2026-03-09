@@ -26,10 +26,16 @@ Deno.serve(async (req) => {
     return new Response("Invalid JSON", { status: 400, headers: corsHeaders });
   }
 
-  // HMAC signature validation
+  // HMAC signature validation using Web Crypto API
   if (webhookSecret) {
     const signature = req.headers.get("x-hub-signature") || "";
-    const expected = `sha1=${hmac("sha1", webhookSecret, rawBody, "utf8", "hex")}`;
+    const encoder = new TextEncoder();
+    const key = await crypto.subtle.importKey(
+      "raw", encoder.encode(webhookSecret), { name: "HMAC", hash: "SHA-1" }, false, ["sign"]
+    );
+    const sig = await crypto.subtle.sign("HMAC", key, encoder.encode(rawBody));
+    const hexSig = Array.from(new Uint8Array(sig)).map(b => b.toString(16).padStart(2, "0")).join("");
+    const expected = `sha1=${hexSig}`;
     if (signature !== expected) {
       console.error("Invalid webhook signature");
       return new Response("Invalid signature", { status: 401, headers: corsHeaders });
