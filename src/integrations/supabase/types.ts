@@ -411,6 +411,57 @@ export type Database = {
           },
         ]
       }
+      lesson_progress: {
+        Row: {
+          completed: boolean
+          completed_at: string | null
+          created_at: string
+          customer_id: string
+          id: string
+          last_accessed_at: string | null
+          member_content_id: string
+          progress_percent: number
+          updated_at: string
+        }
+        Insert: {
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          customer_id: string
+          id?: string
+          last_accessed_at?: string | null
+          member_content_id: string
+          progress_percent?: number
+          updated_at?: string
+        }
+        Update: {
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          customer_id?: string
+          id?: string
+          last_accessed_at?: string | null
+          member_content_id?: string
+          progress_percent?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lesson_progress_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lesson_progress_member_content_id_fkey"
+            columns: ["member_content_id"]
+            isOneToOne: false
+            referencedRelation: "member_content"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       member_content: {
         Row: {
           created_at: string
