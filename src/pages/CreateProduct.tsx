@@ -94,6 +94,9 @@ export default function CreateProduct() {
   const [step, setStep] = useState(0);
   const [form, setForm] = useState<ProductFormData>(INITIAL_FORM);
   const [saving, setSaving] = useState(false);
+  const [upgradeOpen, setUpgradeOpen] = useState(false);
+  const [upgradeFeature, setUpgradeFeature] = useState("");
+  const planInfo = usePlanLimits();
 
   const updateForm = (updates: Partial<ProductFormData>) => {
     setForm((prev) => ({ ...prev, ...updates }));
