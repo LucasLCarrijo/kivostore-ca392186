@@ -138,7 +138,7 @@ export default function Products() {
     mutationFn: async (productId: string) => {
       const { error } = await supabase
         .from("products")
-        .update({ status: "ARCHIVED" as const })
+        .update({ status: "ARCHIVED" as ProductStatus })
         .eq("id", productId);
       if (error) throw error;
     },
