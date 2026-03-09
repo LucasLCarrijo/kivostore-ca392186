@@ -30,7 +30,7 @@ export function MetricCard({ title, value, icon: Icon, change, prefix = "", suff
             <span
               className={cn(
                 "text-xs font-medium",
-                change >= 0 ? "text-green-600" : "text-red-600"
+                change >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"
               )}
             >
               {change >= 0 ? "+" : ""}{change.toFixed(1)}%

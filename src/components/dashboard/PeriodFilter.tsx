@@ -2,7 +2,7 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-const periods = [
+const periods: Array<{ label: string; value: number | "custom" }> = [
   { label: "7D", value: 7 },
   { label: "14D", value: 14 },
   { label: "30D", value: 30 },
