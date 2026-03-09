@@ -177,13 +177,11 @@ const App = () => (
                 element={
                   <ProtectedRoute>
                     <DashboardLayout>
-                      <div className="p-6">
-                        <h1 className="text-2xl font-bold">Clientes</h1>
-                        <p className="text-muted-foreground">Gerencie seus clientes e leads</p>
-                      </div>
+                      <Customers />
                     </DashboardLayout>
                   </ProtectedRoute>
                 } 
+              />
               />
               
               <Route 
