@@ -13,8 +13,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import {
-  Plus, Mail, Play, Pause, Trash2, GripVertical, Clock, Users, Eye, MousePointerClick, UserMinus, ChevronDown, ChevronUp, Sparkles, Loader2,
+  Plus, Mail, Play, Pause, Trash2, GripVertical, Clock, Users, Eye, MousePointerClick, UserMinus, ChevronDown, ChevronUp, Sparkles, Loader2, Crown,
 } from "lucide-react";
+import { usePlanLimits } from "@/hooks/usePlanLimits";
+import { UpgradeModal } from "@/components/UpgradeModal";
 
 const TRIGGER_LABELS: Record<string, string> = {
   lead_captured: "Quando lead é capturado",
@@ -90,6 +92,8 @@ export default function EmailFlows() {
   const { toast } = useToast();
   const qc = useQueryClient();
   const workspaceId = currentWorkspace?.id;
+  const planInfo = usePlanLimits();
+  const [upgradeOpen, setUpgradeOpen] = useState(false);
 
   const [showCreate, setShowCreate] = useState(false);
   const [expandedSeq, setExpandedSeq] = useState<string | null>(null);
@@ -100,6 +104,31 @@ export default function EmailFlows() {
     trigger_product_id: null,
     steps: [emptyStep(0)],
   });
+
+  // Block if email marketing not available
+  if (!planInfo.loading && !planInfo.limits.hasEmailMarketing) {
+    return (
+      <div className="p-6 flex flex-col items-center justify-center min-h-[60vh] text-center space-y-4">
+        <div className="p-4 rounded-full bg-muted">
+          <Crown className="w-8 h-8 text-muted-foreground" />
+        </div>
+        <h2 className="text-xl font-bold text-foreground">Email Marketing</h2>
+        <p className="text-muted-foreground max-w-md">
+          Email marketing está disponível a partir do plano Creator. 
+          Crie sequências automáticas para converter seus leads.
+        </p>
+        <Button onClick={() => setUpgradeOpen(true)} className="gap-2">
+          <Crown className="w-4 h-4" /> Fazer Upgrade
+        </Button>
+        <UpgradeModal
+          open={upgradeOpen}
+          onOpenChange={setUpgradeOpen}
+          currentPlan={planInfo.plan}
+          feature="usar email marketing"
+        />
+      </div>
+    );
+  }
 
   // Fetch sequences
   const { data: sequences = [], isLoading } = useQuery({

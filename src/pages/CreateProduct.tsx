@@ -10,6 +10,8 @@ import { ProductDetailsStep } from "@/components/products/ProductDetailsStep";
 import { ProductPricingStep } from "@/components/products/ProductPricingStep";
 import { ProductDeliveryStep } from "@/components/products/ProductDeliveryStep";
 import { ProductExtrasStep } from "@/components/products/ProductExtrasStep";
+import { usePlanLimits } from "@/hooks/usePlanLimits";
+import { UpgradeModal } from "@/components/UpgradeModal";
 import type { Database } from "@/integrations/supabase/types";
 
 type ProductType = Database["public"]["Enums"]["product_type"];
@@ -92,6 +94,9 @@ export default function CreateProduct() {
   const [step, setStep] = useState(0);
   const [form, setForm] = useState<ProductFormData>(INITIAL_FORM);
   const [saving, setSaving] = useState(false);
+  const [upgradeOpen, setUpgradeOpen] = useState(false);
+  const [upgradeFeature, setUpgradeFeature] = useState("");
+  const planInfo = usePlanLimits();
 
   const updateForm = (updates: Partial<ProductFormData>) => {
     setForm((prev) => ({ ...prev, ...updates }));
@@ -106,6 +111,21 @@ export default function CreateProduct() {
 
   const saveProduct = async (status: "DRAFT" | "PUBLISHED") => {
     if (!currentWorkspace || !form.type) return;
+
+    // Plan limit check
+    if (!planInfo.canCreateProduct) {
+      setUpgradeFeature("criar mais produtos");
+      setUpgradeOpen(true);
+      return;
+    }
+
+    const isCourseType = ["ECOURSE", "MEMBERSHIP"].includes(form.type);
+    if (isCourseType && !planInfo.canCreateCourse) {
+      setUpgradeFeature("criar cursos");
+      setUpgradeOpen(true);
+      return;
+    }
+
     setSaving(true);
 
     try {
@@ -277,6 +297,12 @@ export default function CreateProduct() {
           )}
         </div>
       </div>
+      <UpgradeModal
+        open={upgradeOpen}
+        onOpenChange={setUpgradeOpen}
+        currentPlan={planInfo.plan}
+        feature={upgradeFeature}
+      />
     </div>
   );
 }

@@ -10,6 +10,7 @@ import { PeriodFilter } from "@/components/dashboard/PeriodFilter";
 import { RevenueChart } from "@/components/dashboard/RevenueChart";
 import { RecentSales } from "@/components/dashboard/RecentSales";
 import { OnboardingChecklist } from "@/components/dashboard/OnboardingChecklist";
+import { UsageAlerts } from "@/components/dashboard/UsageAlerts";
 
 interface Metrics {
   totalRevenue: number;
@@ -181,6 +182,9 @@ export default function Dashboard() {
         <h1 className="text-2xl font-bold text-foreground">{greeting}</h1>
         <p className="text-muted-foreground capitalize">{dateString}</p>
       </div>
+
+      {/* Usage Alerts */}
+      <UsageAlerts />
 
       {/* Onboarding Checklist */}
       <OnboardingChecklist />
