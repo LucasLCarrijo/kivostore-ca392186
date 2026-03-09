@@ -74,13 +74,23 @@ export default function Checkout() {
 
       const { data: priceData } = await supabase
         .from("prices")
-        .select("id, amount, compare_at_amount, pix_discount_percent, max_installments")
+        .select("id, amount, compare_at_amount, pix_discount_percent, max_installments, type")
         .eq("product_id", prod.id)
         .eq("is_default", true)
         .eq("is_active", true)
         .maybeSingle();
 
       if (!priceData) { setNotFound(true); setLoading(false); return; }
+
+      // Check for subscription plan
+      if (priceData.type === "RECURRING") {
+        const { data: planData } = await supabase
+          .from("subscription_plans")
+          .select("billing_interval, trial_days")
+          .eq("product_id", prod.id)
+          .maybeSingle();
+        if (planData) setSubPlan(planData);
+      }
 
       setProduct(prod);
       setPrice(priceData);
