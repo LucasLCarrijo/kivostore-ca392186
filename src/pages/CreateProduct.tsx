@@ -111,6 +111,21 @@ export default function CreateProduct() {
 
   const saveProduct = async (status: "DRAFT" | "PUBLISHED") => {
     if (!currentWorkspace || !form.type) return;
+
+    // Plan limit check
+    if (!planInfo.canCreateProduct) {
+      setUpgradeFeature("criar mais produtos");
+      setUpgradeOpen(true);
+      return;
+    }
+
+    const isCourseType = ["ECOURSE", "MEMBERSHIP"].includes(form.type);
+    if (isCourseType && !planInfo.canCreateCourse) {
+      setUpgradeFeature("criar cursos");
+      setUpgradeOpen(true);
+      return;
+    }
+
     setSaving(true);
 
     try {
