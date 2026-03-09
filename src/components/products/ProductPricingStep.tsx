@@ -9,6 +9,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import type { ProductFormData } from "@/pages/CreateProduct";
+import { AIPriceSuggestion } from "./AIPriceSuggestion";
 
 interface Props {
   form: ProductFormData;
