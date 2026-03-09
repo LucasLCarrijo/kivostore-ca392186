@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, useRef, ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./AuthProvider";
 
@@ -43,10 +43,13 @@ export function WorkspaceProvider({ children }: WorkspaceProviderProps) {
   const [workspaceMembership, setWorkspaceMembership] = useState<WorkspaceMember | null>(null);
   const [loading, setLoading] = useState(true);
   const { user, session } = useAuth();
+  // Keep a ref to workspaces so switchWorkspace always sees the latest value
+  const workspacesRef = useRef<Workspace[]>([]);
 
   const fetchUserWorkspaces = async () => {
     if (!user) {
       setUserWorkspaces([]);
+      workspacesRef.current = [];
       setCurrentWorkspace(null);
       setWorkspaceMembership(null);
       setLoading(false);
@@ -54,7 +57,6 @@ export function WorkspaceProvider({ children }: WorkspaceProviderProps) {
     }
 
     try {
-      // Get user's workspace memberships with workspace data
       const { data: memberships, error } = await supabase
         .from('workspace_members')
         .select(`
@@ -66,28 +68,39 @@ export function WorkspaceProvider({ children }: WorkspaceProviderProps) {
       if (error) {
         console.error("Error fetching workspaces:", error);
         setUserWorkspaces([]);
+        workspacesRef.current = [];
         setCurrentWorkspace(null);
         setWorkspaceMembership(null);
       } else if (memberships && memberships.length > 0) {
         const workspaces = memberships.map(m => m.workspaces).filter(Boolean);
         setUserWorkspaces(workspaces);
-        
-        // Set first workspace as current if none is set
-        if (!currentWorkspace && workspaces.length > 0) {
-          setCurrentWorkspace(workspaces[0]);
-          setWorkspaceMembership(memberships[0]);
-          
-          // Store current workspace in localStorage
-          localStorage.setItem('kivo_current_workspace', workspaces[0].id);
+        workspacesRef.current = workspaces;
+
+        // Try to restore stored workspace preference
+        const storedWorkspaceId = localStorage.getItem('kivo_current_workspace');
+        const preferred = storedWorkspaceId
+          ? workspaces.find(w => w.id === storedWorkspaceId)
+          : null;
+        const target = preferred || workspaces[0];
+        const membership = preferred
+          ? memberships.find(m => m.workspace_id === storedWorkspaceId)
+          : memberships[0];
+
+        if (target) {
+          setCurrentWorkspace(target);
+          setWorkspaceMembership(membership || memberships[0]);
+          localStorage.setItem('kivo_current_workspace', target.id);
         }
       } else {
         setUserWorkspaces([]);
+        workspacesRef.current = [];
         setCurrentWorkspace(null);
         setWorkspaceMembership(null);
       }
     } catch (error) {
       console.error("Error fetching workspaces:", error);
       setUserWorkspaces([]);
+      workspacesRef.current = [];
       setCurrentWorkspace(null);
       setWorkspaceMembership(null);
     } finally {
@@ -96,11 +109,10 @@ export function WorkspaceProvider({ children }: WorkspaceProviderProps) {
   };
 
   const switchWorkspace = async (workspaceId: string) => {
-    const workspace = userWorkspaces.find(w => w.id === workspaceId);
+    const workspace = workspacesRef.current.find(w => w.id === workspaceId);
     if (workspace) {
       setCurrentWorkspace(workspace);
       
-      // Update membership info
       const { data: membership } = await supabase
         .from('workspace_members')
         .select('*')
@@ -121,7 +133,6 @@ export function WorkspaceProvider({ children }: WorkspaceProviderProps) {
     if (!user) return null;
 
     try {
-      // Generate unique slug
       const { data: slugData, error: slugError } = await supabase
         .rpc('generate_unique_slug', { base_name: name });
 
@@ -130,7 +141,6 @@ export function WorkspaceProvider({ children }: WorkspaceProviderProps) {
         return null;
       }
 
-      // Create workspace
       const { data: workspace, error: workspaceError } = await supabase
         .from('workspaces')
         .insert({
@@ -145,7 +155,6 @@ export function WorkspaceProvider({ children }: WorkspaceProviderProps) {
         return null;
       }
 
-      // Create workspace membership
       const { error: memberError } = await supabase
         .from('workspace_members')
         .insert({
@@ -159,7 +168,6 @@ export function WorkspaceProvider({ children }: WorkspaceProviderProps) {
         return null;
       }
 
-      // Refresh workspaces to update the lists
       await refreshWorkspaces();
       
       return workspace;
@@ -171,15 +179,10 @@ export function WorkspaceProvider({ children }: WorkspaceProviderProps) {
 
   useEffect(() => {
     if (session) {
-      // Check for stored workspace preference
-      const storedWorkspaceId = localStorage.getItem('kivo_current_workspace');
-      fetchUserWorkspaces().then(() => {
-        if (storedWorkspaceId) {
-          switchWorkspace(storedWorkspaceId);
-        }
-      });
+      fetchUserWorkspaces();
     } else {
       setUserWorkspaces([]);
+      workspacesRef.current = [];
       setCurrentWorkspace(null);
       setWorkspaceMembership(null);
       setLoading(false);
