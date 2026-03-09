@@ -324,7 +324,7 @@ export function StorefrontPreview({ storefront, theme, blocks }: StorefrontPrevi
                       className="p-2 rounded-full transition-colors hover:opacity-80"
                       style={{ backgroundColor: currentTheme.text_color + '10' }}
                     >
-                      <TikTokIcon className="h-5 w-5" style={{ color: currentTheme.text_color }} />
+                      <TikTokIcon className="h-5 w-5 text-current" />
                     </a>
                   )}
                   {socialLinks.youtube && (

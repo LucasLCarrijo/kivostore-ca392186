@@ -256,7 +256,7 @@ export function BlocksSection({ storefrontId, blocks, onBlocksChange }: BlocksSe
     mutationFn: async ({ id, config }: { id: string; config: Record<string, unknown> }) => {
       const { error } = await supabase
         .from('storefront_blocks')
-        .update({ config })
+        .update({ config: config as any })
         .eq('id', id);
       
       if (error) throw error;
