@@ -8,10 +8,11 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import {
   Loader2, ChevronLeft, ChevronRight, Check, Menu,
-  Play, FileText, Headphones, BookOpen, ArrowLeft, Award,
+  Play, FileText, Headphones, BookOpen, ArrowLeft, Award, Download,
 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import confetti from "canvas-confetti";
+import { toast } from "sonner";
 
 interface Module {
   id: string;
