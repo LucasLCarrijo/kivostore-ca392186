@@ -214,9 +214,16 @@ export default function Leads() {
       const matchesTag =
         !tagFilter || (lead.tags && lead.tags.includes(tagFilter));
 
-      return matchesSearch && matchesStatus && matchesTag;
+      const matchesProduct =
+        !productFilter || lead.product_id === productFilter;
+
+      const leadDate = new Date(lead.created_at);
+      const matchesDateFrom = !dateFrom || leadDate >= new Date(dateFrom);
+      const matchesDateTo = !dateTo || leadDate <= new Date(dateTo + "T23:59:59");
+
+      return matchesSearch && matchesStatus && matchesTag && matchesProduct && matchesDateFrom && matchesDateTo;
     });
-  }, [leads, search, statusFilter, tagFilter]);
+  }, [leads, search, statusFilter, tagFilter, productFilter, dateFrom, dateTo]);
 
   // Export CSV
   const exportCSV = () => {
