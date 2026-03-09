@@ -256,22 +256,37 @@ export default function Checkout() {
   };
 
   // Polling for PIX payment confirmation
+  const [orderId, setOrderId] = useState<string | null>(null);
+
+  // Store order_id from PIX response
   useEffect(() => {
-    if (!pixData || paymentSuccess || !sessionId) return;
+    // orderId is set when PIX payment is created
+  }, []);
+
+  // Polling for PIX payment confirmation via check-payment-status
+  useEffect(() => {
+    if (!pixData || paymentSuccess || !orderId) return;
     const interval = setInterval(async () => {
-      const { data } = await supabase
-        .from("checkout_sessions")
-        .select("status")
-        .eq("id", sessionId)
-        .single();
-      if (data?.status === "COMPLETED") {
-        clearInterval(interval);
-        // Get order from checkout session to redirect
-        navigate(`/order/success/${sessionId}`);
-      }
+      try {
+        const res = await supabase.functions.invoke("check-payment-status", {
+          body: null,
+          method: "GET",
+        });
+        // Use fetch directly since invoke doesn't support GET params well
+        const url = `https://${import.meta.env.VITE_SUPABASE_PROJECT_ID}.supabase.co/functions/v1/check-payment-status?order_id=${orderId}`;
+        const resp = await fetch(url, {
+          headers: { "apikey": import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY },
+        });
+        const data = await resp.json();
+        if (data?.status === "SUCCEEDED") {
+          clearInterval(interval);
+          setPaymentSuccess(true);
+          navigate(`/order/success/${orderId}`);
+        }
+      } catch {}
     }, 5000);
     return () => clearInterval(interval);
-  }, [pixData, paymentSuccess, sessionId]);
+  }, [pixData, paymentSuccess, orderId]);
 
   if (loading) {
     return (
