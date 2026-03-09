@@ -624,6 +624,98 @@ export type Database = {
           },
         ]
       }
+      email_events: {
+        Row: {
+          campaign_id: string | null
+          created_at: string | null
+          email: string
+          event_type: string
+          id: string
+          lead_id: string | null
+          message_id: string | null
+          metadata: Json | null
+          workspace_id: string
+        }
+        Insert: {
+          campaign_id?: string | null
+          created_at?: string | null
+          email: string
+          event_type: string
+          id?: string
+          lead_id?: string | null
+          message_id?: string | null
+          metadata?: Json | null
+          workspace_id: string
+        }
+        Update: {
+          campaign_id?: string | null
+          created_at?: string | null
+          email?: string
+          event_type?: string
+          id?: string
+          lead_id?: string | null
+          message_id?: string | null
+          metadata?: Json | null
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_events_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_events_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      email_segments: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          filter_rules: Json | null
+          id: string
+          member_count: number | null
+          name: string
+          updated_at: string | null
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          filter_rules?: Json | null
+          id?: string
+          member_count?: number | null
+          name: string
+          updated_at?: string | null
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          filter_rules?: Json | null
+          id?: string
+          member_count?: number | null
+          name?: string
+          updated_at?: string | null
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_segments_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       entitlements: {
         Row: {
           customer_id: string
@@ -717,50 +809,105 @@ export type Database = {
           },
         ]
       }
+      lead_segment_members: {
+        Row: {
+          added_at: string | null
+          lead_id: string
+          segment_id: string
+        }
+        Insert: {
+          added_at?: string | null
+          lead_id: string
+          segment_id: string
+        }
+        Update: {
+          added_at?: string | null
+          lead_id?: string
+          segment_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_segment_members_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_segment_members_segment_id_fkey"
+            columns: ["segment_id"]
+            isOneToOne: false
+            referencedRelation: "email_segments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       leads: {
         Row: {
           created_at: string
+          customer_id: string | null
           email: string
           id: string
           metadata: Json | null
           name: string | null
+          opt_in_at: string | null
+          opt_in_ip: string | null
           phone: string | null
           product_id: string | null
           source: string | null
+          source_detail: string | null
           status: string
           tags: string[] | null
+          unsubscribed_at: string | null
           updated_at: string
           workspace_id: string
         }
         Insert: {
           created_at?: string
+          customer_id?: string | null
           email: string
           id?: string
           metadata?: Json | null
           name?: string | null
+          opt_in_at?: string | null
+          opt_in_ip?: string | null
           phone?: string | null
           product_id?: string | null
           source?: string | null
+          source_detail?: string | null
           status?: string
           tags?: string[] | null
+          unsubscribed_at?: string | null
           updated_at?: string
           workspace_id: string
         }
         Update: {
           created_at?: string
+          customer_id?: string | null
           email?: string
           id?: string
           metadata?: Json | null
           name?: string | null
+          opt_in_at?: string | null
+          opt_in_ip?: string | null
           phone?: string | null
           product_id?: string | null
           source?: string | null
+          source_detail?: string | null
           status?: string
           tags?: string[] | null
+          unsubscribed_at?: string | null
           updated_at?: string
           workspace_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "leads_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "leads_product_id_fkey"
             columns: ["product_id"]
