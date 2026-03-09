@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Upload, Check, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useWorkspace } from "@/contexts/WorkspaceProvider";
 
 interface StepProfileProps {
   data: {
@@ -27,6 +28,7 @@ export function StepProfile({ data, onUpdate, onNext, user }: StepProfileProps) 
   const [usernameStatus, setUsernameStatus] = useState<'checking' | 'available' | 'taken' | null>(null);
   const [isValid, setIsValid] = useState(false);
   const { toast } = useToast();
+  const { currentWorkspace, refreshWorkspaces } = useWorkspace();
 
   useEffect(() => {
     // Pre-fill with user data
@@ -105,15 +107,21 @@ export function StepProfile({ data, onUpdate, onNext, user }: StepProfileProps) 
     setUsernameStatus('checking');
 
     try {
-      const { data, error } = await supabase
+      // Check if slug exists, excluding the user's own workspace
+      const query = supabase
         .from('workspaces')
-        .select('slug')
-        .eq('slug', username)
-        .maybeSingle();
+        .select('slug, id')
+        .eq('slug', username);
 
+      const { data: results, error } = await query;
       if (error) throw error;
 
-      setUsernameStatus(data ? 'taken' : 'available');
+      // Filter out user's own workspace
+      const otherWorkspaces = (results || []).filter(
+        (w) => w.id !== currentWorkspace?.id
+      );
+
+      setUsernameStatus(otherWorkspaces.length > 0 ? 'taken' : 'available');
     } catch (error) {
       setUsernameStatus('taken');
     }
@@ -132,27 +140,41 @@ export function StepProfile({ data, onUpdate, onNext, user }: StepProfileProps) 
   const handleSubmit = async () => {
     if (!isValid) return;
 
+    // Use currentWorkspace from context instead of app_metadata
+    if (!currentWorkspace) {
+      toast({
+        title: "Erro",
+        description: "Workspace não encontrado. Tente recarregar a página.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
-      // Update workspace
+      // Update workspace name and slug
       const { error } = await supabase
         .from('workspaces')
         .update({
           name: formData.display_name,
           slug: formData.username,
         })
-        .eq('id', user?.app_metadata?.workspace_id);
+        .eq('id', currentWorkspace.id);
 
       if (error) throw error;
 
-      // Update storefront
+      // Update storefront using workspace_id (not slug, since slug just changed)
       await supabase
         .from('storefronts')
         .update({
           title: formData.display_name,
           bio: formData.bio,
-          avatar_url: formData.avatar_url,
+          avatar_url: formData.avatar_url || null,
+          slug: formData.username,
         })
-        .eq('slug', formData.username);
+        .eq('workspace_id', currentWorkspace.id);
+
+      // Refresh workspace data so the rest of onboarding has updated info
+      await refreshWorkspaces();
 
       onUpdate(formData);
       onNext();
@@ -256,10 +278,10 @@ export function StepProfile({ data, onUpdate, onNext, user }: StepProfileProps) 
                   <div className="animate-spin h-4 w-4 border-2 border-primary border-t-transparent rounded-full" />
                 )}
                 {usernameStatus === 'available' && (
-                  <Check className="h-4 w-4 text-green-500" />
+                  <Check className="h-4 w-4 text-accent" />
                 )}
                 {usernameStatus === 'taken' && (
-                  <X className="h-4 w-4 text-red-500" />
+                  <X className="h-4 w-4 text-destructive" />
                 )}
               </div>
             )}
@@ -268,13 +290,13 @@ export function StepProfile({ data, onUpdate, onNext, user }: StepProfileProps) 
           {formData.username && usernameStatus && (
             <p className={`text-xs ${
               usernameStatus === 'available' 
-                ? 'text-green-600' 
+                ? 'text-accent' 
                 : usernameStatus === 'taken' 
-                ? 'text-red-600' 
+                ? 'text-destructive' 
                 : 'text-muted-foreground'
             }`}>
               {usernameStatus === 'available' && "✅ Username disponível"}
-              {usernameStatus === 'taken' && "❌ Username já está em uso"}
+              {usernameStatus === 'taken' && "❌ Username já está em uso ou formato inválido"}
               {usernameStatus === 'checking' && "Verificando disponibilidade..."}
             </p>
           )}
