@@ -25,6 +25,12 @@ interface Price {
   compare_at_amount: number | null;
   pix_discount_percent: number | null;
   max_installments: number | null;
+  type: string | null;
+}
+
+interface SubscriptionPlan {
+  billing_interval: string;
+  trial_days: number;
 }
 
 export default function Checkout() {
@@ -34,6 +40,7 @@ export default function Checkout() {
 
   const [product, setProduct] = useState<Product | null>(null);
   const [price, setPrice] = useState<Price | null>(null);
+  const [subPlan, setSubPlan] = useState<SubscriptionPlan | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
 
@@ -67,13 +74,23 @@ export default function Checkout() {
 
       const { data: priceData } = await supabase
         .from("prices")
-        .select("id, amount, compare_at_amount, pix_discount_percent, max_installments")
+        .select("id, amount, compare_at_amount, pix_discount_percent, max_installments, type")
         .eq("product_id", prod.id)
         .eq("is_default", true)
         .eq("is_active", true)
         .maybeSingle();
 
       if (!priceData) { setNotFound(true); setLoading(false); return; }
+
+      // Check for subscription plan
+      if (priceData.type === "RECURRING") {
+        const { data: planData } = await supabase
+          .from("subscription_plans")
+          .select("billing_interval, trial_days")
+          .eq("product_id", prod.id)
+          .maybeSingle();
+        if (planData) setSubPlan(planData);
+      }
 
       setProduct(prod);
       setPrice(priceData);
@@ -321,6 +338,25 @@ export default function Checkout() {
 
         {/* Product Summary */}
         <ProductSummary product={product} price={price} />
+
+        {/* Subscription info */}
+        {subPlan && (
+          <div className="p-4 rounded-xl border border-primary/20 bg-primary/5 text-sm">
+            {subPlan.trial_days > 0 ? (
+              <p className="text-foreground font-medium">
+                ✨ Comece grátis por {subPlan.trial_days} dias, depois{" "}
+                {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(price.amount)}
+                {subPlan.billing_interval === "monthly" ? "/mês" : subPlan.billing_interval === "quarterly" ? "/trimestre" : "/ano"}
+              </p>
+            ) : (
+              <p className="text-foreground font-medium">
+                {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(price.amount)}
+                {subPlan.billing_interval === "monthly" ? "/mês" : subPlan.billing_interval === "quarterly" ? "/trimestre" : "/ano"}
+                {" "}— Assinatura recorrente
+              </p>
+            )}
+          </div>
+        )}
 
         {/* Coupon */}
         <CouponSection

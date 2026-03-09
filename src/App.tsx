@@ -27,6 +27,7 @@ import Upsell from "./pages/Upsell";
 import MemberLogin from "./pages/MemberLogin";
 import MemberDashboard from "./pages/MemberDashboard";
 import MemberCourse from "./pages/MemberCourse";
+import MemberBilling from "./pages/MemberBilling";
 import Affiliates from "./pages/Affiliates";
 import AffiliateApply from "./pages/AffiliateApply";
 import AffiliateDashboard from "./pages/AffiliateDashboard";
@@ -260,6 +261,7 @@ const App = () => (
               <Route path="/member/login" element={<MemberLogin />} />
               <Route path="/member" element={<MemberDashboard />} />
               <Route path="/member/course/:productId" element={<MemberCourse />} />
+              <Route path="/member/billing" element={<MemberBilling />} />
 
               {/* Affiliate — public pages */}
               <Route path="/affiliate/apply/:workspaceSlug" element={<AffiliateApply />} />
