@@ -782,6 +782,810 @@ export type Database = {
           },
         ]
       }
+      communities: {
+        Row: {
+          access_type: Database["public"]["Enums"]["community_access_type"]
+          allow_member_events: boolean
+          allow_member_posts: boolean
+          cover_image_url: string | null
+          created_at: string
+          description: string | null
+          icon_url: string | null
+          id: string
+          is_active: boolean
+          linked_product_id: string | null
+          long_description: string | null
+          member_count: number
+          name: string
+          points_per_comment: number
+          points_per_course_completed: number
+          points_per_daily_login: number
+          points_per_like_received: number
+          points_per_post: number
+          post_count: number
+          require_approval: boolean
+          slug: string
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          access_type?: Database["public"]["Enums"]["community_access_type"]
+          allow_member_events?: boolean
+          allow_member_posts?: boolean
+          cover_image_url?: string | null
+          created_at?: string
+          description?: string | null
+          icon_url?: string | null
+          id?: string
+          is_active?: boolean
+          linked_product_id?: string | null
+          long_description?: string | null
+          member_count?: number
+          name: string
+          points_per_comment?: number
+          points_per_course_completed?: number
+          points_per_daily_login?: number
+          points_per_like_received?: number
+          points_per_post?: number
+          post_count?: number
+          require_approval?: boolean
+          slug: string
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          access_type?: Database["public"]["Enums"]["community_access_type"]
+          allow_member_events?: boolean
+          allow_member_posts?: boolean
+          cover_image_url?: string | null
+          created_at?: string
+          description?: string | null
+          icon_url?: string | null
+          id?: string
+          is_active?: boolean
+          linked_product_id?: string | null
+          long_description?: string | null
+          member_count?: number
+          name?: string
+          points_per_comment?: number
+          points_per_course_completed?: number
+          points_per_daily_login?: number
+          points_per_like_received?: number
+          points_per_post?: number
+          post_count?: number
+          require_approval?: boolean
+          slug?: string
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "communities_linked_product_id_fkey"
+            columns: ["linked_product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "communities_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: true
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      community_comments: {
+        Row: {
+          author_id: string
+          body: string
+          created_at: string
+          deleted_at: string | null
+          edited_at: string | null
+          id: string
+          images: string[] | null
+          is_best_answer: boolean
+          like_count: number
+          parent_id: string | null
+          post_id: string
+          reply_count: number
+          updated_at: string
+        }
+        Insert: {
+          author_id: string
+          body: string
+          created_at?: string
+          deleted_at?: string | null
+          edited_at?: string | null
+          id?: string
+          images?: string[] | null
+          is_best_answer?: boolean
+          like_count?: number
+          parent_id?: string | null
+          post_id: string
+          reply_count?: number
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string
+          body?: string
+          created_at?: string
+          deleted_at?: string | null
+          edited_at?: string | null
+          id?: string
+          images?: string[] | null
+          is_best_answer?: boolean
+          like_count?: number
+          parent_id?: string | null
+          post_id?: string
+          reply_count?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_comments_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "community_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "community_comments_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "community_comments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "community_comments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "community_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      community_event_rsvps: {
+        Row: {
+          created_at: string
+          event_id: string
+          id: string
+          member_id: string
+          status: Database["public"]["Enums"]["rsvp_status"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          event_id: string
+          id?: string
+          member_id: string
+          status?: Database["public"]["Enums"]["rsvp_status"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          event_id?: string
+          id?: string
+          member_id?: string
+          status?: Database["public"]["Enums"]["rsvp_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_event_rsvps_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "community_events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "community_event_rsvps_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "community_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      community_events: {
+        Row: {
+          community_id: string
+          cover_image_url: string | null
+          created_at: string
+          created_by: string
+          description: string | null
+          ends_at: string | null
+          id: string
+          is_all_day: boolean
+          is_recurring: boolean
+          max_attendees: number | null
+          meeting_platform: string | null
+          meeting_url: string | null
+          recurrence_rule: string | null
+          rsvp_count: number
+          starts_at: string
+          status: Database["public"]["Enums"]["event_status"]
+          timezone: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          community_id: string
+          cover_image_url?: string | null
+          created_at?: string
+          created_by: string
+          description?: string | null
+          ends_at?: string | null
+          id?: string
+          is_all_day?: boolean
+          is_recurring?: boolean
+          max_attendees?: number | null
+          meeting_platform?: string | null
+          meeting_url?: string | null
+          recurrence_rule?: string | null
+          rsvp_count?: number
+          starts_at: string
+          status?: Database["public"]["Enums"]["event_status"]
+          timezone?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          community_id?: string
+          cover_image_url?: string | null
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          ends_at?: string | null
+          id?: string
+          is_all_day?: boolean
+          is_recurring?: boolean
+          max_attendees?: number | null
+          meeting_platform?: string | null
+          meeting_url?: string | null
+          recurrence_rule?: string | null
+          rsvp_count?: number
+          starts_at?: string
+          status?: Database["public"]["Enums"]["event_status"]
+          timezone?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_events_community_id_fkey"
+            columns: ["community_id"]
+            isOneToOne: false
+            referencedRelation: "communities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "community_events_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "community_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      community_members: {
+        Row: {
+          avatar_url: string | null
+          ban_reason: string | null
+          banned_at: string | null
+          bio: string | null
+          community_id: string
+          created_at: string
+          current_streak: number
+          customer_id: string | null
+          display_name: string | null
+          id: string
+          joined_at: string
+          last_active_at: string | null
+          level: number
+          longest_streak: number
+          muted_at: string | null
+          muted_until: string | null
+          role: Database["public"]["Enums"]["community_member_role"]
+          status: Database["public"]["Enums"]["community_member_status"]
+          total_points: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          ban_reason?: string | null
+          banned_at?: string | null
+          bio?: string | null
+          community_id: string
+          created_at?: string
+          current_streak?: number
+          customer_id?: string | null
+          display_name?: string | null
+          id?: string
+          joined_at?: string
+          last_active_at?: string | null
+          level?: number
+          longest_streak?: number
+          muted_at?: string | null
+          muted_until?: string | null
+          role?: Database["public"]["Enums"]["community_member_role"]
+          status?: Database["public"]["Enums"]["community_member_status"]
+          total_points?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          ban_reason?: string | null
+          banned_at?: string | null
+          bio?: string | null
+          community_id?: string
+          created_at?: string
+          current_streak?: number
+          customer_id?: string | null
+          display_name?: string | null
+          id?: string
+          joined_at?: string
+          last_active_at?: string | null
+          level?: number
+          longest_streak?: number
+          muted_at?: string | null
+          muted_until?: string | null
+          role?: Database["public"]["Enums"]["community_member_role"]
+          status?: Database["public"]["Enums"]["community_member_status"]
+          total_points?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_members_community_id_fkey"
+            columns: ["community_id"]
+            isOneToOne: false
+            referencedRelation: "communities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "community_members_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      community_notifications: {
+        Row: {
+          actor_id: string | null
+          body: string | null
+          comment_id: string | null
+          community_id: string
+          created_at: string
+          event_id: string | null
+          id: string
+          is_read: boolean
+          post_id: string | null
+          read_at: string | null
+          recipient_id: string
+          title: string
+          type: Database["public"]["Enums"]["notification_type"]
+        }
+        Insert: {
+          actor_id?: string | null
+          body?: string | null
+          comment_id?: string | null
+          community_id: string
+          created_at?: string
+          event_id?: string | null
+          id?: string
+          is_read?: boolean
+          post_id?: string | null
+          read_at?: string | null
+          recipient_id: string
+          title: string
+          type: Database["public"]["Enums"]["notification_type"]
+        }
+        Update: {
+          actor_id?: string | null
+          body?: string | null
+          comment_id?: string | null
+          community_id?: string
+          created_at?: string
+          event_id?: string | null
+          id?: string
+          is_read?: boolean
+          post_id?: string | null
+          read_at?: string | null
+          recipient_id?: string
+          title?: string
+          type?: Database["public"]["Enums"]["notification_type"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_notifications_actor_id_fkey"
+            columns: ["actor_id"]
+            isOneToOne: false
+            referencedRelation: "community_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "community_notifications_comment_id_fkey"
+            columns: ["comment_id"]
+            isOneToOne: false
+            referencedRelation: "community_comments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "community_notifications_community_id_fkey"
+            columns: ["community_id"]
+            isOneToOne: false
+            referencedRelation: "communities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "community_notifications_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "community_events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "community_notifications_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "community_posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "community_notifications_recipient_id_fkey"
+            columns: ["recipient_id"]
+            isOneToOne: false
+            referencedRelation: "community_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      community_points_log: {
+        Row: {
+          action: Database["public"]["Enums"]["point_action"]
+          community_id: string
+          created_at: string
+          description: string | null
+          id: string
+          member_id: string
+          points: number
+          reference_id: string | null
+          reference_type: string | null
+        }
+        Insert: {
+          action: Database["public"]["Enums"]["point_action"]
+          community_id: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          member_id: string
+          points: number
+          reference_id?: string | null
+          reference_type?: string | null
+        }
+        Update: {
+          action?: Database["public"]["Enums"]["point_action"]
+          community_id?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          member_id?: string
+          points?: number
+          reference_id?: string | null
+          reference_type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_points_log_community_id_fkey"
+            columns: ["community_id"]
+            isOneToOne: false
+            referencedRelation: "communities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "community_points_log_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "community_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      community_poll_votes: {
+        Row: {
+          created_at: string
+          id: string
+          member_id: string
+          option_id: string
+          post_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          member_id: string
+          option_id: string
+          post_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          member_id?: string
+          option_id?: string
+          post_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_poll_votes_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "community_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "community_poll_votes_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "community_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      community_posts: {
+        Row: {
+          author_id: string
+          best_answer_id: string | null
+          body: string | null
+          comment_count: number
+          community_id: string
+          created_at: string
+          deleted_at: string | null
+          edited_at: string | null
+          id: string
+          images: string[] | null
+          is_answered: boolean | null
+          is_locked: boolean
+          is_pinned: boolean
+          like_count: number
+          link_preview_data: Json | null
+          link_url: string | null
+          poll_allow_multiple: boolean | null
+          poll_ends_at: string | null
+          poll_options: Json | null
+          post_type: Database["public"]["Enums"]["post_type"]
+          space_id: string
+          title: string
+          updated_at: string
+          video_url: string | null
+          view_count: number
+        }
+        Insert: {
+          author_id: string
+          best_answer_id?: string | null
+          body?: string | null
+          comment_count?: number
+          community_id: string
+          created_at?: string
+          deleted_at?: string | null
+          edited_at?: string | null
+          id?: string
+          images?: string[] | null
+          is_answered?: boolean | null
+          is_locked?: boolean
+          is_pinned?: boolean
+          like_count?: number
+          link_preview_data?: Json | null
+          link_url?: string | null
+          poll_allow_multiple?: boolean | null
+          poll_ends_at?: string | null
+          poll_options?: Json | null
+          post_type?: Database["public"]["Enums"]["post_type"]
+          space_id: string
+          title: string
+          updated_at?: string
+          video_url?: string | null
+          view_count?: number
+        }
+        Update: {
+          author_id?: string
+          best_answer_id?: string | null
+          body?: string | null
+          comment_count?: number
+          community_id?: string
+          created_at?: string
+          deleted_at?: string | null
+          edited_at?: string | null
+          id?: string
+          images?: string[] | null
+          is_answered?: boolean | null
+          is_locked?: boolean
+          is_pinned?: boolean
+          like_count?: number
+          link_preview_data?: Json | null
+          link_url?: string | null
+          poll_allow_multiple?: boolean | null
+          poll_ends_at?: string | null
+          poll_options?: Json | null
+          post_type?: Database["public"]["Enums"]["post_type"]
+          space_id?: string
+          title?: string
+          updated_at?: string
+          video_url?: string | null
+          view_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_posts_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "community_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "community_posts_community_id_fkey"
+            columns: ["community_id"]
+            isOneToOne: false
+            referencedRelation: "communities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "community_posts_space_id_fkey"
+            columns: ["space_id"]
+            isOneToOne: false
+            referencedRelation: "community_spaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      community_reactions: {
+        Row: {
+          comment_id: string | null
+          created_at: string
+          emoji: string
+          id: string
+          member_id: string
+          post_id: string | null
+        }
+        Insert: {
+          comment_id?: string | null
+          created_at?: string
+          emoji?: string
+          id?: string
+          member_id: string
+          post_id?: string | null
+        }
+        Update: {
+          comment_id?: string | null
+          created_at?: string
+          emoji?: string
+          id?: string
+          member_id?: string
+          post_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_reactions_comment_id_fkey"
+            columns: ["comment_id"]
+            isOneToOne: false
+            referencedRelation: "community_comments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "community_reactions_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "community_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "community_reactions_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "community_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      community_space_subscriptions: {
+        Row: {
+          created_at: string
+          member_id: string
+          notify_new_posts: boolean
+          space_id: string
+        }
+        Insert: {
+          created_at?: string
+          member_id: string
+          notify_new_posts?: boolean
+          space_id: string
+        }
+        Update: {
+          created_at?: string
+          member_id?: string
+          notify_new_posts?: boolean
+          space_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_space_subscriptions_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "community_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "community_space_subscriptions_space_id_fkey"
+            columns: ["space_id"]
+            isOneToOne: false
+            referencedRelation: "community_spaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      community_spaces: {
+        Row: {
+          color: string | null
+          community_id: string
+          created_at: string
+          description: string | null
+          emoji: string | null
+          id: string
+          is_default: boolean
+          is_visible: boolean
+          name: string
+          only_admins_can_post: boolean
+          position: number
+          post_count: number
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          color?: string | null
+          community_id: string
+          created_at?: string
+          description?: string | null
+          emoji?: string | null
+          id?: string
+          is_default?: boolean
+          is_visible?: boolean
+          name: string
+          only_admins_can_post?: boolean
+          position?: number
+          post_count?: number
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          color?: string | null
+          community_id?: string
+          created_at?: string
+          description?: string | null
+          emoji?: string | null
+          id?: string
+          is_default?: boolean
+          is_visible?: boolean
+          name?: string
+          only_admins_can_post?: boolean
+          position?: number
+          post_count?: number
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_spaces_community_id_fkey"
+            columns: ["community_id"]
+            isOneToOne: false
+            referencedRelation: "communities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       coupon_usages: {
         Row: {
           coupon_id: string
@@ -3002,8 +3806,56 @@ export type Database = {
     }
     Functions: {
       generate_unique_slug: { Args: { base_name: string }; Returns: string }
+      get_community_ids_for_user: {
+        Args: { _user_id: string }
+        Returns: string[]
+      }
+      get_community_member_id: {
+        Args: { _community_id: string; _user_id: string }
+        Returns: string
+      }
+      get_community_member_ids_for_user: {
+        Args: { _user_id: string }
+        Returns: string[]
+      }
+      is_community_member: {
+        Args: { _community_id: string; _user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
+      community_access_type: "FREE_WITH_PRODUCT" | "PAID_SUBSCRIPTION" | "OPEN"
+      community_member_role: "OWNER" | "ADMIN" | "MODERATOR" | "MEMBER"
+      community_member_status:
+        | "PENDING"
+        | "ACTIVE"
+        | "MUTED"
+        | "BANNED"
+        | "LEFT"
+      event_status: "UPCOMING" | "LIVE" | "COMPLETED" | "CANCELLED"
+      notification_type:
+        | "POST_REPLY"
+        | "COMMENT_REPLY"
+        | "POST_LIKE"
+        | "COMMENT_LIKE"
+        | "MENTION"
+        | "NEW_EVENT"
+        | "NEW_POST_IN_SPACE"
+        | "MEMBER_JOINED"
+        | "LEVEL_UP"
+        | "POST_PINNED"
+      point_action:
+        | "POST_CREATED"
+        | "COMMENT_CREATED"
+        | "LIKE_RECEIVED"
+        | "POST_LIKED"
+        | "COURSE_COMPLETED"
+        | "EVENT_ATTENDED"
+        | "DAILY_LOGIN"
+        | "STREAK_BONUS"
+        | "ADMIN_BONUS"
+        | "ADMIN_PENALTY"
+      post_type: "DISCUSSION" | "QUESTION" | "POLL" | "ANNOUNCEMENT" | "WIN"
       price_type: "ONE_TIME" | "RECURRING"
       product_status: "DRAFT" | "PUBLISHED" | "ARCHIVED"
       product_type:
@@ -3012,6 +3864,7 @@ export type Database = {
         | "SERVICE"
         | "PHYSICAL"
         | "LEAD_MAGNET"
+      rsvp_status: "GOING" | "MAYBE" | "NOT_GOING"
       workspace_role: "OWNER" | "ADMIN" | "MEMBER"
     }
     CompositeTypes: {
@@ -3140,9 +3993,39 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      community_access_type: ["FREE_WITH_PRODUCT", "PAID_SUBSCRIPTION", "OPEN"],
+      community_member_role: ["OWNER", "ADMIN", "MODERATOR", "MEMBER"],
+      community_member_status: ["PENDING", "ACTIVE", "MUTED", "BANNED", "LEFT"],
+      event_status: ["UPCOMING", "LIVE", "COMPLETED", "CANCELLED"],
+      notification_type: [
+        "POST_REPLY",
+        "COMMENT_REPLY",
+        "POST_LIKE",
+        "COMMENT_LIKE",
+        "MENTION",
+        "NEW_EVENT",
+        "NEW_POST_IN_SPACE",
+        "MEMBER_JOINED",
+        "LEVEL_UP",
+        "POST_PINNED",
+      ],
+      point_action: [
+        "POST_CREATED",
+        "COMMENT_CREATED",
+        "LIKE_RECEIVED",
+        "POST_LIKED",
+        "COURSE_COMPLETED",
+        "EVENT_ATTENDED",
+        "DAILY_LOGIN",
+        "STREAK_BONUS",
+        "ADMIN_BONUS",
+        "ADMIN_PENALTY",
+      ],
+      post_type: ["DISCUSSION", "QUESTION", "POLL", "ANNOUNCEMENT", "WIN"],
       price_type: ["ONE_TIME", "RECURRING"],
       product_status: ["DRAFT", "PUBLISHED", "ARCHIVED"],
       product_type: ["DIGITAL", "COURSE", "SERVICE", "PHYSICAL", "LEAD_MAGNET"],
+      rsvp_status: ["GOING", "MAYBE", "NOT_GOING"],
       workspace_role: ["OWNER", "ADMIN", "MEMBER"],
     },
   },
