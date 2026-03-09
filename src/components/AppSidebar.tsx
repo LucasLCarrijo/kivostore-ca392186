@@ -1,4 +1,4 @@
-import { Home, DollarSign, Store, BarChart3, MoreHorizontal, Menu } from "lucide-react";
+import { Home, DollarSign, Store, BarChart3, Heart, Settings, LogOut } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
 import {
@@ -10,18 +10,21 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarHeader,
   useSidebar,
 } from "@/components/ui/sidebar";
 import { useWorkspace } from "@/contexts/WorkspaceProvider";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthProvider";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const navigationItems = [
   { title: "Home", url: "/dashboard", icon: Home },
-  { title: "Renda", url: "/earnings", icon: DollarSign },
   { title: "Minha Loja", url: "/store", icon: Store },
+  { title: "Renda", url: "/earnings", icon: DollarSign },
   { title: "Analytics", url: "/analytics", icon: BarChart3 },
-  { title: "Mais", url: "/settings", icon: MoreHorizontal },
+  { title: "Clientes", url: "/clients", icon: Heart },
+  { title: "Configurações", url: "/settings", icon: Settings },
 ];
 
 export function AppSidebar() {
@@ -30,35 +33,56 @@ export function AppSidebar() {
   const location = useLocation();
   const currentPath = location.pathname;
   const { currentWorkspace } = useWorkspace();
-  const { signOut } = useAuth();
+  const { signOut, user } = useAuth();
 
   const isActive = (path: string) => currentPath === path;
   const isExpanded = navigationItems.some((i) => isActive(i.url));
 
   return (
-    <Sidebar collapsible="icon">
-      <SidebarContent>
-        {/* Workspace Info */}
-        <SidebarGroup>
-          <SidebarGroupLabel>
-            {!collapsed ? (currentWorkspace?.name || "Kivo") : "K"}
-          </SidebarGroupLabel>
-        </SidebarGroup>
+    <Sidebar collapsible="icon" className="w-60">
+      <SidebarHeader className="border-b border-border/40">
+        <div className="flex items-center gap-3 p-4">
+          <div className="flex-shrink-0">
+            <img 
+              src="/src/assets/kivo-logo.svg" 
+              alt="Kora"
+              className="h-8 w-8" 
+            />
+          </div>
+          {!collapsed && (
+            <div className="flex-1 min-w-0">
+              <h2 className="text-lg font-bold text-primary truncate">Kora</h2>
+              <p className="text-sm text-muted-foreground truncate">
+                {currentWorkspace?.name || "Meu Workspace"}
+              </p>
+            </div>
+          )}
+          {!collapsed && (
+            <Avatar className="h-8 w-8 flex-shrink-0">
+              <AvatarImage src="" />
+              <AvatarFallback className="text-xs bg-primary/10 text-primary">
+                {user?.email?.charAt(0).toUpperCase() || "U"}
+              </AvatarFallback>
+            </Avatar>
+          )}
+        </div>
+      </SidebarHeader>
 
+      <SidebarContent className="px-2">
         {/* Navigation */}
         <SidebarGroup>
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className="space-y-1">
               {navigationItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
                     <NavLink
                       to={item.url}
                       end
-                      className="hover:bg-muted/50"
-                      activeClassName="bg-muted text-primary font-medium"
+                      className="hover:bg-muted/50 rounded-lg px-3 py-2.5"
+                      activeClassName="bg-primary/10 text-primary font-medium hover:bg-primary/15"
                     >
-                      <item.icon className="mr-2 h-4 w-4" />
+                      <item.icon className="mr-3 h-5 w-5 flex-shrink-0" />
                       {!collapsed && <span>{item.title}</span>}
                     </NavLink>
                   </SidebarMenuButton>
@@ -76,9 +100,10 @@ export function AppSidebar() {
                 <SidebarMenuButton asChild>
                   <Button
                     variant="ghost"
-                    className="w-full justify-start"
+                    className="w-full justify-start hover:bg-muted/50 rounded-lg px-3 py-2.5"
                     onClick={signOut}
                   >
+                    <LogOut className="mr-3 h-5 w-5 flex-shrink-0" />
                     {!collapsed && <span>Sair</span>}
                   </Button>
                 </SidebarMenuButton>
