@@ -29,6 +29,9 @@ import MemberCourse from "./pages/MemberCourse";
 import Affiliates from "./pages/Affiliates";
 import AffiliateApply from "./pages/AffiliateApply";
 import AffiliateDashboard from "./pages/AffiliateDashboard";
+import Leads from "./pages/Leads";
+import LeadSegments from "./pages/LeadSegments";
+import LeadEmail from "./pages/LeadEmail";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
