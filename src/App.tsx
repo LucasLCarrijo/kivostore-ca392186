@@ -280,6 +280,9 @@ const App = () => (
               <Route path="/member/course/:productId" element={<MemberCourse />} />
               <Route path="/member/billing" element={<MemberBilling />} />
 
+              {/* Booking page — public */}
+              <Route path="/book/:productSlug" element={<BookAppointment />} />
+
               {/* Affiliate — public pages */}
               <Route path="/affiliate/apply/:workspaceSlug" element={<AffiliateApply />} />
               <Route path="/affiliate/dashboard" element={<AffiliateDashboard />} />
