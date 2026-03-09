@@ -18,6 +18,7 @@ import Dashboard from "./pages/Dashboard";
 import Products from "./pages/Products";
 import CreateProduct from "./pages/CreateProduct";
 import CourseBuilder from "./pages/CourseBuilder";
+import StorefrontEditor from "./pages/StorefrontEditor";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -117,6 +118,15 @@ const App = () => (
                         <p className="text-muted-foreground">Gerencie seus produtos e configurações</p>
                       </div>
                     </DashboardLayout>
+                  </ProtectedRoute>
+                } 
+              />
+              
+              <Route 
+                path="/store/editor" 
+                element={
+                  <ProtectedRoute>
+                    <StorefrontEditor />
                   </ProtectedRoute>
                 } 
               />

@@ -470,32 +470,91 @@ export type Database = {
           },
         ]
       }
+      storefront_blocks: {
+        Row: {
+          config: Json
+          created_at: string
+          id: string
+          is_visible: boolean
+          position: number
+          storefront_id: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          config?: Json
+          created_at?: string
+          id?: string
+          is_visible?: boolean
+          position?: number
+          storefront_id: string
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          config?: Json
+          created_at?: string
+          id?: string
+          is_visible?: boolean
+          position?: number
+          storefront_id?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "storefront_blocks_storefront_id_fkey"
+            columns: ["storefront_id"]
+            isOneToOne: false
+            referencedRelation: "storefronts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       storefront_themes: {
         Row: {
           background_color: string | null
+          button_style: string | null
           created_at: string | null
+          custom_css: string | null
+          font_body: string | null
+          font_heading: string | null
           id: string
           primary_color: string | null
+          secondary_color: string | null
           storefront_id: string
           template_key: string | null
+          text_color: string | null
           updated_at: string | null
         }
         Insert: {
           background_color?: string | null
+          button_style?: string | null
           created_at?: string | null
+          custom_css?: string | null
+          font_body?: string | null
+          font_heading?: string | null
           id?: string
           primary_color?: string | null
+          secondary_color?: string | null
           storefront_id: string
           template_key?: string | null
+          text_color?: string | null
           updated_at?: string | null
         }
         Update: {
           background_color?: string | null
+          button_style?: string | null
           created_at?: string | null
+          custom_css?: string | null
+          font_body?: string | null
+          font_heading?: string | null
           id?: string
           primary_color?: string | null
+          secondary_color?: string | null
           storefront_id?: string
           template_key?: string | null
+          text_color?: string | null
           updated_at?: string | null
         }
         Relationships: [
@@ -516,6 +575,7 @@ export type Database = {
           id: string
           is_published: boolean | null
           slug: string
+          social_links: Json | null
           title: string | null
           updated_at: string | null
           workspace_id: string
@@ -527,6 +587,7 @@ export type Database = {
           id?: string
           is_published?: boolean | null
           slug: string
+          social_links?: Json | null
           title?: string | null
           updated_at?: string | null
           workspace_id: string
@@ -538,6 +599,7 @@ export type Database = {
           id?: string
           is_published?: boolean | null
           slug?: string
+          social_links?: Json | null
           title?: string | null
           updated_at?: string | null
           workspace_id?: string
