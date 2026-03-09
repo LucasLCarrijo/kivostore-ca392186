@@ -179,6 +179,75 @@ export type Database = {
           },
         ]
       }
+      member_content: {
+        Row: {
+          created_at: string
+          description: string | null
+          duration: number | null
+          id: string
+          is_free: boolean | null
+          is_published: boolean | null
+          media_type: string | null
+          media_url: string | null
+          parent_id: string | null
+          position: number | null
+          product_id: string
+          text_content: string | null
+          title: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          duration?: number | null
+          id?: string
+          is_free?: boolean | null
+          is_published?: boolean | null
+          media_type?: string | null
+          media_url?: string | null
+          parent_id?: string | null
+          position?: number | null
+          product_id: string
+          text_content?: string | null
+          title: string
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          duration?: number | null
+          id?: string
+          is_free?: boolean | null
+          is_published?: boolean | null
+          media_type?: string | null
+          media_url?: string | null
+          parent_id?: string | null
+          position?: number | null
+          product_id?: string
+          text_content?: string | null
+          title?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_member_content_parent"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "member_content"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_member_content_product"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       orders: {
         Row: {
           created_at: string
