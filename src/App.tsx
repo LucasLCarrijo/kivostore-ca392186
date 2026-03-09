@@ -17,6 +17,7 @@ import VerifyEmail from "./pages/VerifyEmail";
 import Income from "./pages/Income";
 import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
+import Customers from "./pages/Customers";
 import Products from "./pages/Products";
 import CreateProduct from "./pages/CreateProduct";
 import CourseBuilder from "./pages/CourseBuilder";
@@ -176,14 +177,12 @@ const App = () => (
                 element={
                   <ProtectedRoute>
                     <DashboardLayout>
-                      <div className="p-6">
-                        <h1 className="text-2xl font-bold">Clientes</h1>
-                        <p className="text-muted-foreground">Gerencie seus clientes e leads</p>
-                      </div>
+                      <Customers />
                     </DashboardLayout>
                   </ProtectedRoute>
                 } 
               />
+              
               
               <Route 
                 path="/settings" 
