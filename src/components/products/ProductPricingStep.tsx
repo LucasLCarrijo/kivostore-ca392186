@@ -9,6 +9,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import type { ProductFormData } from "@/pages/CreateProduct";
+import { AIPriceSuggestion } from "./AIPriceSuggestion";
 
 interface Props {
   form: ProductFormData;
@@ -36,6 +37,15 @@ export function ProductPricingStep({ form, updateForm }: Props) {
 
   return (
     <div className="space-y-6">
+      {/* AI Price Suggestion */}
+      {(!form.isFree || isMembership) && form.type && (
+        <AIPriceSuggestion
+          productType={form.type}
+          productName={form.name}
+          productDescription={form.shortDescription}
+        />
+      )}
+
       {/* Free toggle — not for memberships */}
       {!isMembership && (
         <div className="flex items-center justify-between p-4 rounded-xl border border-border bg-card">

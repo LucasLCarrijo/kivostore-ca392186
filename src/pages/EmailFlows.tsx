@@ -13,7 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import {
-  Plus, Mail, Play, Pause, Trash2, GripVertical, Clock, Users, Eye, MousePointerClick, UserMinus, ChevronDown, ChevronUp,
+  Plus, Mail, Play, Pause, Trash2, GripVertical, Clock, Users, Eye, MousePointerClick, UserMinus, ChevronDown, ChevronUp, Sparkles, Loader2,
 } from "lucide-react";
 
 const TRIGGER_LABELS: Record<string, string> = {
@@ -53,6 +53,38 @@ const emptyStep = (pos: number): Step => ({
   body: "",
 });
 
+const generateEmailCopy = async (
+  stepIndex: number,
+  updateStepFn: (idx: number, field: keyof Step, value: any) => void,
+  setLoadingFn: (v: boolean) => void
+) => {
+  setLoadingFn(true);
+  try {
+    const { data, error } = await (await import("@/integrations/supabase/client")).supabase.functions.invoke("ai-generate", {
+      body: {
+        type: "email",
+        context: {
+          objective: "engajamento e conversão",
+          segment: "leads e clientes",
+          productName: "produto digital",
+          tone: "profissional e envolvente",
+        },
+      },
+    });
+    if (error) throw error;
+    if (data?.error) throw new Error(data.error);
+    const email = data.emails?.[0];
+    if (email) {
+      updateStepFn(stepIndex, "subject", email.subject);
+      updateStepFn(stepIndex, "body", email.body);
+    }
+  } catch (err: any) {
+    console.error("AI email error:", err);
+  } finally {
+    setLoadingFn(false);
+  }
+};
+
 export default function EmailFlows() {
   const { currentWorkspace } = useWorkspace();
   const { toast } = useToast();
@@ -61,6 +93,7 @@ export default function EmailFlows() {
 
   const [showCreate, setShowCreate] = useState(false);
   const [expandedSeq, setExpandedSeq] = useState<string | null>(null);
+  const [aiLoading, setAiLoading] = useState(false);
   const [form, setForm] = useState<SequenceForm>({
     name: "",
     trigger_type: "lead_captured",
@@ -427,6 +460,16 @@ export default function EmailFlows() {
                         <div className="flex items-center justify-between">
                           <span className="text-sm font-medium text-foreground">Email {i + 1}</span>
                           <div className="flex items-center gap-1">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-7 text-xs gap-1 text-primary"
+                              onClick={() => generateEmailCopy(i, updateStep, setAiLoading)}
+                              disabled={aiLoading}
+                            >
+                              {aiLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3" />}
+                              Sugerir copy
+                            </Button>
                             <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => moveStep(i, -1)} disabled={i === 0}>
                               <ChevronUp className="h-3 w-3" />
                             </Button>
