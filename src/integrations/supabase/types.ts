@@ -299,6 +299,58 @@ export type Database = {
           },
         ]
       }
+      entitlements: {
+        Row: {
+          customer_id: string
+          expires_at: string | null
+          granted_at: string
+          id: string
+          order_id: string
+          product_id: string
+          revoked_at: string | null
+        }
+        Insert: {
+          customer_id: string
+          expires_at?: string | null
+          granted_at?: string
+          id?: string
+          order_id: string
+          product_id: string
+          revoked_at?: string | null
+        }
+        Update: {
+          customer_id?: string
+          expires_at?: string | null
+          granted_at?: string
+          id?: string
+          order_id?: string
+          product_id?: string
+          revoked_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "entitlements_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "entitlements_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "entitlements_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       leads: {
         Row: {
           created_at: string
@@ -428,53 +480,203 @@ export type Database = {
           },
         ]
       }
+      order_bumps: {
+        Row: {
+          bump_product_id: string
+          created_at: string
+          description: string | null
+          headline: string | null
+          id: string
+          is_active: boolean
+          main_product_id: string
+          position: number
+        }
+        Insert: {
+          bump_product_id: string
+          created_at?: string
+          description?: string | null
+          headline?: string | null
+          id?: string
+          is_active?: boolean
+          main_product_id: string
+          position?: number
+        }
+        Update: {
+          bump_product_id?: string
+          created_at?: string
+          description?: string | null
+          headline?: string | null
+          id?: string
+          is_active?: boolean
+          main_product_id?: string
+          position?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_bumps_bump_product_id_fkey"
+            columns: ["bump_product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_bumps_main_product_id_fkey"
+            columns: ["main_product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      order_items: {
+        Row: {
+          created_at: string
+          id: string
+          is_order_bump: boolean
+          is_upsell: boolean
+          order_id: string
+          price_id: string
+          product_id: string
+          quantity: number
+          total_amount: number
+          unit_amount: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_order_bump?: boolean
+          is_upsell?: boolean
+          order_id: string
+          price_id: string
+          product_id: string
+          quantity?: number
+          total_amount?: number
+          unit_amount?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_order_bump?: boolean
+          is_upsell?: boolean
+          order_id?: string
+          price_id?: string
+          product_id?: string
+          quantity?: number
+          total_amount?: number
+          unit_amount?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_items_price_id_fkey"
+            columns: ["price_id"]
+            isOneToOne: false
+            referencedRelation: "prices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       orders: {
         Row: {
+          affiliate_link_id: string | null
+          checkout_session_id: string | null
           created_at: string
           currency: string
           customer_avatar_url: string | null
           customer_email: string
+          customer_id: string | null
           customer_name: string | null
+          discount_amount: number | null
           id: string
+          idempotency_key: string | null
           notes: string | null
+          order_number: string | null
+          paid_at: string | null
           payment_method: string | null
           product_id: string | null
+          source: string | null
           status: string
+          subtotal_amount: number | null
           total_amount: number
           updated_at: string
           workspace_id: string
         }
         Insert: {
+          affiliate_link_id?: string | null
+          checkout_session_id?: string | null
           created_at?: string
           currency?: string
           customer_avatar_url?: string | null
           customer_email: string
+          customer_id?: string | null
           customer_name?: string | null
+          discount_amount?: number | null
           id?: string
+          idempotency_key?: string | null
           notes?: string | null
+          order_number?: string | null
+          paid_at?: string | null
           payment_method?: string | null
           product_id?: string | null
+          source?: string | null
           status?: string
+          subtotal_amount?: number | null
           total_amount?: number
           updated_at?: string
           workspace_id: string
         }
         Update: {
+          affiliate_link_id?: string | null
+          checkout_session_id?: string | null
           created_at?: string
           currency?: string
           customer_avatar_url?: string | null
           customer_email?: string
+          customer_id?: string | null
           customer_name?: string | null
+          discount_amount?: number | null
           id?: string
+          idempotency_key?: string | null
           notes?: string | null
+          order_number?: string | null
+          paid_at?: string | null
           payment_method?: string | null
           product_id?: string | null
+          source?: string | null
           status?: string
+          subtotal_amount?: number | null
           total_amount?: number
           updated_at?: string
           workspace_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "orders_checkout_session_id_fkey"
+            columns: ["checkout_session_id"]
+            isOneToOne: false
+            referencedRelation: "checkout_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "orders_product_id_fkey"
             columns: ["product_id"]
@@ -790,6 +992,60 @@ export type Database = {
             columns: ["workspace_id"]
             isOneToOne: false
             referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      upsell_offers: {
+        Row: {
+          created_at: string
+          description: string | null
+          headline: string | null
+          id: string
+          is_active: boolean
+          position: number
+          special_price: number
+          trigger_product_id: string
+          type: string
+          upsell_product_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          headline?: string | null
+          id?: string
+          is_active?: boolean
+          position?: number
+          special_price?: number
+          trigger_product_id: string
+          type?: string
+          upsell_product_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          headline?: string | null
+          id?: string
+          is_active?: boolean
+          position?: number
+          special_price?: number
+          trigger_product_id?: string
+          type?: string
+          upsell_product_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "upsell_offers_trigger_product_id_fkey"
+            columns: ["trigger_product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "upsell_offers_upsell_product_id_fkey"
+            columns: ["upsell_product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
             referencedColumns: ["id"]
           },
         ]
