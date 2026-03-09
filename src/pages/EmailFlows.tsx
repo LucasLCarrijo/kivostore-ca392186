@@ -93,6 +93,7 @@ export default function EmailFlows() {
 
   const [showCreate, setShowCreate] = useState(false);
   const [expandedSeq, setExpandedSeq] = useState<string | null>(null);
+  const [aiLoading, setAiLoading] = useState(false);
   const [form, setForm] = useState<SequenceForm>({
     name: "",
     trigger_type: "lead_captured",
