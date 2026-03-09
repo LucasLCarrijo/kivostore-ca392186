@@ -297,6 +297,12 @@ export default function CreateProduct() {
           )}
         </div>
       </div>
+      <UpgradeModal
+        open={upgradeOpen}
+        onOpenChange={setUpgradeOpen}
+        currentPlan={planInfo.plan}
+        feature={upgradeFeature}
+      />
     </div>
   );
 }

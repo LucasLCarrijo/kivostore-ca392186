@@ -62,6 +62,33 @@ export default function Affiliates() {
   const [saving, setSaving] = useState(false);
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [commissionFilter, setCommissionFilter] = useState("ALL");
+  const [upgradeOpen, setUpgradeOpen] = useState(false);
+  const planInfo = usePlanLimits();
+
+  // Block entire page if affiliates not available
+  if (!planInfo.loading && !planInfo.limits.hasAffiliates) {
+    return (
+      <div className="p-6 flex flex-col items-center justify-center min-h-[60vh] text-center space-y-4">
+        <div className="p-4 rounded-full bg-muted">
+          <Crown className="w-8 h-8 text-muted-foreground" />
+        </div>
+        <h2 className="text-xl font-bold text-foreground">Programa de Afiliados</h2>
+        <p className="text-muted-foreground max-w-md">
+          O programa de afiliados está disponível a partir do plano Creator. 
+          Faça upgrade para gerenciar seus afiliados e comissões.
+        </p>
+        <Button onClick={() => setUpgradeOpen(true)} className="gap-2">
+          <Crown className="w-4 h-4" /> Fazer Upgrade
+        </Button>
+        <UpgradeModal
+          open={upgradeOpen}
+          onOpenChange={setUpgradeOpen}
+          currentPlan={planInfo.plan}
+          feature="usar o programa de afiliados"
+        />
+      </div>
+    );
+  }
 
   useEffect(() => {
     if (currentWorkspace) loadData();
