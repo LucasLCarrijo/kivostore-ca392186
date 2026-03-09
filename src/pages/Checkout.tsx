@@ -25,6 +25,12 @@ interface Price {
   compare_at_amount: number | null;
   pix_discount_percent: number | null;
   max_installments: number | null;
+  type: string | null;
+}
+
+interface SubscriptionPlan {
+  billing_interval: string;
+  trial_days: number;
 }
 
 export default function Checkout() {
