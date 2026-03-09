@@ -31,11 +31,12 @@ export function StepProfile({ data, onUpdate, onNext, user }: StepProfileProps) 
   const { currentWorkspace, refreshWorkspaces } = useWorkspace();
 
   useEffect(() => {
-    // Pre-fill with user data
-    if (user && !formData.display_name) {
+    // Pre-fill with user data (including Google OAuth avatar)
+    if (user) {
       setFormData(prev => ({
         ...prev,
-        display_name: user.user_metadata?.full_name || user.email?.split('@')[0] || "",
+        display_name: prev.display_name || user.user_metadata?.full_name || user.user_metadata?.name || user.email?.split('@')[0] || "",
+        avatar_url: prev.avatar_url || user.user_metadata?.avatar_url || user.user_metadata?.picture || "",
       }));
     }
   }, [user]);
