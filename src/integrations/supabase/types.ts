@@ -81,6 +81,44 @@ export type Database = {
           },
         ]
       }
+      digital_assets: {
+        Row: {
+          created_at: string
+          file_name: string
+          file_size_bytes: number | null
+          file_url: string
+          id: string
+          mime_type: string | null
+          product_id: string
+        }
+        Insert: {
+          created_at?: string
+          file_name: string
+          file_size_bytes?: number | null
+          file_url: string
+          id?: string
+          mime_type?: string | null
+          product_id: string
+        }
+        Update: {
+          created_at?: string
+          file_name?: string
+          file_size_bytes?: number | null
+          file_url?: string
+          id?: string
+          mime_type?: string | null
+          product_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "digital_assets_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       leads: {
         Row: {
           created_at: string
@@ -207,30 +245,45 @@ export type Database = {
       prices: {
         Row: {
           amount: number
+          compare_at_amount: number | null
           created_at: string | null
           currency: string | null
           id: string
+          is_active: boolean | null
           is_default: boolean | null
+          max_installments: number | null
+          name: string | null
+          pix_discount_percent: number | null
           product_id: string
           type: Database["public"]["Enums"]["price_type"] | null
           updated_at: string | null
         }
         Insert: {
           amount?: number
+          compare_at_amount?: number | null
           created_at?: string | null
           currency?: string | null
           id?: string
+          is_active?: boolean | null
           is_default?: boolean | null
+          max_installments?: number | null
+          name?: string | null
+          pix_discount_percent?: number | null
           product_id: string
           type?: Database["public"]["Enums"]["price_type"] | null
           updated_at?: string | null
         }
         Update: {
           amount?: number
+          compare_at_amount?: number | null
           created_at?: string | null
           currency?: string | null
           id?: string
+          is_active?: boolean | null
           is_default?: boolean | null
+          max_installments?: number | null
+          name?: string | null
+          pix_discount_percent?: number | null
           product_id?: string
           type?: Database["public"]["Enums"]["price_type"] | null
           updated_at?: string | null
@@ -245,14 +298,58 @@ export type Database = {
           },
         ]
       }
+      product_media: {
+        Row: {
+          alt_text: string | null
+          created_at: string
+          id: string
+          mime_type: string | null
+          position: number | null
+          product_id: string
+          url: string
+        }
+        Insert: {
+          alt_text?: string | null
+          created_at?: string
+          id?: string
+          mime_type?: string | null
+          position?: number | null
+          product_id: string
+          url: string
+        }
+        Update: {
+          alt_text?: string | null
+          created_at?: string
+          id?: string
+          mime_type?: string | null
+          position?: number | null
+          product_id?: string
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_media_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       products: {
         Row: {
           created_at: string | null
+          deleted_at: string | null
           description: string | null
           id: string
+          is_storefront_visible: boolean | null
           name: string
+          sales_count: number | null
+          short_description: string | null
           slug: string
           status: Database["public"]["Enums"]["product_status"] | null
+          stock_limit: number | null
+          storefront_order: number | null
           thumbnail_url: string | null
           type: Database["public"]["Enums"]["product_type"]
           updated_at: string | null
@@ -260,11 +357,17 @@ export type Database = {
         }
         Insert: {
           created_at?: string | null
+          deleted_at?: string | null
           description?: string | null
           id?: string
+          is_storefront_visible?: boolean | null
           name: string
+          sales_count?: number | null
+          short_description?: string | null
           slug: string
           status?: Database["public"]["Enums"]["product_status"] | null
+          stock_limit?: number | null
+          storefront_order?: number | null
           thumbnail_url?: string | null
           type: Database["public"]["Enums"]["product_type"]
           updated_at?: string | null
@@ -272,11 +375,17 @@ export type Database = {
         }
         Update: {
           created_at?: string | null
+          deleted_at?: string | null
           description?: string | null
           id?: string
+          is_storefront_visible?: boolean | null
           name?: string
+          sales_count?: number | null
+          short_description?: string | null
           slug?: string
           status?: Database["public"]["Enums"]["product_status"] | null
+          stock_limit?: number | null
+          storefront_order?: number | null
           thumbnail_url?: string | null
           type?: Database["public"]["Enums"]["product_type"]
           updated_at?: string | null
@@ -452,7 +561,13 @@ export type Database = {
     Enums: {
       price_type: "ONE_TIME" | "RECURRING"
       product_status: "DRAFT" | "PUBLISHED" | "ARCHIVED"
-      product_type: "DIGITAL_PRODUCT" | "LEAD_MAGNET" | "LINK"
+      product_type:
+        | "DIGITAL_PRODUCT"
+        | "LEAD_MAGNET"
+        | "LINK"
+        | "COACHING_CALL"
+        | "ECOURSE"
+        | "MEMBERSHIP"
       workspace_role: "OWNER" | "ADMIN" | "MEMBER"
     }
     CompositeTypes: {
@@ -583,7 +698,14 @@ export const Constants = {
     Enums: {
       price_type: ["ONE_TIME", "RECURRING"],
       product_status: ["DRAFT", "PUBLISHED", "ARCHIVED"],
-      product_type: ["DIGITAL_PRODUCT", "LEAD_MAGNET", "LINK"],
+      product_type: [
+        "DIGITAL_PRODUCT",
+        "LEAD_MAGNET",
+        "LINK",
+        "COACHING_CALL",
+        "ECOURSE",
+        "MEMBERSHIP",
+      ],
       workspace_role: ["OWNER", "ADMIN", "MEMBER"],
     },
   },
