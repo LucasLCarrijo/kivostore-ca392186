@@ -26,6 +26,9 @@ import Upsell from "./pages/Upsell";
 import MemberLogin from "./pages/MemberLogin";
 import MemberDashboard from "./pages/MemberDashboard";
 import MemberCourse from "./pages/MemberCourse";
+import Affiliates from "./pages/Affiliates";
+import AffiliateApply from "./pages/AffiliateApply";
+import AffiliateDashboard from "./pages/AffiliateDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
