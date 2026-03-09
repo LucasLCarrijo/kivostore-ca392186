@@ -361,6 +361,57 @@ export type Database = {
           },
         ]
       }
+      certificates: {
+        Row: {
+          course_name: string
+          created_at: string
+          creator_name: string | null
+          customer_id: string
+          id: string
+          issued_at: string
+          pdf_url: string | null
+          product_id: string
+          student_name: string
+        }
+        Insert: {
+          course_name: string
+          created_at?: string
+          creator_name?: string | null
+          customer_id: string
+          id?: string
+          issued_at?: string
+          pdf_url?: string | null
+          product_id: string
+          student_name: string
+        }
+        Update: {
+          course_name?: string
+          created_at?: string
+          creator_name?: string | null
+          customer_id?: string
+          id?: string
+          issued_at?: string
+          pdf_url?: string | null
+          product_id?: string
+          student_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "certificates_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "certificates_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       checkout_line_items: {
         Row: {
           checkout_session_id: string
