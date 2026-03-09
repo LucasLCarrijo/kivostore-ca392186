@@ -10,6 +10,7 @@ import { PeriodFilter } from "@/components/dashboard/PeriodFilter";
 import { RevenueChart } from "@/components/dashboard/RevenueChart";
 import { RecentSales } from "@/components/dashboard/RecentSales";
 import { OnboardingChecklist } from "@/components/dashboard/OnboardingChecklist";
+import { UsageAlerts } from "@/components/dashboard/UsageAlerts";
 
 interface Metrics {
   totalRevenue: number;
