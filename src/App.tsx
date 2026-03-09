@@ -177,7 +177,11 @@ const App = () => (
               {/* Root redirect */}
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
               
+              {/* Public storefront — must be before 404 */}
+              <Route path="/:slug" element={<PublicStorefront />} />
+              
               {/* 404 - Must be last */}
+              <Route path="*" element={<NotFound />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </WorkspaceProvider>
