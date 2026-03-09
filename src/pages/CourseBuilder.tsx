@@ -90,7 +90,7 @@ export default function CourseBuilder() {
       await supabase
         .from("member_content")
         .update({ position: newPosition })
-        .eq("id", active.id);
+        .eq("id", String(active.id));
 
       // Update other items' positions
       const itemsToUpdate = content.filter((item) => {
