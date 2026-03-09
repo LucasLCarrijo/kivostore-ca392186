@@ -13,8 +13,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import {
-  Plus, Mail, Play, Pause, Trash2, GripVertical, Clock, Users, Eye, MousePointerClick, UserMinus, ChevronDown, ChevronUp, Sparkles, Loader2,
+  Plus, Mail, Play, Pause, Trash2, GripVertical, Clock, Users, Eye, MousePointerClick, UserMinus, ChevronDown, ChevronUp, Sparkles, Loader2, Crown,
 } from "lucide-react";
+import { usePlanLimits } from "@/hooks/usePlanLimits";
+import { UpgradeModal } from "@/components/UpgradeModal";
 
 const TRIGGER_LABELS: Record<string, string> = {
   lead_captured: "Quando lead é capturado",
