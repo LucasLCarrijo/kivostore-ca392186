@@ -17,6 +17,7 @@ import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
 import Products from "./pages/Products";
 import CreateProduct from "./pages/CreateProduct";
+import CourseBuilder from "./pages/CourseBuilder";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -93,6 +94,15 @@ const App = () => (
                     <DashboardLayout>
                       <CreateProduct />
                     </DashboardLayout>
+                  </ProtectedRoute>
+                } 
+              />
+              
+              <Route 
+                path="/products/:id/course-builder" 
+                element={
+                  <ProtectedRoute>
+                    <CourseBuilder />
                   </ProtectedRoute>
                 } 
               />
