@@ -9,6 +9,7 @@ import { Eye, EyeOff, Shield, ArrowLeft, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
+import { useAuth } from "@/contexts/AuthProvider";
 
 type LoginStep = "credentials" | "mfa";
 
@@ -20,12 +21,20 @@ export default function Login() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { toast } = useToast();
+  const { user, loading: authLoading } = useAuth();
 
   // MFA state
   const [loginStep, setLoginStep] = useState<LoginStep>("credentials");
   const [mfaFactorId, setMfaFactorId] = useState("");
   const [mfaCode, setMfaCode] = useState("");
   const [mfaVerifying, setMfaVerifying] = useState(false);
+
+  // Redirect authenticated users away from login
+  useEffect(() => {
+    if (!authLoading && user) {
+      navigate("/dashboard", { replace: true });
+    }
+  }, [user, authLoading, navigate]);
 
   // Handle OAuth error callback
   useEffect(() => {
