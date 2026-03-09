@@ -145,11 +145,8 @@ const App = () => (
                 path="/store" 
                 element={
                   <ProtectedRoute>
-                    <DashboardLayout>
-                      <div className="p-6">
-                        <h1 className="text-2xl font-bold">Minha Loja</h1>
-                        <p className="text-muted-foreground">Gerencie seus produtos e configurações</p>
-                      </div>
+                     <DashboardLayout>
+                      <Store />
                     </DashboardLayout>
                   </ProtectedRoute>
                 } 
