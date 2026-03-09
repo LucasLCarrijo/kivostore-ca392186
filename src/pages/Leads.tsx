@@ -97,22 +97,41 @@ export default function Leads() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [tagFilter, setTagFilter] = useState<string | null>(null);
+  const [productFilter, setProductFilter] = useState<string | null>(null);
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
   const [editingTagsLead, setEditingTagsLead] = useState<any | null>(null);
   const [newTag, setNewTag] = useState("");
   const [viewingLead, setViewingLead] = useState<any | null>(null);
 
-  // Fetch leads
+  // Fetch leads with product info
   const { data: leads = [], isLoading } = useQuery({
     queryKey: ["leads", currentWorkspace?.id],
     queryFn: async () => {
       if (!currentWorkspace?.id) return [];
       const { data, error } = await supabase
         .from("leads")
-        .select("*")
+        .select("*, products:product_id(id, name)")
         .eq("workspace_id", currentWorkspace.id)
         .is("unsubscribed_at", null)
         .order("created_at", { ascending: false });
 
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: !!currentWorkspace?.id,
+  });
+
+  // Fetch products for filter
+  const { data: products = [] } = useQuery({
+    queryKey: ["products-filter", currentWorkspace?.id],
+    queryFn: async () => {
+      if (!currentWorkspace?.id) return [];
+      const { data, error } = await supabase
+        .from("products")
+        .select("id, name")
+        .eq("workspace_id", currentWorkspace.id)
+        .order("name");
       if (error) throw error;
       return data || [];
     },
@@ -195,29 +214,35 @@ export default function Leads() {
       const matchesTag =
         !tagFilter || (lead.tags && lead.tags.includes(tagFilter));
 
-      return matchesSearch && matchesStatus && matchesTag;
+      const matchesProduct =
+        !productFilter || lead.product_id === productFilter;
+
+      const leadDate = new Date(lead.created_at);
+      const matchesDateFrom = !dateFrom || leadDate >= new Date(dateFrom);
+      const matchesDateTo = !dateTo || leadDate <= new Date(dateTo + "T23:59:59");
+
+      return matchesSearch && matchesStatus && matchesTag && matchesProduct && matchesDateFrom && matchesDateTo;
     });
-  }, [leads, search, statusFilter, tagFilter]);
+  }, [leads, search, statusFilter, tagFilter, productFilter, dateFrom, dateTo]);
 
   // Export CSV
   const exportCSV = () => {
-    const headers = ["Nome", "Email", "Telefone", "Source", "Status", "Tags", "Data"];
+    const headers = ["Nome", "Email", "WhatsApp", "Tags", "Data"];
     const rows = filteredLeads.map((lead) => [
-      lead.name || "",
-      lead.email,
-      lead.phone || "",
-      lead.source || "",
-      lead.status,
-      (lead.tags || []).join("; "),
-      format(new Date(lead.created_at), "dd/MM/yyyy HH:mm"),
+      `"${(lead.name || "").replace(/"/g, '""')}"`,
+      `"${lead.email}"`,
+      `"${lead.phone || ""}"`,
+      `"${(lead.tags || []).join("; ")}"`,
+      `"${format(new Date(lead.created_at), "dd/MM/yyyy HH:mm")}"`,
     ]);
 
-    const csv = [headers, ...rows].map((row) => row.join(",")).join("\n");
+    const bom = "\uFEFF";
+    const csv = bom + [headers.map(h => `"${h}"`), ...rows].map((row) => row.join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `leads-${format(new Date(), "yyyy-MM-dd")}.csv`;
+    link.download = `leads_export_${format(new Date(), "yyyy-MM-dd")}.csv`;
     link.click();
     URL.revokeObjectURL(url);
     toast.success("CSV exportado!");
@@ -335,44 +360,78 @@ export default function Leads() {
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col sm:flex-row gap-4">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Buscar por nome ou email..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Status" />
+            </SelectTrigger>
+            <SelectContent>
+              {STATUS_OPTIONS.map((status) => (
+                <SelectItem key={status.value} value={status.value}>
+                  {status.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select
+            value={tagFilter || "all"}
+            onValueChange={(v) => setTagFilter(v === "all" ? null : v)}
+          >
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Tags" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todas as Tags</SelectItem>
+              {allTags.map((tag) => (
+                <SelectItem key={tag} value={tag}>
+                  {tag}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="flex flex-col sm:flex-row gap-4">
+          <Select
+            value={productFilter || "all"}
+            onValueChange={(v) => setProductFilter(v === "all" ? null : v)}
+          >
+            <SelectTrigger className="w-[200px]">
+              <SelectValue placeholder="Produto" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todos os Produtos</SelectItem>
+              {products.map((p) => (
+                <SelectItem key={p.id} value={p.id}>
+                  {p.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <Input
-            placeholder="Buscar por nome ou email..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="pl-10"
+            type="date"
+            placeholder="Data início"
+            value={dateFrom}
+            onChange={(e) => setDateFrom(e.target.value)}
+            className="w-[160px]"
+          />
+          <Input
+            type="date"
+            placeholder="Data fim"
+            value={dateTo}
+            onChange={(e) => setDateTo(e.target.value)}
+            className="w-[160px]"
           />
         </div>
-        <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Status" />
-          </SelectTrigger>
-          <SelectContent>
-            {STATUS_OPTIONS.map((status) => (
-              <SelectItem key={status.value} value={status.value}>
-                {status.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <Select
-          value={tagFilter || "all"}
-          onValueChange={(v) => setTagFilter(v === "all" ? null : v)}
-        >
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Tags" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Todas as Tags</SelectItem>
-            {allTags.map((tag) => (
-              <SelectItem key={tag} value={tag}>
-                {tag}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
       </div>
 
       {/* Leads Table */}
