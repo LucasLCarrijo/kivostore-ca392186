@@ -33,12 +33,11 @@ import { toast } from "sonner";
 type ProductStatus = "DRAFT" | "PUBLISHED" | "ARCHIVED";
 
 const TYPE_LABELS: Record<string, { label: string; icon: typeof Package }> = {
-  DIGITAL_PRODUCT: { label: "Digital", icon: Package },
+  DIGITAL: { label: "Digital", icon: Package },
   LEAD_MAGNET: { label: "Lead Magnet", icon: Megaphone },
-  COACHING_CALL: { label: "Serviço", icon: Calendar },
-  ECOURSE: { label: "Curso", icon: GraduationCap },
-  MEMBERSHIP: { label: "Membership", icon: RefreshCw },
-  LINK: { label: "URL/Media", icon: Link },
+  SERVICE: { label: "Serviço", icon: Calendar },
+  COURSE: { label: "Curso", icon: GraduationCap },
+  PHYSICAL: { label: "Físico", icon: Package },
 };
 
 const STATUS_STYLES: Record<string, string> = {
