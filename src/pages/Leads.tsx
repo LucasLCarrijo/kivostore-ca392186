@@ -104,18 +104,34 @@ export default function Leads() {
   const [newTag, setNewTag] = useState("");
   const [viewingLead, setViewingLead] = useState<any | null>(null);
 
-  // Fetch leads
+  // Fetch leads with product info
   const { data: leads = [], isLoading } = useQuery({
     queryKey: ["leads", currentWorkspace?.id],
     queryFn: async () => {
       if (!currentWorkspace?.id) return [];
       const { data, error } = await supabase
         .from("leads")
-        .select("*")
+        .select("*, products:product_id(id, name)")
         .eq("workspace_id", currentWorkspace.id)
         .is("unsubscribed_at", null)
         .order("created_at", { ascending: false });
 
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: !!currentWorkspace?.id,
+  });
+
+  // Fetch products for filter
+  const { data: products = [] } = useQuery({
+    queryKey: ["products-filter", currentWorkspace?.id],
+    queryFn: async () => {
+      if (!currentWorkspace?.id) return [];
+      const { data, error } = await supabase
+        .from("products")
+        .select("id, name")
+        .eq("workspace_id", currentWorkspace.id)
+        .order("name");
       if (error) throw error;
       return data || [];
     },
