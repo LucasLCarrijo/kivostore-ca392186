@@ -69,7 +69,7 @@ const App = () => (
                   </ProtectedRoute>
                 } 
               />
-              />
+              
               
               {/* Dashboard routes (protected with workspace required) */}
               <Route 
