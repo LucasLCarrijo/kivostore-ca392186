@@ -121,6 +121,50 @@ export default function Analytics() {
     },
   });
 
+  // ── Abandoned cart recovery metrics ──
+  const { data: abandonedSessions = [] } = useQuery({
+    queryKey: ["analytics-abandoned", workspaceId, fromISO, toISO],
+    enabled: !!workspaceId,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("checkout_sessions")
+        .select("id, total_amount, status, abandoned_at, completed_at")
+        .eq("workspace_id", workspaceId!)
+        .eq("status", "ABANDONED")
+        .gte("abandoned_at", fromISO)
+        .lte("abandoned_at", toISO);
+      return data ?? [];
+    },
+  });
+
+  const { data: recoveryEmails = [] } = useQuery({
+    queryKey: ["analytics-recovery-emails", workspaceId, fromISO, toISO],
+    enabled: !!workspaceId,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("recovery_emails")
+        .select("id, checkout_session_id, converted_at, sent_at")
+        .eq("workspace_id", workspaceId!)
+        .gte("created_at", fromISO)
+        .lte("created_at", toISO);
+      return data ?? [];
+    },
+  });
+
+  const recoveredSessions = useMemo(() => {
+    const convertedIds = new Set(
+      recoveryEmails.filter((e) => e.converted_at).map((e) => e.checkout_session_id)
+    );
+    return abandonedSessions.filter((s) => convertedIds.has(s.id));
+  }, [abandonedSessions, recoveryEmails]);
+
+  const recoveredRevenue = recoveredSessions.reduce(
+    (sum, s) => sum + Number(s.total_amount || 0), 0
+  );
+  const recoveryRate = abandonedSessions.length > 0
+    ? ((recoveredSessions.length / abandonedSessions.length) * 100).toFixed(1)
+    : "0";
+
   // ── Computed metrics ──
   const totalRevenue = orders.reduce((s, o) => s + Number(o.total_amount), 0);
   const pageViews = events.filter((e) => e.event_type === "PAGE_VIEW").length;
