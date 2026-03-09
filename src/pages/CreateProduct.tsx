@@ -36,6 +36,9 @@ export interface ProductFormData {
   upsellPrice: number;
   affiliateEnabled: boolean;
   affiliateCommission: number;
+  // Membership fields
+  billingInterval: "monthly" | "quarterly" | "yearly";
+  trialDays: number;
 }
 
 const INITIAL_FORM: ProductFormData = {
