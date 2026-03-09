@@ -123,6 +123,15 @@ const App = () => (
               />
               
               <Route 
+                path="/store/editor" 
+                element={
+                  <ProtectedRoute>
+                    <StorefrontEditor />
+                  </ProtectedRoute>
+                } 
+              />
+              
+              <Route 
                 path="/analytics" 
                 element={
                   <ProtectedRoute>
