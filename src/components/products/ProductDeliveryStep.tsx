@@ -41,22 +41,8 @@ export function ProductDeliveryStep({ form, updateForm }: Props) {
     updateForm({ deliveryFiles: form.deliveryFiles.filter((_, i) => i !== index) });
   };
 
-  // Render based on product type
-  if (form.type === "LINK") {
-    return (
-      <div className="space-y-4">
-        <Label>URL externa</Label>
-        <p className="text-sm text-muted-foreground">Cole o link que será entregue ao comprador</p>
-        <Input
-          placeholder="https://..."
-          value={form.deliveryUrl}
-          onChange={(e) => updateForm({ deliveryUrl: e.target.value })}
-        />
-      </div>
-    );
-  }
-
-  if (form.type === "COACHING_CALL") {
+  // SERVICE — scheduling URL
+  if (form.type === "SERVICE") {
     return (
       <div className="space-y-4">
         <Label>URL de agendamento</Label>
@@ -72,7 +58,8 @@ export function ProductDeliveryStep({ form, updateForm }: Props) {
     );
   }
 
-  if (form.type === "ECOURSE") {
+  // COURSE — redirect to course builder
+  if (form.type === "COURSE") {
     return (
       <div className="space-y-4 text-center py-10">
         <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
@@ -86,9 +73,22 @@ export function ProductDeliveryStep({ form, updateForm }: Props) {
     );
   }
 
-  // DIGITAL_PRODUCT, LEAD_MAGNET, MEMBERSHIP — file upload
+  // DIGITAL, LEAD_MAGNET, PHYSICAL — file upload + optional URL
   return (
     <div className="space-y-4">
+      {/* Optional external URL for DIGITAL */}
+      {form.type === "DIGITAL" && (
+        <div className="space-y-2 mb-4">
+          <Label>URL externa (opcional)</Label>
+          <p className="text-sm text-muted-foreground">Cole um link que será entregue ao comprador</p>
+          <Input
+            placeholder="https://..."
+            value={form.deliveryUrl}
+            onChange={(e) => updateForm({ deliveryUrl: e.target.value })}
+          />
+        </div>
+      )}
+
       <Label>
         {form.type === "LEAD_MAGNET" ? "Arquivo de recompensa" : "Arquivos do produto"}
       </Label>

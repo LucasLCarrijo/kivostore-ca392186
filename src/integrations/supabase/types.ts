@@ -2042,7 +2042,7 @@ export type Database = {
           stock_limit?: number | null
           storefront_order?: number | null
           thumbnail_url?: string | null
-          type: Database["public"]["Enums"]["product_type"]
+          type?: Database["public"]["Enums"]["product_type"]
           updated_at?: string | null
           workspace_id: string
         }
@@ -2820,12 +2820,11 @@ export type Database = {
       price_type: "ONE_TIME" | "RECURRING"
       product_status: "DRAFT" | "PUBLISHED" | "ARCHIVED"
       product_type:
-        | "DIGITAL_PRODUCT"
+        | "DIGITAL"
+        | "COURSE"
+        | "SERVICE"
+        | "PHYSICAL"
         | "LEAD_MAGNET"
-        | "LINK"
-        | "COACHING_CALL"
-        | "ECOURSE"
-        | "MEMBERSHIP"
       workspace_role: "OWNER" | "ADMIN" | "MEMBER"
     }
     CompositeTypes: {
@@ -2956,14 +2955,7 @@ export const Constants = {
     Enums: {
       price_type: ["ONE_TIME", "RECURRING"],
       product_status: ["DRAFT", "PUBLISHED", "ARCHIVED"],
-      product_type: [
-        "DIGITAL_PRODUCT",
-        "LEAD_MAGNET",
-        "LINK",
-        "COACHING_CALL",
-        "ECOURSE",
-        "MEMBERSHIP",
-      ],
+      product_type: ["DIGITAL", "COURSE", "SERVICE", "PHYSICAL", "LEAD_MAGNET"],
       workspace_role: ["OWNER", "ADMIN", "MEMBER"],
     },
   },

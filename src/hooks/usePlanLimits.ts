@@ -101,7 +101,7 @@ export function usePlanLimits(): PlanInfo {
           .from("products")
           .select("id", { count: "exact", head: true })
           .eq("workspace_id", currentWorkspace.id)
-          .in("type", ["ECOURSE", "MEMBERSHIP"])
+          .in("type", ["COURSE"])
           .is("deleted_at", null),
         supabase
           .from("affiliates")

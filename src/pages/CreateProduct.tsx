@@ -119,8 +119,8 @@ export default function CreateProduct() {
       return;
     }
 
-    const isCourseType = ["ECOURSE", "MEMBERSHIP"].includes(form.type);
-    if (isCourseType && !planInfo.canCreateCourse) {
+      const isCourseType = form.type === "COURSE";
+      if (isCourseType && !planInfo.canCreateCourse) {
       setUpgradeFeature("criar cursos");
       setUpgradeOpen(true);
       return;
@@ -150,7 +150,7 @@ export default function CreateProduct() {
 
       // Create price
       if (product) {
-        const isMembership = form.type === "MEMBERSHIP";
+        const isMembership = form.type === "COURSE" && form.billingInterval !== undefined && form.price > 0;
         const priceType = isMembership ? "RECURRING" : "ONE_TIME";
 
         const { error: priceError } = await supabase.from("prices").insert({

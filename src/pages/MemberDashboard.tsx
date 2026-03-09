@@ -68,7 +68,7 @@ export default function MemberDashboard() {
       const courseEntitlements: CourseEntitlement[] = entitlements
         .filter(e => {
           const prod = products?.find(p => p.id === e.product_id);
-          return prod && (prod.type === "ECOURSE" || prod.type === "MEMBERSHIP");
+          return prod && prod.type === "COURSE";
         })
         .map(e => ({
           ...e,
