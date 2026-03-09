@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
-import { useParams, useSearchParams, Link } from "react-router-dom";
+import { useParams, useSearchParams, Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { ProductSummary } from "@/components/checkout/ProductSummary";
 import { CustomerForm } from "@/components/checkout/CustomerForm";
@@ -30,6 +30,7 @@ interface Price {
 export default function Checkout() {
   const { productSlug } = useParams<{ productSlug: string }>();
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   const [product, setProduct] = useState<Product | null>(null);
   const [price, setPrice] = useState<Price | null>(null);
@@ -205,7 +206,9 @@ export default function Checkout() {
       const data = res.data;
       if (data?.error) throw new Error(data.error);
       if (data?.status === "paid" || data?.status === "authorized") {
-        setPaymentSuccess(true);
+        // Call post-purchase processing
+        await supabase.functions.invoke("post-purchase", { body: { order_id: data.order_id } });
+        navigate(`/order/success/${data.order_id}`);
       } else {
         setPaymentError(data?.message || "Pagamento recusado. Tente outro cartão.");
       }
@@ -262,8 +265,9 @@ export default function Checkout() {
         .eq("id", sessionId)
         .single();
       if (data?.status === "COMPLETED") {
-        setPaymentSuccess(true);
         clearInterval(interval);
+        // Get order from checkout session to redirect
+        navigate(`/order/success/${sessionId}`);
       }
     }, 5000);
     return () => clearInterval(interval);

@@ -21,6 +21,8 @@ import CourseBuilder from "./pages/CourseBuilder";
 import StorefrontEditor from "./pages/StorefrontEditor";
 import PublicStorefront from "./pages/PublicStorefront";
 import Checkout from "./pages/Checkout";
+import OrderSuccess from "./pages/OrderSuccess";
+import Upsell from "./pages/Upsell";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -180,6 +182,10 @@ const App = () => (
               
               {/* Checkout — public */}
               <Route path="/checkout/:productSlug" element={<Checkout />} />
+              
+              {/* Post-purchase — public */}
+              <Route path="/order/success/:orderId" element={<OrderSuccess />} />
+              <Route path="/upsell/:offerId" element={<Upsell />} />
               
               {/* Public storefront — must be before 404 */}
               <Route path="/:slug" element={<PublicStorefront />} />
