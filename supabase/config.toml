@@ -23,3 +23,6 @@ verify_jwt = false
 
 [functions.process-email-sequences]
 verify_jwt = false
+
+[functions.renew-subscriptions]
+verify_jwt = false

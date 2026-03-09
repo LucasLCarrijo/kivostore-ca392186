@@ -261,6 +261,7 @@ const App = () => (
               <Route path="/member/login" element={<MemberLogin />} />
               <Route path="/member" element={<MemberDashboard />} />
               <Route path="/member/course/:productId" element={<MemberCourse />} />
+              <Route path="/member/billing" element={<MemberBilling />} />
 
               {/* Affiliate — public pages */}
               <Route path="/affiliate/apply/:workspaceSlug" element={<AffiliateApply />} />
