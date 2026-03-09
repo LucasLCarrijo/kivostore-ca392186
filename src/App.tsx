@@ -33,6 +33,7 @@ import Leads from "./pages/Leads";
 import LeadSegments from "./pages/LeadSegments";
 import LeadEmail from "./pages/LeadEmail";
 import Analytics from "./pages/Analytics";
+import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -175,10 +176,7 @@ const App = () => (
                 element={
                   <ProtectedRoute>
                     <DashboardLayout>
-                      <div className="p-6">
-                        <h1 className="text-2xl font-bold">Configurações</h1>
-                        <p className="text-muted-foreground">Configurações da conta e da loja</p>
-                      </div>
+                      <Settings />
                     </DashboardLayout>
                   </ProtectedRoute>
                 } 
