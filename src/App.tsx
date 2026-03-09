@@ -13,6 +13,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import VerifyEmail from "./pages/VerifyEmail";
 import Income from "./pages/Income";
 import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
@@ -56,16 +57,19 @@ const App = () => (
               <Route path="/signup" element={<Signup />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/reset-password" element={<ResetPassword />} />
+              <Route path="/verify-email" element={<VerifyEmail />} />
+              <Route path="/resend-verification" element={<Navigate to="/verify-email" replace />} />
               
               {/* Onboarding (protected but no workspace required) */}
               <Route 
                 path="/onboarding" 
                 element={
-                  <ProtectedRoute requireWorkspace={false}>
+                  <ProtectedRoute requireWorkspace={false} requireEmailVerification={false}>
                     <Onboarding />
                   </ProtectedRoute>
                 } 
               />
+              
               
               {/* Dashboard routes (protected with workspace required) */}
               <Route 
