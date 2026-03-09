@@ -33,6 +33,7 @@ import Leads from "./pages/Leads";
 import LeadSegments from "./pages/LeadSegments";
 import LeadEmail from "./pages/LeadEmail";
 import Analytics from "./pages/Analytics";
+import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
