@@ -265,8 +265,9 @@ export default function Checkout() {
         .eq("id", sessionId)
         .single();
       if (data?.status === "COMPLETED") {
-        setPaymentSuccess(true);
         clearInterval(interval);
+        // Get order from checkout session to redirect
+        navigate(`/order/success/${sessionId}`);
       }
     }, 5000);
     return () => clearInterval(interval);
