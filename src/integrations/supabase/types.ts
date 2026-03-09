@@ -222,6 +222,7 @@ export type Database = {
           currency: string
           id: string
           logo_url: string | null
+          metadata: Json | null
           name: string
           slug: string
           timezone: string
@@ -232,6 +233,7 @@ export type Database = {
           currency?: string
           id?: string
           logo_url?: string | null
+          metadata?: Json | null
           name: string
           slug: string
           timezone?: string
@@ -242,6 +244,7 @@ export type Database = {
           currency?: string
           id?: string
           logo_url?: string | null
+          metadata?: Json | null
           name?: string
           slug?: string
           timezone?: string
