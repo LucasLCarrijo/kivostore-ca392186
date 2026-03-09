@@ -1,4 +1,4 @@
-import { Home, DollarSign, Store, BarChart3, Heart, Settings, LogOut, Package, Users, UserCheck, Tag } from "lucide-react";
+import { Home, DollarSign, Store, BarChart3, Heart, Settings, LogOut, Package, Users, UserCheck, Tag, Mail } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
 import {
@@ -24,6 +24,7 @@ const navigationItems = [
   { title: "Cupons", url: "/coupons", icon: Tag },
   { title: "Minha Loja", url: "/store", icon: Store },
   { title: "Leads", url: "/leads", icon: UserCheck },
+  { title: "Email Flows", url: "/email-flows", icon: Mail },
   { title: "Renda", url: "/earnings", icon: DollarSign },
   { title: "Afiliados", url: "/affiliates", icon: Users },
   { title: "Analytics", url: "/analytics", icon: BarChart3 },

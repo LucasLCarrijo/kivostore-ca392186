@@ -817,6 +817,143 @@ export type Database = {
           },
         ]
       }
+      email_sequence_enrollments: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          current_step: number
+          enrolled_at: string
+          id: string
+          lead_id: string
+          next_send_at: string | null
+          sequence_id: string
+          unsubscribed_at: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          current_step?: number
+          enrolled_at?: string
+          id?: string
+          lead_id: string
+          next_send_at?: string | null
+          sequence_id: string
+          unsubscribed_at?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          current_step?: number
+          enrolled_at?: string
+          id?: string
+          lead_id?: string
+          next_send_at?: string | null
+          sequence_id?: string
+          unsubscribed_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_sequence_enrollments_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_sequence_enrollments_sequence_id_fkey"
+            columns: ["sequence_id"]
+            isOneToOne: false
+            referencedRelation: "email_sequences"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      email_sequence_steps: {
+        Row: {
+          body: string
+          created_at: string
+          delay_hours: number
+          id: string
+          position: number
+          sequence_id: string
+          subject: string
+        }
+        Insert: {
+          body?: string
+          created_at?: string
+          delay_hours?: number
+          id?: string
+          position?: number
+          sequence_id: string
+          subject: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          delay_hours?: number
+          id?: string
+          position?: number
+          sequence_id?: string
+          subject?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_sequence_steps_sequence_id_fkey"
+            columns: ["sequence_id"]
+            isOneToOne: false
+            referencedRelation: "email_sequences"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      email_sequences: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          name: string
+          trigger_product_id: string | null
+          trigger_type: string
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          trigger_product_id?: string | null
+          trigger_type?: string
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          trigger_product_id?: string | null
+          trigger_type?: string
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_sequences_trigger_product_id_fkey"
+            columns: ["trigger_product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_sequences_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       entitlements: {
         Row: {
           customer_id: string

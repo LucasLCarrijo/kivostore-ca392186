@@ -36,6 +36,7 @@ import LeadEmail from "./pages/LeadEmail";
 import Analytics from "./pages/Analytics";
 import Settings from "./pages/Settings";
 import Coupons from "./pages/Coupons";
+import EmailFlows from "./pages/EmailFlows";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -197,6 +198,17 @@ const App = () => (
                   <ProtectedRoute>
                     <DashboardLayout>
                       <Affiliates />
+                    </DashboardLayout>
+                  </ProtectedRoute>
+                } 
+              />
+
+              <Route 
+                path="/email-flows" 
+                element={
+                  <ProtectedRoute>
+                    <DashboardLayout>
+                      <EmailFlows />
                     </DashboardLayout>
                   </ProtectedRoute>
                 } 
