@@ -3,10 +3,11 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Upload, X, Image as ImageIcon } from "lucide-react";
+import { Upload, X, Image as ImageIcon, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import type { ProductFormData } from "@/pages/CreateProduct";
+import { AICopyModal } from "./AICopyModal";
 
 interface Props {
   form: ProductFormData;
@@ -15,6 +16,7 @@ interface Props {
 
 export function ProductDetailsStep({ form, updateForm }: Props) {
   const [uploading, setUploading] = useState(false);
+  const [aiField, setAiField] = useState<"name" | "shortDescription" | "description" | null>(null);
 
   const uploadFile = useCallback(
     async (file: File, bucket: string) => {
@@ -63,11 +65,27 @@ export function ProductDetailsStep({ form, updateForm }: Props) {
     updateForm({ galleryUrls: form.galleryUrls.filter((_, i) => i !== index) });
   };
 
+  const AIButton = ({ field }: { field: "name" | "shortDescription" | "description" }) => (
+    <Button
+      type="button"
+      variant="ghost"
+      size="sm"
+      className="gap-1 h-7 text-xs text-primary hover:text-primary"
+      onClick={() => setAiField(field)}
+    >
+      <Sparkles className="h-3 w-3" />
+      Gerar com IA
+    </Button>
+  );
+
   return (
     <div className="space-y-6">
       {/* Name */}
       <div className="space-y-2">
-        <Label htmlFor="name">Nome do produto *</Label>
+        <div className="flex items-center justify-between">
+          <Label htmlFor="name">Nome do produto *</Label>
+          <AIButton field="name" />
+        </div>
         <Input
           id="name"
           placeholder="Ex: Guia Completo de Marketing Digital"
@@ -78,7 +96,10 @@ export function ProductDetailsStep({ form, updateForm }: Props) {
 
       {/* Short description */}
       <div className="space-y-2">
-        <Label htmlFor="short-desc">Descrição curta</Label>
+        <div className="flex items-center justify-between">
+          <Label htmlFor="short-desc">Descrição curta</Label>
+          <AIButton field="shortDescription" />
+        </div>
         <Textarea
           id="short-desc"
           placeholder="Descreva seu produto em poucas palavras..."
@@ -94,7 +115,10 @@ export function ProductDetailsStep({ form, updateForm }: Props) {
 
       {/* Full description */}
       <div className="space-y-2">
-        <Label htmlFor="description">Descrição completa</Label>
+        <div className="flex items-center justify-between">
+          <Label htmlFor="description">Descrição completa</Label>
+          <AIButton field="description" />
+        </div>
         <Textarea
           id="description"
           placeholder="Descreva detalhadamente o que o cliente vai receber..."
@@ -168,6 +192,21 @@ export function ProductDetailsStep({ form, updateForm }: Props) {
           )}
         </div>
       </div>
+
+      {/* AI Copy Modal */}
+      {aiField && (
+        <AICopyModal
+          open={!!aiField}
+          onOpenChange={(open) => !open && setAiField(null)}
+          field={aiField}
+          productName={form.name}
+          onSelect={(text) => {
+            if (aiField === "name") updateForm({ name: text });
+            else if (aiField === "shortDescription") updateForm({ shortDescription: text });
+            else if (aiField === "description") updateForm({ description: text });
+          }}
+        />
+      )}
     </div>
   );
 }

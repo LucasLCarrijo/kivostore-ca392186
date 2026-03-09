@@ -13,7 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import {
-  Plus, Mail, Play, Pause, Trash2, GripVertical, Clock, Users, Eye, MousePointerClick, UserMinus, ChevronDown, ChevronUp,
+  Plus, Mail, Play, Pause, Trash2, GripVertical, Clock, Users, Eye, MousePointerClick, UserMinus, ChevronDown, ChevronUp, Sparkles, Loader2,
 } from "lucide-react";
 
 const TRIGGER_LABELS: Record<string, string> = {
