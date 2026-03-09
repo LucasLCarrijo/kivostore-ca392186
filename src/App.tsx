@@ -88,6 +88,16 @@ const App = () => (
                 } 
               />
               
+              <Route 
+                path="/coupons" 
+                element={
+                  <ProtectedRoute>
+                    <DashboardLayout>
+                      <Coupons />
+                    </DashboardLayout>
+                  </ProtectedRoute>
+                } 
+              />
               
               {/* Products routes */}
               <Route 

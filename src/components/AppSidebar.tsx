@@ -21,6 +21,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 const navigationItems = [
   { title: "Home", url: "/dashboard", icon: Home },
   { title: "Produtos", url: "/products", icon: Package },
+  { title: "Cupons", url: "/coupons", icon: Tag },
   { title: "Minha Loja", url: "/store", icon: Store },
   { title: "Leads", url: "/leads", icon: UserCheck },
   { title: "Renda", url: "/earnings", icon: DollarSign },
