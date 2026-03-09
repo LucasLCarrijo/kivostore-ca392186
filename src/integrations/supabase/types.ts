@@ -267,6 +267,100 @@ export type Database = {
           },
         ]
       }
+      api_keys: {
+        Row: {
+          created_at: string
+          expires_at: string | null
+          id: string
+          key_hash: string
+          last_used_at: string | null
+          name: string
+          prefix: string
+          revoked_at: string | null
+          user_id: string
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          key_hash: string
+          last_used_at?: string | null
+          name: string
+          prefix: string
+          revoked_at?: string | null
+          user_id: string
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          key_hash?: string
+          last_used_at?: string | null
+          name?: string
+          prefix?: string
+          revoked_at?: string | null
+          user_id?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "api_keys_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      audit_logs: {
+        Row: {
+          action: string
+          created_at: string
+          entity_id: string
+          entity_type: string
+          id: string
+          ip_address: string | null
+          metadata: Json | null
+          user_agent: string | null
+          user_id: string | null
+          workspace_id: string
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          entity_id: string
+          entity_type: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          user_agent?: string | null
+          user_id?: string | null
+          workspace_id: string
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          entity_id?: string
+          entity_type?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          user_agent?: string | null
+          user_id?: string | null
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audit_logs_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       checkout_line_items: {
         Row: {
           checkout_session_id: string
@@ -1852,6 +1946,7 @@ export type Database = {
           mime_type: string | null
           position: number | null
           product_id: string
+          size_bytes: number | null
           url: string
         }
         Insert: {
@@ -1861,6 +1956,7 @@ export type Database = {
           mime_type?: string | null
           position?: number | null
           product_id: string
+          size_bytes?: number | null
           url: string
         }
         Update: {
@@ -1870,6 +1966,7 @@ export type Database = {
           mime_type?: string | null
           position?: number | null
           product_id?: string
+          size_bytes?: number | null
           url?: string
         }
         Relationships: [
@@ -1878,6 +1975,36 @@ export type Database = {
             columns: ["product_id"]
             isOneToOne: false
             referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_tags: {
+        Row: {
+          product_id: string
+          tag_id: string
+        }
+        Insert: {
+          product_id: string
+          tag_id: string
+        }
+        Update: {
+          product_id?: string
+          tag_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_tags_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_tags_tag_id_fkey"
+            columns: ["tag_id"]
+            isOneToOne: false
+            referencedRelation: "tags"
             referencedColumns: ["id"]
           },
         ]
@@ -2005,35 +2132,44 @@ export type Database = {
         Row: {
           amount: number
           created_at: string
+          currency: string
           gateway_refund_id: string | null
           id: string
           order_id: string
           payment_id: string
           processed_at: string | null
           reason: string | null
+          requested_at: string
           status: string
+          updated_at: string
         }
         Insert: {
           amount?: number
           created_at?: string
+          currency?: string
           gateway_refund_id?: string | null
           id?: string
           order_id: string
           payment_id: string
           processed_at?: string | null
           reason?: string | null
+          requested_at?: string
           status?: string
+          updated_at?: string
         }
         Update: {
           amount?: number
           created_at?: string
+          currency?: string
           gateway_refund_id?: string | null
           id?: string
           order_id?: string
           payment_id?: string
           processed_at?: string | null
           reason?: string | null
+          requested_at?: string
           status?: string
+          updated_at?: string
         }
         Relationships: [
           {
@@ -2051,6 +2187,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      sessions: {
+        Row: {
+          created_at: string
+          device_fingerprint: string | null
+          expires_at: string
+          id: string
+          ip_address: string | null
+          token: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          device_fingerprint?: string | null
+          expires_at: string
+          id?: string
+          ip_address?: string | null
+          token: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          device_fingerprint?: string | null
+          expires_at?: string
+          id?: string
+          ip_address?: string | null
+          token?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
       }
       storefront_blocks: {
         Row: {
@@ -2200,33 +2369,62 @@ export type Database = {
         Row: {
           billing_interval: string
           created_at: string
+          description: string | null
           id: string
+          is_active: boolean
+          name: string
+          price_id: string | null
           product_id: string
           trial_days: number
           updated_at: string
+          workspace_id: string | null
         }
         Insert: {
           billing_interval?: string
           created_at?: string
+          description?: string | null
           id?: string
+          is_active?: boolean
+          name?: string
+          price_id?: string | null
           product_id: string
           trial_days?: number
           updated_at?: string
+          workspace_id?: string | null
         }
         Update: {
           billing_interval?: string
           created_at?: string
+          description?: string | null
           id?: string
+          is_active?: boolean
+          name?: string
+          price_id?: string | null
           product_id?: string
           trial_days?: number
           updated_at?: string
+          workspace_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "subscription_plans_price_id_fkey"
+            columns: ["price_id"]
+            isOneToOne: false
+            referencedRelation: "prices"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "subscription_plans_product_id_fkey"
             columns: ["product_id"]
             isOneToOne: true
             referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subscription_plans_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
             referencedColumns: ["id"]
           },
         ]
@@ -2307,9 +2505,42 @@ export type Database = {
           },
         ]
       }
+      tags: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          slug: string
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          slug: string
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          slug?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tags_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       upsell_offers: {
         Row: {
           created_at: string
+          currency: string
           description: string | null
           headline: string | null
           id: string
@@ -2318,10 +2549,12 @@ export type Database = {
           special_price: number
           trigger_product_id: string
           type: string
+          updated_at: string
           upsell_product_id: string
         }
         Insert: {
           created_at?: string
+          currency?: string
           description?: string | null
           headline?: string | null
           id?: string
@@ -2330,10 +2563,12 @@ export type Database = {
           special_price?: number
           trigger_product_id: string
           type?: string
+          updated_at?: string
           upsell_product_id: string
         }
         Update: {
           created_at?: string
+          currency?: string
           description?: string | null
           headline?: string | null
           id?: string
@@ -2342,6 +2577,7 @@ export type Database = {
           special_price?: number
           trigger_product_id?: string
           type?: string
+          updated_at?: string
           upsell_product_id?: string
         }
         Relationships: [
@@ -2367,9 +2603,11 @@ export type Database = {
           created_at: string
           error_message: string | null
           event_type: string
-          external_event_id: string | null
+          external_event_id: string
+          headers: Json | null
           id: string
-          payload: Json | null
+          last_attempt_at: string | null
+          payload: Json
           processed_at: string | null
           provider: string
           status: string
@@ -2380,9 +2618,11 @@ export type Database = {
           created_at?: string
           error_message?: string | null
           event_type: string
-          external_event_id?: string | null
+          external_event_id: string
+          headers?: Json | null
           id?: string
-          payload?: Json | null
+          last_attempt_at?: string | null
+          payload?: Json
           processed_at?: string | null
           provider: string
           status?: string
@@ -2393,9 +2633,11 @@ export type Database = {
           created_at?: string
           error_message?: string | null
           event_type?: string
-          external_event_id?: string | null
+          external_event_id?: string
+          headers?: Json | null
           id?: string
-          payload?: Json | null
+          last_attempt_at?: string | null
+          payload?: Json
           processed_at?: string | null
           provider?: string
           status?: string
