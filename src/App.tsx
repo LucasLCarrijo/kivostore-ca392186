@@ -32,6 +32,7 @@ import AffiliateDashboard from "./pages/AffiliateDashboard";
 import Leads from "./pages/Leads";
 import LeadSegments from "./pages/LeadSegments";
 import LeadEmail from "./pages/LeadEmail";
+import Analytics from "./pages/Analytics";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -149,10 +150,7 @@ const App = () => (
                 element={
                   <ProtectedRoute>
                     <DashboardLayout>
-                      <div className="p-6">
-                        <h1 className="text-2xl font-bold">Analytics</h1>
-                        <p className="text-muted-foreground">Análise detalhada do seu negócio</p>
-                      </div>
+                      <Analytics />
                     </DashboardLayout>
                   </ProtectedRoute>
                 } 
