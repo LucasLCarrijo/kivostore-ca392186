@@ -14,6 +14,176 @@ export type Database = {
   }
   public: {
     Tables: {
+      prices: {
+        Row: {
+          amount: number
+          created_at: string | null
+          currency: string | null
+          id: string
+          is_default: boolean | null
+          product_id: string
+          type: Database["public"]["Enums"]["price_type"] | null
+          updated_at: string | null
+        }
+        Insert: {
+          amount?: number
+          created_at?: string | null
+          currency?: string | null
+          id?: string
+          is_default?: boolean | null
+          product_id: string
+          type?: Database["public"]["Enums"]["price_type"] | null
+          updated_at?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          currency?: string | null
+          id?: string
+          is_default?: boolean | null
+          product_id?: string
+          type?: Database["public"]["Enums"]["price_type"] | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prices_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      products: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          name: string
+          slug: string
+          status: Database["public"]["Enums"]["product_status"] | null
+          thumbnail_url: string | null
+          type: Database["public"]["Enums"]["product_type"]
+          updated_at: string | null
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          slug: string
+          status?: Database["public"]["Enums"]["product_status"] | null
+          thumbnail_url?: string | null
+          type: Database["public"]["Enums"]["product_type"]
+          updated_at?: string | null
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          slug?: string
+          status?: Database["public"]["Enums"]["product_status"] | null
+          thumbnail_url?: string | null
+          type?: Database["public"]["Enums"]["product_type"]
+          updated_at?: string | null
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "products_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      storefront_themes: {
+        Row: {
+          background_color: string | null
+          created_at: string | null
+          id: string
+          primary_color: string | null
+          storefront_id: string
+          template_key: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          background_color?: string | null
+          created_at?: string | null
+          id?: string
+          primary_color?: string | null
+          storefront_id: string
+          template_key?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          background_color?: string | null
+          created_at?: string | null
+          id?: string
+          primary_color?: string | null
+          storefront_id?: string
+          template_key?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "storefront_themes_storefront_id_fkey"
+            columns: ["storefront_id"]
+            isOneToOne: false
+            referencedRelation: "storefronts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      storefronts: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string | null
+          id: string
+          is_published: boolean | null
+          slug: string
+          title: string | null
+          updated_at: string | null
+          workspace_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string | null
+          id?: string
+          is_published?: boolean | null
+          slug: string
+          title?: string | null
+          updated_at?: string | null
+          workspace_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string | null
+          id?: string
+          is_published?: boolean | null
+          slug?: string
+          title?: string | null
+          updated_at?: string | null
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "storefronts_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       workspace_members: {
         Row: {
           created_at: string
@@ -52,6 +222,7 @@ export type Database = {
           currency: string
           id: string
           logo_url: string | null
+          metadata: Json | null
           name: string
           slug: string
           timezone: string
@@ -62,6 +233,7 @@ export type Database = {
           currency?: string
           id?: string
           logo_url?: string | null
+          metadata?: Json | null
           name: string
           slug: string
           timezone?: string
@@ -72,6 +244,7 @@ export type Database = {
           currency?: string
           id?: string
           logo_url?: string | null
+          metadata?: Json | null
           name?: string
           slug?: string
           timezone?: string
@@ -87,6 +260,9 @@ export type Database = {
       generate_unique_slug: { Args: { base_name: string }; Returns: string }
     }
     Enums: {
+      price_type: "ONE_TIME" | "RECURRING"
+      product_status: "DRAFT" | "PUBLISHED" | "ARCHIVED"
+      product_type: "DIGITAL_PRODUCT" | "LEAD_MAGNET" | "LINK"
       workspace_role: "OWNER" | "ADMIN" | "MEMBER"
     }
     CompositeTypes: {
@@ -215,6 +391,9 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      price_type: ["ONE_TIME", "RECURRING"],
+      product_status: ["DRAFT", "PUBLISHED", "ARCHIVED"],
+      product_type: ["DIGITAL_PRODUCT", "LEAD_MAGNET", "LINK"],
       workspace_role: ["OWNER", "ADMIN", "MEMBER"],
     },
   },

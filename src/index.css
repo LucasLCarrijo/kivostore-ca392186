@@ -17,15 +17,15 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    /* Kivo Primary: #6C3CE1 (roxo vibrante) */
-    --primary: 264 76% 56%;
+    /* Kivo Primary: #F9423A (vermelho coral) */
+    --primary: 6 95% 60%;
     --primary-foreground: 0 0% 100%;
 
-    /* Kivo Secondary: #F5F3FF (lilás claro) */
-    --secondary: 252 100% 97%;
-    --secondary-foreground: 264 76% 56%;
+    /* Kivo Secondary: #FFF5F5 (coral muito claro) */
+    --secondary: 0 100% 98%;
+    --secondary-foreground: 6 95% 60%;
 
-    --muted: 252 100% 97%;
+    --muted: 0 100% 98%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
     /* Kivo Accent: #10B981 (verde sucesso) */
@@ -38,18 +38,18 @@ All colors MUST be HSL.
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 264 76% 56%;
+    --ring: 6 95% 60%;
 
     --radius: 0.75rem; /* 12px for cards, 8px for inputs */
 
     --sidebar-background: 0 0% 100%;
     --sidebar-foreground: 222.2 84% 4.9%;
-    --sidebar-primary: 264 76% 56%;
+    --sidebar-primary: 6 95% 60%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 252 100% 97%;
-    --sidebar-accent-foreground: 264 76% 56%;
+    --sidebar-accent: 0 100% 98%;
+    --sidebar-accent-foreground: 6 95% 60%;
     --sidebar-border: 214.3 31.8% 91.4%;
-    --sidebar-ring: 264 76% 56%;
+    --sidebar-ring: 6 95% 60%;
   }
 
   .dark {
@@ -63,7 +63,7 @@ All colors MUST be HSL.
     --popover-foreground: 210 40% 98%;
 
     /* Dark mode primary */
-    --primary: 264 76% 56%;
+    --primary: 6 95% 60%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 217.2 32.6% 17.5%;
@@ -80,16 +80,16 @@ All colors MUST be HSL.
 
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 264 76% 56%;
+    --ring: 6 95% 60%;
     
     --sidebar-background: 222.2 84% 4.9%;
     --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 264 76% 56%;
+    --sidebar-primary: 6 95% 60%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 217.2 32.6% 17.5%;
     --sidebar-accent-foreground: 210 40% 98%;
     --sidebar-border: 217.2 32.6% 17.5%;
-    --sidebar-ring: 264 76% 56%;
+    --sidebar-ring: 6 95% 60%;
   }
 }
 
