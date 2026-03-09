@@ -184,6 +184,9 @@ export default function Dashboard() {
         <p className="text-muted-foreground capitalize">{dateString}</p>
       </div>
 
+      {/* Email Verification Banner */}
+      <EmailVerificationBanner />
+
       {/* Usage Alerts */}
       <UsageAlerts />
 

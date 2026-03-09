@@ -42,7 +42,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
           hasRedirectedOnce = true;
           const currentPath = window.location.pathname;
           // Don't redirect if already on a known app page or public page
-          const skipRedirectPaths = ['/onboarding', '/checkout', '/order', '/upsell', '/member', '/affiliate', '/dashboard', '/products', '/earnings', '/coupons', '/store', '/analytics', '/clients', '/settings', '/affiliates', '/email-flows', '/leads'];
+          const skipRedirectPaths = ['/onboarding', '/checkout', '/order', '/upsell', '/member', '/affiliate', '/dashboard', '/products', '/earnings', '/coupons', '/store', '/analytics', '/clients', '/settings', '/affiliates', '/email-flows', '/leads', '/verify-email', '/resend-verification'];
           const shouldSkip = skipRedirectPaths.some(p => currentPath.startsWith(p));
 
           if (!shouldSkip && session?.user) {
