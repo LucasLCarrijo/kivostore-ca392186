@@ -21,9 +21,9 @@ All colors MUST be HSL.
     --primary: 6 95% 60%;
     --primary-foreground: 0 0% 100%;
 
-    /* Kivo Secondary: #F5F3FF (lilás claro) */
-    --secondary: 252 100% 97%;
-    --secondary-foreground: 264 76% 56%;
+    /* Kivo Secondary: #FFF5F5 (coral muito claro) */
+    --secondary: 0 100% 98%;
+    --secondary-foreground: 6 95% 60%;
 
     --muted: 252 100% 97%;
     --muted-foreground: 215.4 16.3% 46.9%;
