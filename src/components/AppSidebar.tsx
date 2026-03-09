@@ -23,6 +23,7 @@ const navigationItems = [
   { title: "Produtos", url: "/products", icon: Package },
   { title: "Minha Loja", url: "/store", icon: Store },
   { title: "Renda", url: "/earnings", icon: DollarSign },
+  { title: "Afiliados", url: "/affiliates", icon: Users },
   { title: "Analytics", url: "/analytics", icon: BarChart3 },
   { title: "Clientes", url: "/clients", icon: Heart },
   { title: "Configurações", url: "/settings", icon: Settings },

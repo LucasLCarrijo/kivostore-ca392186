@@ -183,6 +183,18 @@ const App = () => (
                 } 
               />
               
+              {/* Affiliates — creator dashboard */}
+              <Route 
+                path="/affiliates" 
+                element={
+                  <ProtectedRoute>
+                    <DashboardLayout>
+                      <Affiliates />
+                    </DashboardLayout>
+                  </ProtectedRoute>
+                } 
+              />
+
               {/* Root redirect */}
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
               
@@ -197,12 +209,15 @@ const App = () => (
               <Route path="/member/login" element={<MemberLogin />} />
               <Route path="/member" element={<MemberDashboard />} />
               <Route path="/member/course/:productId" element={<MemberCourse />} />
+
+              {/* Affiliate — public pages */}
+              <Route path="/affiliate/apply/:workspaceSlug" element={<AffiliateApply />} />
+              <Route path="/affiliate/dashboard" element={<AffiliateDashboard />} />
               
               {/* Public storefront — must be before 404 */}
               <Route path="/:slug" element={<PublicStorefront />} />
               
               {/* 404 - Must be last */}
-              <Route path="*" element={<NotFound />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </WorkspaceProvider>
