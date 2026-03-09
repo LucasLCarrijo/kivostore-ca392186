@@ -5,3 +5,9 @@ verify_jwt = false
 
 [functions.post-purchase]
 verify_jwt = false
+
+[functions.webhook-pagarme]
+verify_jwt = false
+
+[functions.check-payment-status]
+verify_jwt = false
