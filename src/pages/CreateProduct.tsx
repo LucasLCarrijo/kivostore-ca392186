@@ -119,8 +119,8 @@ export default function CreateProduct() {
       return;
     }
 
-    const isCourseType = ["ECOURSE", "MEMBERSHIP"].includes(form.type);
-    if (isCourseType && !planInfo.canCreateCourse) {
+      const isCourseType = form.type === "COURSE";
+      if (isCourseType && !planInfo.canCreateCourse) {
       setUpgradeFeature("criar cursos");
       setUpgradeOpen(true);
       return;
