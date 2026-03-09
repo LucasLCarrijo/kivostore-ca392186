@@ -299,6 +299,50 @@ export type Database = {
           },
         ]
       }
+      disputes: {
+        Row: {
+          amount: number
+          created_at: string
+          evidence: Json | null
+          gateway_dispute_id: string | null
+          id: string
+          order_id: string
+          reason: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          amount?: number
+          created_at?: string
+          evidence?: Json | null
+          gateway_dispute_id?: string | null
+          id?: string
+          order_id: string
+          reason?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          evidence?: Json | null
+          gateway_dispute_id?: string | null
+          id?: string
+          order_id?: string
+          reason?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "disputes_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       entitlements: {
         Row: {
           customer_id: string
@@ -347,6 +391,47 @@ export type Database = {
             columns: ["product_id"]
             isOneToOne: false
             referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      gateway_accounts: {
+        Row: {
+          created_at: string
+          credentials_enc: Json | null
+          id: string
+          is_active: boolean
+          is_primary: boolean
+          provider: string
+          recipient_id: string | null
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          credentials_enc?: Json | null
+          id?: string
+          is_active?: boolean
+          is_primary?: boolean
+          provider?: string
+          recipient_id?: string | null
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          credentials_enc?: Json | null
+          id?: string
+          is_active?: boolean
+          is_primary?: boolean
+          provider?: string
+          recipient_id?: string | null
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gateway_accounts_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
             referencedColumns: ["id"]
           },
         ]
@@ -744,6 +829,138 @@ export type Database = {
           },
         ]
       }
+      payments: {
+        Row: {
+          amount: number
+          created_at: string
+          currency: string
+          failed_at: string | null
+          failure_reason: string | null
+          gateway_account_id: string | null
+          gateway_fee: number | null
+          gateway_payment_id: string | null
+          id: string
+          idempotency_key: string | null
+          installments: number
+          metadata: Json | null
+          method: string
+          net_amount: number | null
+          order_id: string
+          processed_at: string | null
+          status: string
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          amount?: number
+          created_at?: string
+          currency?: string
+          failed_at?: string | null
+          failure_reason?: string | null
+          gateway_account_id?: string | null
+          gateway_fee?: number | null
+          gateway_payment_id?: string | null
+          id?: string
+          idempotency_key?: string | null
+          installments?: number
+          metadata?: Json | null
+          method: string
+          net_amount?: number | null
+          order_id: string
+          processed_at?: string | null
+          status?: string
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          currency?: string
+          failed_at?: string | null
+          failure_reason?: string | null
+          gateway_account_id?: string | null
+          gateway_fee?: number | null
+          gateway_payment_id?: string | null
+          id?: string
+          idempotency_key?: string | null
+          installments?: number
+          metadata?: Json | null
+          method?: string
+          net_amount?: number | null
+          order_id?: string
+          processed_at?: string | null
+          status?: string
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_gateway_account_id_fkey"
+            columns: ["gateway_account_id"]
+            isOneToOne: false
+            referencedRelation: "gateway_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pix_payment_data: {
+        Row: {
+          copy_paste_code: string | null
+          created_at: string
+          expires_at: string | null
+          id: string
+          paid_at: string | null
+          payment_id: string
+          qr_code: string | null
+          qr_code_url: string | null
+          tx_id: string | null
+        }
+        Insert: {
+          copy_paste_code?: string | null
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          paid_at?: string | null
+          payment_id: string
+          qr_code?: string | null
+          qr_code_url?: string | null
+          tx_id?: string | null
+        }
+        Update: {
+          copy_paste_code?: string | null
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          paid_at?: string | null
+          payment_id?: string
+          qr_code?: string | null
+          qr_code_url?: string | null
+          tx_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pix_payment_data_payment_id_fkey"
+            columns: ["payment_id"]
+            isOneToOne: true
+            referencedRelation: "payments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       prices: {
         Row: {
           amount: number
@@ -899,6 +1116,57 @@ export type Database = {
             columns: ["workspace_id"]
             isOneToOne: false
             referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      refunds: {
+        Row: {
+          amount: number
+          created_at: string
+          gateway_refund_id: string | null
+          id: string
+          order_id: string
+          payment_id: string
+          processed_at: string | null
+          reason: string | null
+          status: string
+        }
+        Insert: {
+          amount?: number
+          created_at?: string
+          gateway_refund_id?: string | null
+          id?: string
+          order_id: string
+          payment_id: string
+          processed_at?: string | null
+          reason?: string | null
+          status?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          gateway_refund_id?: string | null
+          id?: string
+          order_id?: string
+          payment_id?: string
+          processed_at?: string | null
+          reason?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "refunds_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "refunds_payment_id_fkey"
+            columns: ["payment_id"]
+            isOneToOne: false
+            referencedRelation: "payments"
             referencedColumns: ["id"]
           },
         ]
@@ -1097,6 +1365,56 @@ export type Database = {
             columns: ["upsell_product_id"]
             isOneToOne: false
             referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      webhook_events: {
+        Row: {
+          attempts: number
+          created_at: string
+          error_message: string | null
+          event_type: string
+          external_event_id: string | null
+          id: string
+          payload: Json | null
+          processed_at: string | null
+          provider: string
+          status: string
+          workspace_id: string | null
+        }
+        Insert: {
+          attempts?: number
+          created_at?: string
+          error_message?: string | null
+          event_type: string
+          external_event_id?: string | null
+          id?: string
+          payload?: Json | null
+          processed_at?: string | null
+          provider: string
+          status?: string
+          workspace_id?: string | null
+        }
+        Update: {
+          attempts?: number
+          created_at?: string
+          error_message?: string | null
+          event_type?: string
+          external_event_id?: string | null
+          id?: string
+          payload?: Json | null
+          processed_at?: string | null
+          provider?: string
+          status?: string
+          workspace_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "webhook_events_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
             referencedColumns: ["id"]
           },
         ]
