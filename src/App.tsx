@@ -98,6 +98,15 @@ const App = () => (
               />
               
               <Route 
+                path="/products/:id/course-builder" 
+                element={
+                  <ProtectedRoute>
+                    <CourseBuilder />
+                  </ProtectedRoute>
+                } 
+              />
+              
+              <Route 
                 path="/store" 
                 element={
                   <ProtectedRoute>
