@@ -53,7 +53,39 @@ const emptyStep = (pos: number): Step => ({
   body: "",
 });
 
-export default function EmailFlows() {
+const generateEmailCopy = async (
+  stepIndex: number,
+  updateStepFn: (idx: number, field: keyof Step, value: any) => void,
+  setLoadingFn: (v: boolean) => void
+) => {
+  setLoadingFn(true);
+  try {
+    const { data, error } = await (await import("@/integrations/supabase/client")).supabase.functions.invoke("ai-generate", {
+      body: {
+        type: "email",
+        context: {
+          objective: "engajamento e conversão",
+          segment: "leads e clientes",
+          productName: "produto digital",
+          tone: "profissional e envolvente",
+        },
+      },
+    });
+    if (error) throw error;
+    if (data?.error) throw new Error(data.error);
+    const email = data.emails?.[0];
+    if (email) {
+      updateStepFn(stepIndex, "subject", email.subject);
+      updateStepFn(stepIndex, "body", email.body);
+    }
+  } catch (err: any) {
+    console.error("AI email error:", err);
+  } finally {
+    setLoadingFn(false);
+  }
+};
+
+
   const { currentWorkspace } = useWorkspace();
   const { toast } = useToast();
   const qc = useQueryClient();
