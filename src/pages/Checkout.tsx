@@ -160,6 +160,7 @@ export default function Checkout() {
       if (res.error) throw new Error(res.error.message);
       const data = res.data;
       if (data?.error) throw new Error(data.error);
+      if (data.order_id) setOrderId(data.order_id);
       setPixData({
         qr_code: data.pix_qr_code || "00020126580014br.gov.bcb.pix0136demo-pix-code",
         qr_code_url: data.pix_qr_code_url || "",
