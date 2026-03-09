@@ -460,6 +460,16 @@ export default function EmailFlows() {
                         <div className="flex items-center justify-between">
                           <span className="text-sm font-medium text-foreground">Email {i + 1}</span>
                           <div className="flex items-center gap-1">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-7 text-xs gap-1 text-primary"
+                              onClick={() => generateEmailCopy(i, updateStep, setAiLoading)}
+                              disabled={aiLoading}
+                            >
+                              {aiLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3" />}
+                              Sugerir copy
+                            </Button>
                             <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => moveStep(i, -1)} disabled={i === 0}>
                               <ChevronUp className="h-3 w-3" />
                             </Button>
