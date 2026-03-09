@@ -206,7 +206,9 @@ export default function Checkout() {
       const data = res.data;
       if (data?.error) throw new Error(data.error);
       if (data?.status === "paid" || data?.status === "authorized") {
-        setPaymentSuccess(true);
+        // Call post-purchase processing
+        await supabase.functions.invoke("post-purchase", { body: { order_id: data.order_id } });
+        navigate(`/order/success/${data.order_id}`);
       } else {
         setPaymentError(data?.message || "Pagamento recusado. Tente outro cartão.");
       }
