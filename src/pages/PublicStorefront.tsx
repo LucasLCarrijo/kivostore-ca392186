@@ -558,7 +558,7 @@ export default function PublicStorefront() {
                 src={storefront.avatar_url}
                 alt={storefront.title || "Avatar"}
                 className="w-24 h-24 rounded-full object-cover mb-4 ring-4 shadow-lg"
-                style={{ ringColor: t.primary + "30" }}
+                style={{ boxShadow: `0 0 0 4px ${t.primary}30` }}
               />
             ) : (
               <div
