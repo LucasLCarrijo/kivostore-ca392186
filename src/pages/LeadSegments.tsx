@@ -112,10 +112,10 @@ export default function LeadSegments() {
       const { data, error } = await supabase
         .from("email_segments")
         .insert({
-          workspace_id: currentWorkspace?.id,
+          workspace_id: currentWorkspace?.id as string,
           name: segment.name,
           description: segment.description,
-          filter_rules: segment.filter_rules,
+          filter_rules: segment.filter_rules as unknown as Record<string, unknown>,
           member_count: memberCount,
         })
         .select()
