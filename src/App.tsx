@@ -183,6 +183,10 @@ const App = () => (
               {/* Checkout — public */}
               <Route path="/checkout/:productSlug" element={<Checkout />} />
               
+              {/* Post-purchase — public */}
+              <Route path="/order/success/:orderId" element={<OrderSuccess />} />
+              <Route path="/upsell/:offerId" element={<Upsell />} />
+              
               {/* Public storefront — must be before 404 */}
               <Route path="/:slug" element={<PublicStorefront />} />
               
