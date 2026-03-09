@@ -30,6 +30,7 @@ interface Price {
 export default function Checkout() {
   const { productSlug } = useParams<{ productSlug: string }>();
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   const [product, setProduct] = useState<Product | null>(null);
   const [price, setPrice] = useState<Price | null>(null);
