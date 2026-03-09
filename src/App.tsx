@@ -21,6 +21,8 @@ import CourseBuilder from "./pages/CourseBuilder";
 import StorefrontEditor from "./pages/StorefrontEditor";
 import PublicStorefront from "./pages/PublicStorefront";
 import Checkout from "./pages/Checkout";
+import OrderSuccess from "./pages/OrderSuccess";
+import Upsell from "./pages/Upsell";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
