@@ -11,7 +11,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "sonner";
-import { Users, DollarSign, CreditCard, Copy, Check, X, Pause, Loader2, Link2 } from "lucide-react";
+import { Users, DollarSign, CreditCard, Copy, Check, X, Pause, Loader2, Link2, Crown } from "lucide-react";
+import { usePlanLimits } from "@/hooks/usePlanLimits";
+import { UpgradeModal } from "@/components/UpgradeModal";
 
 interface AffiliateProgram {
   id: string;
