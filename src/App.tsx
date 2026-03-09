@@ -22,6 +22,7 @@ import Products from "./pages/Products";
 import CreateProduct from "./pages/CreateProduct";
 import CourseBuilder from "./pages/CourseBuilder";
 import StorefrontEditor from "./pages/StorefrontEditor";
+import Store from "./pages/Store";
 import PublicStorefront from "./pages/PublicStorefront";
 import Checkout from "./pages/Checkout";
 import OrderSuccess from "./pages/OrderSuccess";
@@ -144,11 +145,8 @@ const App = () => (
                 path="/store" 
                 element={
                   <ProtectedRoute>
-                    <DashboardLayout>
-                      <div className="p-6">
-                        <h1 className="text-2xl font-bold">Minha Loja</h1>
-                        <p className="text-muted-foreground">Gerencie seus produtos e configurações</p>
-                      </div>
+                     <DashboardLayout>
+                      <Store />
                     </DashboardLayout>
                   </ProtectedRoute>
                 } 
