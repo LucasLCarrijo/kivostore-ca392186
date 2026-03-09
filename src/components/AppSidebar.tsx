@@ -1,4 +1,4 @@
-import { Home, DollarSign, Store, BarChart3, Heart, Settings, LogOut, Package, Users } from "lucide-react";
+import { Home, DollarSign, Store, BarChart3, Heart, Settings, LogOut, Package, Users, UserCheck } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
 import {
@@ -22,6 +22,7 @@ const navigationItems = [
   { title: "Home", url: "/dashboard", icon: Home },
   { title: "Produtos", url: "/products", icon: Package },
   { title: "Minha Loja", url: "/store", icon: Store },
+  { title: "Leads", url: "/leads", icon: UserCheck },
   { title: "Renda", url: "/earnings", icon: DollarSign },
   { title: "Afiliados", url: "/affiliates", icon: Users },
   { title: "Analytics", url: "/analytics", icon: BarChart3 },
