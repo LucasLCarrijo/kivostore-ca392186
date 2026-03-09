@@ -17,6 +17,7 @@ import VerifyEmail from "./pages/VerifyEmail";
 import Income from "./pages/Income";
 import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
+import Customers from "./pages/Customers";
 import Products from "./pages/Products";
 import CreateProduct from "./pages/CreateProduct";
 import CourseBuilder from "./pages/CourseBuilder";
