@@ -379,8 +379,17 @@ export default function MemberCourse() {
                 <Award className="w-10 h-10 text-green-600 mx-auto mb-2" />
                 <h3 className="text-lg font-bold text-green-800">Parabéns! 🎉</h3>
                 <p className="text-sm text-green-700 mt-1">Você completou todas as aulas deste curso!</p>
-                <Button className="mt-3 bg-[#6C3CE1] hover:bg-[#5a32bd]">
-                  <Award className="w-4 h-4" /> Gerar Certificado
+                <Button
+                  className="mt-3 bg-[#6C3CE1] hover:bg-[#5a32bd] gap-2"
+                  disabled={generatingCert}
+                  onClick={handleGenerateCertificate}
+                >
+                  {generatingCert ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Download className="w-4 h-4" />
+                  )}
+                  Download Certificado
                 </Button>
               </div>
             )}
