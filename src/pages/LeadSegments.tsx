@@ -139,14 +139,15 @@ export default function LeadSegments() {
   const updateSegment = useMutation({
     mutationFn: async ({ id, segment }: { id: string; segment: SegmentForm }) => {
       const memberCount = countMatchingLeads(segment.filter_rules);
+      const updateData: any = {
+        name: segment.name,
+        description: segment.description,
+        filter_rules: segment.filter_rules,
+        member_count: memberCount,
+      };
       const { error } = await supabase
         .from("email_segments")
-        .update({
-          name: segment.name,
-          description: segment.description,
-          filter_rules: segment.filter_rules as unknown as Record<string, unknown>,
-          member_count: memberCount,
-        })
+        .update(updateData)
         .eq("id", id);
 
       if (error) throw error;
