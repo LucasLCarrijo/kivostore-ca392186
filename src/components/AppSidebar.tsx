@@ -20,6 +20,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const navigationItems = [
   { title: "Home", url: "/dashboard", icon: Home },
+  { title: "Produtos", url: "/products", icon: Package },
   { title: "Minha Loja", url: "/store", icon: Store },
   { title: "Renda", url: "/earnings", icon: DollarSign },
   { title: "Analytics", url: "/analytics", icon: BarChart3 },
