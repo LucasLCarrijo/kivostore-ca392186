@@ -109,15 +109,16 @@ export default function LeadSegments() {
   const createSegment = useMutation({
     mutationFn: async (segment: SegmentForm) => {
       const memberCount = countMatchingLeads(segment.filter_rules);
+      const insertData: any = {
+        workspace_id: currentWorkspace?.id,
+        name: segment.name,
+        description: segment.description,
+        filter_rules: segment.filter_rules,
+        member_count: memberCount,
+      };
       const { data, error } = await supabase
         .from("email_segments")
-        .insert({
-          workspace_id: currentWorkspace?.id as string,
-          name: segment.name,
-          description: segment.description,
-          filter_rules: segment.filter_rules as unknown as Record<string, unknown>,
-          member_count: memberCount,
-        })
+        .insert(insertData)
         .select()
         .single();
 
