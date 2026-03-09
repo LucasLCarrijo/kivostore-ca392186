@@ -183,6 +183,9 @@ export default function Dashboard() {
         <p className="text-muted-foreground capitalize">{dateString}</p>
       </div>
 
+      {/* Usage Alerts */}
+      <UsageAlerts />
+
       {/* Onboarding Checklist */}
       <OnboardingChecklist />
 

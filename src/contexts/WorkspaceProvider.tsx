@@ -9,6 +9,7 @@ export interface Workspace {
   logo_url: string | null;
   currency: string;
   timezone: string;
+  plan: string;
   created_at: string;
   updated_at: string;
 }
