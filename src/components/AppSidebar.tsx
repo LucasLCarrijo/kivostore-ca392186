@@ -1,4 +1,4 @@
-import { Home, DollarSign, Store, BarChart3, Heart, Settings, LogOut } from "lucide-react";
+import { Home, DollarSign, Store, BarChart3, Heart, Settings, LogOut, Package } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
 import {
@@ -20,6 +20,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const navigationItems = [
   { title: "Home", url: "/dashboard", icon: Home },
+  { title: "Produtos", url: "/products", icon: Package },
   { title: "Minha Loja", url: "/store", icon: Store },
   { title: "Renda", url: "/earnings", icon: DollarSign },
   { title: "Analytics", url: "/analytics", icon: BarChart3 },

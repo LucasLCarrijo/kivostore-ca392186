@@ -15,6 +15,8 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
+import Products from "./pages/Products";
+import CreateProduct from "./pages/CreateProduct";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -66,6 +68,30 @@ const App = () => (
                         <h1 className="text-2xl font-bold">Renda</h1>
                         <p className="text-muted-foreground">Acompanhe suas vendas e ganhos</p>
                       </div>
+                    </DashboardLayout>
+                  </ProtectedRoute>
+                } 
+              />
+              
+              
+              {/* Products routes */}
+              <Route 
+                path="/products" 
+                element={
+                  <ProtectedRoute>
+                    <DashboardLayout>
+                      <Products />
+                    </DashboardLayout>
+                  </ProtectedRoute>
+                } 
+              />
+              
+              <Route 
+                path="/products/new" 
+                element={
+                  <ProtectedRoute>
+                    <DashboardLayout>
+                      <CreateProduct />
                     </DashboardLayout>
                   </ProtectedRoute>
                 } 
