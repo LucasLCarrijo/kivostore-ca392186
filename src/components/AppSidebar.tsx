@@ -26,6 +26,7 @@ const navigationItems = [
   { title: "Leads", url: "/leads", icon: UserCheck },
   { title: "Email Flows", url: "/email-flows", icon: Mail },
   { title: "Agendamentos", url: "/appointments", icon: CalendarCheck },
+  { title: "Circles", url: "/circle", icon: MessagesSquare },
   { title: "Renda", url: "/earnings", icon: DollarSign },
   { title: "Afiliados", url: "/affiliates", icon: Users },
   { title: "Analytics", url: "/analytics", icon: BarChart3 },
