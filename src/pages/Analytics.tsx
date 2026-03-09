@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
-  DollarSign, Eye, UserCheck, TrendingUp, MousePointerClick, ShoppingCart, CreditCard,
+  DollarSign, Eye, UserCheck, TrendingUp, MousePointerClick, ShoppingCart, CreditCard, RefreshCw,
 } from "lucide-react";
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell,
