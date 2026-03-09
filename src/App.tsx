@@ -2,8 +2,19 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider } from "@/contexts/AuthProvider";
+import { WorkspaceProvider } from "@/contexts/WorkspaceProvider";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import { DashboardLayout } from "@/components/DashboardLayout";
+
+// Pages
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
+import Onboarding from "./pages/Onboarding";
+import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -14,11 +25,102 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <AuthProvider>
+          <WorkspaceProvider>
+            <Routes>
+              {/* Public routes */}
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
+              
+              {/* Onboarding (protected but no workspace required) */}
+              <Route 
+                path="/onboarding" 
+                element={
+                  <ProtectedRoute requireWorkspace={false}>
+                    <Onboarding />
+                  </ProtectedRoute>
+                } 
+              />
+              
+              {/* Dashboard routes (protected with workspace required) */}
+              <Route 
+                path="/dashboard" 
+                element={
+                  <ProtectedRoute>
+                    <DashboardLayout>
+                      <Dashboard />
+                    </DashboardLayout>
+                  </ProtectedRoute>
+                } 
+              />
+              
+              {/* Placeholder routes for sidebar navigation */}
+              <Route 
+                path="/earnings" 
+                element={
+                  <ProtectedRoute>
+                    <DashboardLayout>
+                      <div className="p-6">
+                        <h1 className="text-2xl font-bold">Renda</h1>
+                        <p className="text-muted-foreground">Acompanhe suas vendas e ganhos</p>
+                      </div>
+                    </DashboardLayout>
+                  </ProtectedRoute>
+                } 
+              />
+              
+              <Route 
+                path="/store" 
+                element={
+                  <ProtectedRoute>
+                    <DashboardLayout>
+                      <div className="p-6">
+                        <h1 className="text-2xl font-bold">Minha Loja</h1>
+                        <p className="text-muted-foreground">Gerencie seus produtos e configurações</p>
+                      </div>
+                    </DashboardLayout>
+                  </ProtectedRoute>
+                } 
+              />
+              
+              <Route 
+                path="/analytics" 
+                element={
+                  <ProtectedRoute>
+                    <DashboardLayout>
+                      <div className="p-6">
+                        <h1 className="text-2xl font-bold">Analytics</h1>
+                        <p className="text-muted-foreground">Análise detalhada do seu negócio</p>
+                      </div>
+                    </DashboardLayout>
+                  </ProtectedRoute>
+                } 
+              />
+              
+              <Route 
+                path="/settings" 
+                element={
+                  <ProtectedRoute>
+                    <DashboardLayout>
+                      <div className="p-6">
+                        <h1 className="text-2xl font-bold">Configurações</h1>
+                        <p className="text-muted-foreground">Configurações da conta e da loja</p>
+                      </div>
+                    </DashboardLayout>
+                  </ProtectedRoute>
+                } 
+              />
+              
+              {/* Root redirect */}
+              <Route path="/" element={<Navigate to="/dashboard" replace />} />
+              
+              {/* 404 - Must be last */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </WorkspaceProvider>
+        </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
