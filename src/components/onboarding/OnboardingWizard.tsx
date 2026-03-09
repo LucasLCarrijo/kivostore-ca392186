@@ -20,7 +20,7 @@ export interface OnboardingData {
   };
   plan: 'free' | 'creator' | 'creator-pro';
   product?: {
-    type: 'DIGITAL_PRODUCT' | 'LEAD_MAGNET' | 'LINK';
+    type: 'DIGITAL' | 'LEAD_MAGNET';
     name: string;
     price: number;
     thumbnail_url?: string;
