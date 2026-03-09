@@ -23,6 +23,9 @@ import PublicStorefront from "./pages/PublicStorefront";
 import Checkout from "./pages/Checkout";
 import OrderSuccess from "./pages/OrderSuccess";
 import Upsell from "./pages/Upsell";
+import MemberLogin from "./pages/MemberLogin";
+import MemberDashboard from "./pages/MemberDashboard";
+import MemberCourse from "./pages/MemberCourse";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
