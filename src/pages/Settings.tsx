@@ -1,0 +1,56 @@
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useSearchParams } from "react-router-dom";
+import { SettingsProfile } from "@/components/settings/SettingsProfile";
+import { SettingsIntegrations } from "@/components/settings/SettingsIntegrations";
+import { SettingsBilling } from "@/components/settings/SettingsBilling";
+import { SettingsPayments } from "@/components/settings/SettingsPayments";
+import { SettingsNotifications } from "@/components/settings/SettingsNotifications";
+import { SettingsSecurity } from "@/components/settings/SettingsSecurity";
+
+export default function Settings() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab = searchParams.get("tab") || "profile";
+
+  return (
+    <div className="p-4 md:p-6 max-w-5xl mx-auto space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold text-foreground">Configurações</h1>
+        <p className="text-sm text-muted-foreground">Gerencie sua conta e preferências</p>
+      </div>
+
+      <Tabs
+        value={activeTab}
+        onValueChange={(v) => setSearchParams({ tab: v })}
+        className="w-full"
+      >
+        <TabsList className="w-full justify-start overflow-x-auto bg-muted/50 h-auto flex-wrap">
+          <TabsTrigger value="profile">Perfil</TabsTrigger>
+          <TabsTrigger value="integrations">Integrações</TabsTrigger>
+          <TabsTrigger value="billing">Billing</TabsTrigger>
+          <TabsTrigger value="payments">Pagamentos</TabsTrigger>
+          <TabsTrigger value="notifications">Notificações</TabsTrigger>
+          <TabsTrigger value="security">Segurança</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="profile" className="mt-6">
+          <SettingsProfile />
+        </TabsContent>
+        <TabsContent value="integrations" className="mt-6">
+          <SettingsIntegrations />
+        </TabsContent>
+        <TabsContent value="billing" className="mt-6">
+          <SettingsBilling />
+        </TabsContent>
+        <TabsContent value="payments" className="mt-6">
+          <SettingsPayments />
+        </TabsContent>
+        <TabsContent value="notifications" className="mt-6">
+          <SettingsNotifications />
+        </TabsContent>
+        <TabsContent value="security" className="mt-6">
+          <SettingsSecurity />
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+}
