@@ -46,7 +46,7 @@ export function AppSidebar() {
         </SidebarGroup>
 
         {/* Navigation */}
-        <SidebarGroup open={isExpanded} onOpenChange={() => {}}>
+        <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
               {navigationItems.map((item) => (
