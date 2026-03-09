@@ -80,7 +80,7 @@ export default function Products() {
         .order("created_at", { ascending: false });
 
       if (statusFilter !== "ALL") {
-        query = query.eq("status", statusFilter);
+        query = query.eq("status", statusFilter as ProductStatus);
       }
 
       const { data, error } = await query;
