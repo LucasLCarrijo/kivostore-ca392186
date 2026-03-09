@@ -57,6 +57,8 @@ const App = () => (
               <Route path="/signup" element={<Signup />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/reset-password" element={<ResetPassword />} />
+              <Route path="/verify-email" element={<VerifyEmail />} />
+              <Route path="/resend-verification" element={<Navigate to="/verify-email" replace />} />
               
               {/* Onboarding (protected but no workspace required) */}
               <Route 
