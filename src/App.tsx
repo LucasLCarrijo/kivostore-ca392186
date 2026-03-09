@@ -252,6 +252,18 @@ const App = () => (
                 } 
               />
 
+              {/* Appointments */}
+              <Route 
+                path="/appointments" 
+                element={
+                  <ProtectedRoute>
+                    <DashboardLayout>
+                      <Appointments />
+                    </DashboardLayout>
+                  </ProtectedRoute>
+                } 
+              />
+
               {/* Root redirect */}
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
               
