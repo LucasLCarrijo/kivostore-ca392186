@@ -207,6 +207,7 @@ function LeadFormBlock({
 export default function PublicStorefront() {
   const { slug } = useParams<{ slug: string }>();
   const [searchParams] = useSearchParams();
+  useAffiliateTracking();
 
   const [storefront, setStorefront] = useState<StorefrontRow | null>(null);
   const [theme, setTheme] = useState<ThemeRow | null>(null);
