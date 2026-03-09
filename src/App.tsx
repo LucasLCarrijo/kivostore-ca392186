@@ -45,6 +45,16 @@ import Appointments from "./pages/Appointments";
 import BookAppointment from "./pages/BookAppointment";
 import NotFound from "./pages/NotFound";
 
+// Circle pages
+import CircleLayout from "./components/circle/CircleLayout";
+import CircleDashboard from "./pages/circle/CircleDashboard";
+import CircleFeed from "./pages/circle/CircleFeed";
+import CircleSpaces from "./pages/circle/CircleSpaces";
+import CircleMembers from "./pages/circle/CircleMembers";
+import CircleLeaderboard from "./pages/circle/CircleLeaderboard";
+import CircleEvents from "./pages/circle/CircleEvents";
+import CircleAdmin from "./pages/circle/CircleAdmin";
+
 const queryClient = new QueryClient();
 
 const App = () => (
