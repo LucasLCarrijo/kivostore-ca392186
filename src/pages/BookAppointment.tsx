@@ -39,7 +39,7 @@ export default function BookAppointment() {
         .select("id, name, workspace_id, slug")
         .eq("slug", productSlug!)
         .eq("type", "SERVICE")
-        .eq("status", "ACTIVE")
+        .eq("status", "PUBLISHED")
         .maybeSingle();
       if (error) throw error;
       return data;
