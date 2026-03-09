@@ -150,10 +150,7 @@ const App = () => (
                 element={
                   <ProtectedRoute>
                     <DashboardLayout>
-                      <div className="p-6">
-                        <h1 className="text-2xl font-bold">Analytics</h1>
-                        <p className="text-muted-foreground">Análise detalhada do seu negócio</p>
-                      </div>
+                      <Analytics />
                     </DashboardLayout>
                   </ProtectedRoute>
                 } 
