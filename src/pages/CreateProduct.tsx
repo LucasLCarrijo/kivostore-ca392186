@@ -130,14 +130,28 @@ export default function CreateProduct() {
 
       // Create price
       if (product) {
+        const isMembership = form.type === "MEMBERSHIP";
+        const priceType = isMembership ? "RECURRING" : "ONE_TIME";
+
         const { error: priceError } = await supabase.from("prices").insert({
           product_id: product.id,
           amount: form.isFree ? 0 : form.price,
           compare_at_amount: form.compareAtPrice,
           pix_discount_percent: form.pixDiscount,
           max_installments: form.maxInstallments,
+          type: priceType,
         });
         if (priceError) console.error("Price error:", priceError);
+
+        // Create subscription plan for memberships
+        if (isMembership) {
+          const { error: planError } = await supabase.from("subscription_plans").insert({
+            product_id: product.id,
+            billing_interval: form.billingInterval,
+            trial_days: form.trialDays,
+          });
+          if (planError) console.error("Plan error:", planError);
+        }
 
         // Save gallery
         if (form.galleryUrls.length > 0) {
