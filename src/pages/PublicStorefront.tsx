@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams, useSearchParams, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { useAffiliateTracking } from "@/hooks/useAffiliateTracking";
 import { formatCurrency } from "@/lib/utils";
 import {
   Instagram,
