@@ -220,7 +220,7 @@ export default function Products() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {products.map((product: any, index: number) => {
-            const typeInfo = TYPE_LABELS[product.type] || TYPE_LABELS.DIGITAL_PRODUCT;
+            const typeInfo = TYPE_LABELS[product.type] || TYPE_LABELS.DIGITAL;
             const TypeIcon = typeInfo.icon;
             const price = getDefaultPrice(product);
             const colorClass = PLACEHOLDER_COLORS[index % PLACEHOLDER_COLORS.length];

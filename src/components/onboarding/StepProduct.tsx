@@ -3,13 +3,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
-import { Upload, Package, FileText, Link2 } from "lucide-react";
+import { Upload, Package, FileText } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
 interface StepProductProps {
   data?: {
-    type: 'DIGITAL_PRODUCT' | 'LEAD_MAGNET' | 'LINK';
+    type: 'DIGITAL' | 'LEAD_MAGNET';
     name: string;
     price: number;
     thumbnail_url?: string;
@@ -21,7 +21,7 @@ interface StepProductProps {
 
 const PRODUCT_TYPES = [
   {
-    id: 'DIGITAL_PRODUCT' as const,
+    id: 'DIGITAL' as const,
     label: 'Produto Digital',
     desc: 'eBook, curso, template...',
     icon: Package,
@@ -32,18 +32,12 @@ const PRODUCT_TYPES = [
     desc: 'Conteúdo gratuito para captar leads',
     icon: FileText,
   },
-  {
-    id: 'LINK' as const,
-    label: 'Link',
-    desc: 'Redirecionamento para outro recurso',
-    icon: Link2,
-  },
 ];
 
 export function StepProduct({ data, onUpdate, onNext, workspaceId }: StepProductProps) {
   const [step, setStep] = useState<'type' | 'details'>('type');
-  const [productType, setProductType] = useState<'DIGITAL_PRODUCT' | 'LEAD_MAGNET' | 'LINK'>(
-    data?.type || 'DIGITAL_PRODUCT'
+  const [productType, setProductType] = useState<'DIGITAL' | 'LEAD_MAGNET'>(
+    data?.type || 'DIGITAL'
   );
   const [name, setName] = useState(data?.name || '');
   const [price, setPrice] = useState(data?.price?.toString() || '');

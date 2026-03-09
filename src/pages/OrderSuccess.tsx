@@ -77,7 +77,7 @@ export default function OrderSuccess() {
           }
 
           // Get download URL for digital products
-          if (prod.type === "DIGITAL_PRODUCT") {
+          if (prod.type === "DIGITAL") {
             const { data: assets } = await supabase
               .from("digital_assets")
               .select("file_url")

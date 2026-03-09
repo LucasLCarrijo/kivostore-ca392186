@@ -17,7 +17,7 @@ interface Props {
 }
 
 export function ProductPricingStep({ form, updateForm }: Props) {
-  const isMembership = form.type === "MEMBERSHIP";
+  const isMembership = form.type === "COURSE" && form.billingInterval !== undefined;
 
   const handlePriceChange = (value: string) => {
     const cleaned = value.replace(/[^\d]/g, "");

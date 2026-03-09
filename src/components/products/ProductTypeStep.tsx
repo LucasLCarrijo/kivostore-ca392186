@@ -1,4 +1,4 @@
-import { Megaphone, Package, Calendar, GraduationCap, RefreshCw, Link } from "lucide-react";
+import { Package, GraduationCap, Calendar, Truck, Megaphone } from "lucide-react";
 import type { ProductFormData } from "@/pages/CreateProduct";
 import type { Database } from "@/integrations/supabase/types";
 
@@ -22,34 +22,28 @@ const PRODUCT_TYPES: {
     subtitle: "Capture leads com um lead magnet",
   },
   {
-    type: "DIGITAL_PRODUCT",
+    type: "DIGITAL",
     icon: Package,
     title: "Produto Digital",
-    subtitle: "PDFs, Guias, Templates, eBooks",
+    subtitle: "PDFs, Guias, Templates, eBooks, Links",
   },
   {
-    type: "COACHING_CALL",
-    icon: Calendar,
-    title: "Coaching Call",
-    subtitle: "Consultorias e calls pagas",
-  },
-  {
-    type: "ECOURSE",
+    type: "COURSE",
     icon: GraduationCap,
-    title: "eCourse",
-    subtitle: "Crie e venda seu curso",
+    title: "Curso Online",
+    subtitle: "Crie e venda cursos com área de membros",
   },
   {
-    type: "MEMBERSHIP",
-    icon: RefreshCw,
-    title: "Membership",
-    subtitle: "Cobranças recorrentes",
+    type: "SERVICE",
+    icon: Calendar,
+    title: "Serviço",
+    subtitle: "Consultorias, coaching calls, mentorias",
   },
   {
-    type: "LINK",
-    icon: Link,
-    title: "URL/Media",
-    subtitle: "Link para site, YouTube, Spotify",
+    type: "PHYSICAL",
+    icon: Truck,
+    title: "Produto Físico",
+    subtitle: "Produtos com entrega física",
   },
 ];
 

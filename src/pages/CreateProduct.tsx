@@ -150,7 +150,7 @@ export default function CreateProduct() {
 
       // Create price
       if (product) {
-        const isMembership = form.type === "MEMBERSHIP";
+        const isMembership = form.type === "COURSE" && form.billingInterval !== undefined && form.price > 0;
         const priceType = isMembership ? "RECURRING" : "ONE_TIME";
 
         const { error: priceError } = await supabase.from("prices").insert({
