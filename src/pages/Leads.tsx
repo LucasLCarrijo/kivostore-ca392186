@@ -227,23 +227,22 @@ export default function Leads() {
 
   // Export CSV
   const exportCSV = () => {
-    const headers = ["Nome", "Email", "Telefone", "Source", "Status", "Tags", "Data"];
+    const headers = ["Nome", "Email", "WhatsApp", "Tags", "Data"];
     const rows = filteredLeads.map((lead) => [
-      lead.name || "",
-      lead.email,
-      lead.phone || "",
-      lead.source || "",
-      lead.status,
-      (lead.tags || []).join("; "),
-      format(new Date(lead.created_at), "dd/MM/yyyy HH:mm"),
+      `"${(lead.name || "").replace(/"/g, '""')}"`,
+      `"${lead.email}"`,
+      `"${lead.phone || ""}"`,
+      `"${(lead.tags || []).join("; ")}"`,
+      `"${format(new Date(lead.created_at), "dd/MM/yyyy HH:mm")}"`,
     ]);
 
-    const csv = [headers, ...rows].map((row) => row.join(",")).join("\n");
+    const bom = "\uFEFF";
+    const csv = bom + [headers.map(h => `"${h}"`), ...rows].map((row) => row.join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `leads-${format(new Date(), "yyyy-MM-dd")}.csv`;
+    link.download = `leads_export_${format(new Date(), "yyyy-MM-dd")}.csv`;
     link.click();
     URL.revokeObjectURL(url);
     toast.success("CSV exportado!");
