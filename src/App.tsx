@@ -64,10 +64,11 @@ const App = () => (
               <Route 
                 path="/onboarding" 
                 element={
-                  <ProtectedRoute requireWorkspace={false}>
+                  <ProtectedRoute requireWorkspace={false} requireEmailVerification={false}>
                     <Onboarding />
                   </ProtectedRoute>
                 } 
+              />
               />
               
               {/* Dashboard routes (protected with workspace required) */}
