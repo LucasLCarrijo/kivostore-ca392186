@@ -45,6 +45,16 @@ import Appointments from "./pages/Appointments";
 import BookAppointment from "./pages/BookAppointment";
 import NotFound from "./pages/NotFound";
 
+// Circle pages
+import CircleLayout from "./components/circle/CircleLayout";
+import CircleDashboard from "./pages/circle/CircleDashboard";
+import CircleFeed from "./pages/circle/CircleFeed";
+import CircleSpaces from "./pages/circle/CircleSpaces";
+import CircleMembers from "./pages/circle/CircleMembers";
+import CircleLeaderboard from "./pages/circle/CircleLeaderboard";
+import CircleEvents from "./pages/circle/CircleEvents";
+import CircleAdmin from "./pages/circle/CircleAdmin";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -261,6 +271,17 @@ const App = () => (
                   </ProtectedRoute>
                 } 
               />
+
+              {/* Circle routes */}
+              <Route path="/circle" element={<ProtectedRoute><CircleLayout><CircleDashboard /></CircleLayout></ProtectedRoute>} />
+              <Route path="/circle/feed" element={<ProtectedRoute><CircleLayout><CircleFeed /></CircleLayout></ProtectedRoute>} />
+              <Route path="/circle/spaces" element={<ProtectedRoute><CircleLayout><CircleSpaces /></CircleLayout></ProtectedRoute>} />
+              <Route path="/circle/spaces/:slug" element={<ProtectedRoute><CircleLayout><CircleFeed /></CircleLayout></ProtectedRoute>} />
+              <Route path="/circle/members" element={<ProtectedRoute><CircleLayout><CircleMembers /></CircleLayout></ProtectedRoute>} />
+              <Route path="/circle/leaderboard" element={<ProtectedRoute><CircleLayout><CircleLeaderboard /></CircleLayout></ProtectedRoute>} />
+              <Route path="/circle/events" element={<ProtectedRoute><CircleLayout><CircleEvents /></CircleLayout></ProtectedRoute>} />
+              <Route path="/circle/classroom" element={<ProtectedRoute><CircleLayout><CircleDashboard /></CircleLayout></ProtectedRoute>} />
+              <Route path="/circle/admin" element={<ProtectedRoute><CircleLayout><CircleAdmin /></CircleLayout></ProtectedRoute>} />
 
               {/* Root redirect */}
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
