@@ -182,7 +182,7 @@ const App = () => (
                   </ProtectedRoute>
                 } 
               />
-              />
+              
               
               <Route 
                 path="/settings" 
