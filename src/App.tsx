@@ -13,6 +13,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import Income from "./pages/Income";
 import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
 import Products from "./pages/Products";
@@ -75,16 +76,12 @@ const App = () => (
                 } 
               />
               
-              {/* Placeholder routes for sidebar navigation */}
               <Route 
                 path="/earnings" 
                 element={
                   <ProtectedRoute>
                     <DashboardLayout>
-                      <div className="p-6">
-                        <h1 className="text-2xl font-bold">Renda</h1>
-                        <p className="text-muted-foreground">Acompanhe suas vendas e ganhos</p>
-                      </div>
+                      <Income />
                     </DashboardLayout>
                   </ProtectedRoute>
                 } 
