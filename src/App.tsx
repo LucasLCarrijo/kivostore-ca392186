@@ -71,6 +71,30 @@ const App = () => (
                 } 
               />
               
+              
+              {/* Products routes */}
+              <Route 
+                path="/products" 
+                element={
+                  <ProtectedRoute>
+                    <DashboardLayout>
+                      <Products />
+                    </DashboardLayout>
+                  </ProtectedRoute>
+                } 
+              />
+              
+              <Route 
+                path="/products/new" 
+                element={
+                  <ProtectedRoute>
+                    <DashboardLayout>
+                      <CreateProduct />
+                    </DashboardLayout>
+                  </ProtectedRoute>
+                } 
+              />
+              
               <Route 
                 path="/store" 
                 element={
