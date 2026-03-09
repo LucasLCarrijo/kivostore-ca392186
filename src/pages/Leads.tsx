@@ -97,6 +97,9 @@ export default function Leads() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [tagFilter, setTagFilter] = useState<string | null>(null);
+  const [productFilter, setProductFilter] = useState<string | null>(null);
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
   const [editingTagsLead, setEditingTagsLead] = useState<any | null>(null);
   const [newTag, setNewTag] = useState("");
   const [viewingLead, setViewingLead] = useState<any | null>(null);
