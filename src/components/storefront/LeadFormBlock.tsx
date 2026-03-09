@@ -133,7 +133,7 @@ export function LeadFormBlock({
   if (isSuccess) {
     return (
       <div className="bg-card rounded-xl p-8 text-center">
-        <CheckCircle className="h-12 w-12 mx-auto text-green-500 mb-4" />
+        <CheckCircle className="h-12 w-12 mx-auto text-primary mb-4" />
         <h3 className="text-xl font-semibold mb-2">Obrigado!</h3>
         <p className="text-muted-foreground">{successMessage}</p>
       </div>
