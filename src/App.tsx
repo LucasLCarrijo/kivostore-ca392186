@@ -40,6 +40,8 @@ import Analytics from "./pages/Analytics";
 import Settings from "./pages/Settings";
 import Coupons from "./pages/Coupons";
 import EmailFlows from "./pages/EmailFlows";
+import Appointments from "./pages/Appointments";
+import BookAppointment from "./pages/BookAppointment";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
