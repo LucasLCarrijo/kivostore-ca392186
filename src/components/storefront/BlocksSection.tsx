@@ -232,12 +232,12 @@ export function BlocksSection({ storefrontId, blocks, onBlocksChange }: BlocksSe
       const maxPosition = Math.max(0, ...blocks.map(b => b.position));
       const { error } = await supabase
         .from('storefront_blocks')
-        .insert({
+        .insert([{
           storefront_id: storefrontId,
           type,
           position: maxPosition + 1,
-          config
-        });
+          config: config as any
+        }]);
       
       if (error) throw error;
     },
