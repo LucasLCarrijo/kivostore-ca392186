@@ -1648,6 +1648,60 @@ export type Database = {
           },
         ]
       }
+      recovery_emails: {
+        Row: {
+          checkout_session_id: string
+          clicked_at: string | null
+          converted_at: string | null
+          created_at: string
+          email_number: number
+          id: string
+          opened_at: string | null
+          scheduled_for: string
+          sent_at: string | null
+          workspace_id: string
+        }
+        Insert: {
+          checkout_session_id: string
+          clicked_at?: string | null
+          converted_at?: string | null
+          created_at?: string
+          email_number: number
+          id?: string
+          opened_at?: string | null
+          scheduled_for: string
+          sent_at?: string | null
+          workspace_id: string
+        }
+        Update: {
+          checkout_session_id?: string
+          clicked_at?: string | null
+          converted_at?: string | null
+          created_at?: string
+          email_number?: number
+          id?: string
+          opened_at?: string | null
+          scheduled_for?: string
+          sent_at?: string | null
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recovery_emails_checkout_session_id_fkey"
+            columns: ["checkout_session_id"]
+            isOneToOne: false
+            referencedRelation: "checkout_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "recovery_emails_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       refunds: {
         Row: {
           amount: number

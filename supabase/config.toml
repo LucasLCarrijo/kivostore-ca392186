@@ -11,3 +11,9 @@ verify_jwt = false
 
 [functions.check-payment-status]
 verify_jwt = false
+
+[functions.abandoned-cart-recovery]
+verify_jwt = false
+
+[functions.send-recovery-emails]
+verify_jwt = false
