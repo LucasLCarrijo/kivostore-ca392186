@@ -22,8 +22,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
-  const initializedRef = useRef(false);
-
   useEffect(() => {
     let hasRedirectedOnce = false;
 
