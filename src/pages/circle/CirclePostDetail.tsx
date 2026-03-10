@@ -164,7 +164,22 @@ export default function CirclePostDetail() {
     mutationFn: async () => {
       await supabase.from("community_posts").update({ is_pinned: !post?.is_pinned }).eq("id", postId!);
     },
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["circle-post", postId] }); toast.success(post?.is_pinned ? "Post desfixado" : "Post fixado"); },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["circle-post", postId] });
+      toast.success(post?.is_pinned ? "Post desfixado" : "Post fixado");
+      // Notify post author on pin
+      if (!post?.is_pinned && post?.author_id && member && community) {
+        createNotification({
+          communityId: community.id,
+          recipientId: post.author_id,
+          actorId: member.id,
+          type: "POST_PINNED",
+          title: `📌 Seu post foi fixado por um admin`,
+          body: post.title,
+          postId: postId!,
+        });
+      }
+    },
   });
 
   const lockPost = useMutation({
