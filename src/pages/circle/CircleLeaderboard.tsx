@@ -5,13 +5,13 @@ import { useWorkspace } from "@/contexts/WorkspaceProvider";
 import { useAuth } from "@/contexts/AuthProvider";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Trophy, TrendingUp, Flame } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getLevelInfo, LEVEL_THRESHOLDS } from "@/components/circle/CircleLayout";
 import { Progress } from "@/components/ui/progress";
 import LevelBadge from "@/components/circle/LevelBadge";
+import MemberProfileModal from "@/components/circle/MemberProfileModal";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -26,10 +26,17 @@ const ACTION_LABELS: Record<string, string> = {
   EVENT_ATTENDED: "Participou de evento",
 };
 
+const PODIUM_GRADIENTS = [
+  "bg-gradient-to-b from-yellow-50 to-transparent dark:from-yellow-950/20",
+  "bg-gradient-to-b from-gray-50 to-transparent dark:from-gray-800/20",
+  "bg-gradient-to-b from-amber-50 to-transparent dark:from-amber-950/20",
+];
+
 export default function CircleLeaderboard() {
   const { currentWorkspace } = useWorkspace();
   const { user } = useAuth();
   const [period, setPeriod] = useState<"all" | "monthly" | "weekly">("all");
+  const [profileMemberId, setProfileMemberId] = useState<string | null>(null);
 
   const { data: community } = useQuery({
     queryKey: ["community", currentWorkspace?.id],
@@ -99,7 +106,6 @@ export default function CircleLeaderboard() {
     enabled: !!community && period !== "all",
   });
 
-  // My points history
   const { data: myPointsLog } = useQuery({
     queryKey: ["circle-my-points", member?.id],
     queryFn: async () => {
@@ -116,12 +122,17 @@ export default function CircleLeaderboard() {
   const getPoints = (m: any) => period === "all" ? m.total_points : m.period_points;
 
   const medalColors = ["text-yellow-500", "text-gray-400", "text-amber-600"];
+  const medalEmoji = ["🥇", "🥈", "🥉"];
 
   const myLevel = member ? getLevelInfo(member.total_points) : null;
   const nextLevel = myLevel ? LEVEL_THRESHOLDS.find((l) => l.level === myLevel.level + 1) : null;
   const progress = myLevel && nextLevel
     ? Math.round(((member!.total_points - myLevel.min) / (nextLevel.min - myLevel.min)) * 100)
     : 100;
+
+  // Find user's position in the list
+  const myPosition = members?.findIndex((m: any) => m.id === member?.id);
+  const myRank = myPosition !== undefined && myPosition >= 0 ? myPosition + 1 : null;
 
   return (
     <div className="max-w-2xl mx-auto p-4 md:p-6 space-y-6">
@@ -164,6 +175,110 @@ export default function CircleLeaderboard() {
         </Card>
       )}
 
+      {/* My rank banner (if outside top 10) */}
+      {myRank && myRank > 10 && (
+        <Card className="p-3 bg-primary/5 border-primary/20 text-center">
+          <p className="text-sm text-foreground font-medium">
+            Você está na posição <span className="font-bold text-primary">#{myRank}</span>
+          </p>
+        </Card>
+      )}
+
+      {/* Period filter */}
+      <div className="flex gap-2 justify-center">
+        {([
+          { key: "weekly" as const, label: "Semanal" },
+          { key: "monthly" as const, label: "Mensal" },
+          { key: "all" as const, label: "Geral" },
+        ]).map((p) => (
+          <Button key={p.key} variant={period === p.key ? "default" : "outline"} size="sm" onClick={() => setPeriod(p.key)}>
+            {p.label}
+          </Button>
+        ))}
+      </div>
+
+      {/* Top 3 podium with gradients */}
+      {members && members.length >= 3 && (
+        <div className="flex items-end justify-center gap-3 pt-4">
+          {[1, 0, 2].map((idx) => {
+            const m = members[idx];
+            if (!m) return null;
+            const isFirst = idx === 0;
+            return (
+              <div
+                key={m.id}
+                onClick={() => setProfileMemberId(m.id)}
+                className={cn(
+                  "flex flex-col items-center rounded-xl p-4 cursor-pointer transition-transform hover:scale-105",
+                  PODIUM_GRADIENTS[idx],
+                  isFirst ? "order-2" : idx === 1 ? "order-1" : "order-3"
+                )}
+              >
+                <span className="text-2xl mb-1">{medalEmoji[idx]}</span>
+                <div className={cn("relative", isFirst && "mb-1")}>
+                  <Avatar className={cn(isFirst ? "h-20 w-20" : "h-14 w-14", "ring-2 ring-offset-2 ring-border")}>
+                    <AvatarImage src={m.avatar_url || ""} />
+                    <AvatarFallback className="bg-primary/10 text-primary">
+                      {(m.display_name || "U").charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                </div>
+                <p className="text-sm font-semibold mt-2 truncate max-w-[90px] text-center text-foreground">{m.display_name || "Membro"}</p>
+                <LevelBadge points={m.total_points} size="sm" />
+                <p className="text-xs font-bold text-foreground mt-1">{getPoints(m)} pts</p>
+                <p className="text-[10px] text-muted-foreground flex items-center gap-0.5">
+                  <Flame className="h-3 w-3 text-orange-500" /> {m.current_streak}d
+                </p>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Full list */}
+      <div className="space-y-2">
+        {members?.map((m: any, i: number) => {
+          const isMe = m.id === member?.id;
+          return (
+            <Card
+              key={m.id}
+              onClick={() => setProfileMemberId(m.id)}
+              className={cn(
+                "p-4 flex items-center gap-3 cursor-pointer transition-colors hover:bg-muted/50",
+                i < 3 && "border-primary/20",
+                isMe && "bg-primary/5 border-primary/30 ring-1 ring-primary/20"
+              )}
+            >
+              <span className={cn("w-8 text-center font-bold text-sm", i < 3 ? medalColors[i] : "text-muted-foreground")}>
+                {i < 3 ? medalEmoji[i] : `#${i + 1}`}
+              </span>
+              <Avatar className="h-10 w-10">
+                <AvatarImage src={m.avatar_url || ""} />
+                <AvatarFallback className="bg-primary/10 text-primary text-xs">
+                  {(m.display_name || "U").charAt(0).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-1.5">
+                  <p className={cn("font-medium text-sm truncate", isMe && "text-primary")}>{m.display_name || "Membro"}</p>
+                  {isMe && <span className="text-[10px] text-primary font-medium">(você)</span>}
+                  <LevelBadge points={m.total_points} size="sm" />
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  <Flame className="h-3 w-3 inline text-orange-500" /> {m.current_streak}d
+                </p>
+              </div>
+              <span className="font-bold text-sm text-foreground">{getPoints(m)} pts</span>
+            </Card>
+          );
+        })}
+        {(!members || members.length === 0) && (
+          <Card className="p-8 text-center">
+            <p className="text-sm text-muted-foreground">Nenhum dado para o período selecionado.</p>
+          </Card>
+        )}
+      </div>
+
       {/* Level legend */}
       <Card className="p-4">
         <p className="text-xs font-medium text-muted-foreground mb-3">Níveis de progressão</p>
@@ -185,115 +300,24 @@ export default function CircleLeaderboard() {
         <Card className="p-4">
           <p className="text-xs font-medium text-muted-foreground mb-2">Como ganhar pontos</p>
           <div className="grid grid-cols-2 gap-2 text-xs">
-            <div className="flex justify-between p-2 bg-muted/30 rounded">
-              <span className="text-muted-foreground">Criar post</span>
-              <span className="font-semibold text-foreground">+{community.points_per_post}</span>
-            </div>
-            <div className="flex justify-between p-2 bg-muted/30 rounded">
-              <span className="text-muted-foreground">Comentar</span>
-              <span className="font-semibold text-foreground">+{community.points_per_comment}</span>
-            </div>
-            <div className="flex justify-between p-2 bg-muted/30 rounded">
-              <span className="text-muted-foreground">Receber like</span>
-              <span className="font-semibold text-foreground">+{community.points_per_like_received}</span>
-            </div>
-            <div className="flex justify-between p-2 bg-muted/30 rounded">
-              <span className="text-muted-foreground">Login diário</span>
-              <span className="font-semibold text-foreground">+{community.points_per_daily_login}</span>
-            </div>
-            <div className="flex justify-between p-2 bg-muted/30 rounded">
-              <span className="text-muted-foreground">Completar curso</span>
-              <span className="font-semibold text-foreground">+{community.points_per_course_completed}</span>
-            </div>
-            <div className="flex justify-between p-2 bg-muted/30 rounded">
-              <span className="text-muted-foreground">Melhor resposta</span>
-              <span className="font-semibold text-foreground">+5</span>
-            </div>
-            <div className="flex justify-between p-2 bg-muted/30 rounded">
-              <span className="text-muted-foreground">Participar de evento</span>
-              <span className="font-semibold text-foreground">+2</span>
-            </div>
-            <div className="flex justify-between p-2 bg-muted/30 rounded">
-              <span className="text-muted-foreground">Streak 7 dias</span>
-              <span className="font-semibold text-foreground">+3</span>
-            </div>
+            {[
+              { label: "Criar post", value: community.points_per_post },
+              { label: "Comentar", value: community.points_per_comment },
+              { label: "Receber like", value: community.points_per_like_received },
+              { label: "Login diário", value: community.points_per_daily_login },
+              { label: "Completar curso", value: community.points_per_course_completed },
+              { label: "Melhor resposta", value: 5 },
+              { label: "Participar de evento", value: 2 },
+              { label: "Streak 7 dias", value: 3 },
+            ].map((item) => (
+              <div key={item.label} className="flex justify-between p-2 bg-muted/30 rounded">
+                <span className="text-muted-foreground">{item.label}</span>
+                <span className="font-semibold text-foreground">+{item.value}</span>
+              </div>
+            ))}
           </div>
         </Card>
       )}
-
-      {/* Period filter */}
-      <div className="flex gap-2 justify-center">
-        {([
-          { key: "weekly" as const, label: "Semanal" },
-          { key: "monthly" as const, label: "Mensal" },
-          { key: "all" as const, label: "Geral" },
-        ]).map((p) => (
-          <Button key={p.key} variant={period === p.key ? "default" : "outline"} size="sm" onClick={() => setPeriod(p.key)}>
-            {p.label}
-          </Button>
-        ))}
-      </div>
-
-      {/* Top 3 podium */}
-      {members && members.length >= 3 && (
-        <div className="flex items-end justify-center gap-4 pt-4">
-          {[1, 0, 2].map((idx) => {
-            const m = members[idx];
-            if (!m) return null;
-            const isFirst = idx === 0;
-            return (
-              <div key={m.id} className={cn("flex flex-col items-center", isFirst ? "order-2" : idx === 1 ? "order-1" : "order-3")}>
-                <div className={cn("relative", isFirst && "mb-2")}>
-                  <Avatar className={cn(isFirst ? "h-20 w-20" : "h-14 w-14", "ring-2 ring-offset-2 ring-border")}>
-                    <AvatarImage src={m.avatar_url || ""} />
-                    <AvatarFallback className="bg-primary/10 text-primary">
-                      {(m.display_name || "U").charAt(0).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                  <span className={cn("absolute -bottom-1 -right-1 h-6 w-6 rounded-full flex items-center justify-center text-xs font-bold bg-card border-2 border-border", medalColors[idx])}>
-                    {idx + 1}
-                  </span>
-                </div>
-                <p className="text-sm font-semibold mt-2 truncate max-w-[80px] text-center">{m.display_name || "Membro"}</p>
-                <LevelBadge points={m.total_points} size="sm" />
-                <p className="text-xs text-muted-foreground mt-0.5">{getPoints(m)} pts</p>
-              </div>
-            );
-          })}
-        </div>
-      )}
-
-      {/* Full list */}
-      <div className="space-y-2">
-        {members?.map((m: any, i: number) => (
-          <Card key={m.id} className={cn("p-4 flex items-center gap-3", i < 3 && "border-primary/20")}>
-            <span className={cn("w-8 text-center font-bold text-sm", i < 3 ? medalColors[i] : "text-muted-foreground")}>
-              {i + 1}
-            </span>
-            <Avatar className="h-10 w-10">
-              <AvatarImage src={m.avatar_url || ""} />
-              <AvatarFallback className="bg-primary/10 text-primary text-xs">
-                {(m.display_name || "U").charAt(0).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-1.5">
-                <p className="font-medium text-sm truncate">{m.display_name || "Membro"}</p>
-                <LevelBadge points={m.total_points} size="sm" />
-              </div>
-              <p className="text-xs text-muted-foreground">
-                <Flame className="h-3 w-3 inline text-orange-500" /> {m.current_streak}d
-              </p>
-            </div>
-            <span className="font-bold text-sm text-foreground">{getPoints(m)} pts</span>
-          </Card>
-        ))}
-        {(!members || members.length === 0) && (
-          <Card className="p-8 text-center">
-            <p className="text-sm text-muted-foreground">Nenhum dado para o período selecionado.</p>
-          </Card>
-        )}
-      </div>
 
       {/* My points history */}
       {myPointsLog && myPointsLog.length > 0 && (
@@ -317,6 +341,14 @@ export default function CircleLeaderboard() {
           </div>
         </Card>
       )}
+
+      {/* Member profile modal */}
+      <MemberProfileModal
+        memberId={profileMemberId}
+        communityId={community?.id || null}
+        open={!!profileMemberId}
+        onOpenChange={(open) => !open && setProfileMemberId(null)}
+      />
     </div>
   );
 }
