@@ -22,6 +22,8 @@ import { createNotification } from "@/lib/notifications";
 
 interface CommentSectionProps {
   postId: string;
+  postTitle: string;
+  postAuthorId: string;
   postType: string;
   isLocked: boolean;
   isMuted: boolean;
