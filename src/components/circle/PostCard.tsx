@@ -36,7 +36,7 @@ function getVideoThumb(url: string | null) {
 
 export default function PostCard({ post, liked, onToggleLike, isMuted, showSpace = true }: PostCardProps) {
   const typeStyle = POST_TYPE_STYLES[post.post_type];
-  const authorLevel = getLevelInfo(post.author?.total_points || 0);
+  const videoThumb = getVideoThumb(post.video_url);
   const videoThumb = getVideoThumb(post.video_url);
 
   return (
