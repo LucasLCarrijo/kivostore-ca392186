@@ -570,14 +570,13 @@ export default function CircleLayout({ children, showRightSidebar = true }: Circ
 
           <div className="flex-1" />
 
-          <Button variant="ghost" size="icon" className="relative h-8 w-8" onClick={() => navigate("/circle/feed")}>
-            <Bell className="h-4 w-4" />
-            {(unreadCount ?? 0) > 0 && (
-              <Badge className="absolute -top-1 -right-1 h-4 w-4 flex items-center justify-center p-0 text-[9px]">
-                {unreadCount}
-              </Badge>
-            )}
-          </Button>
+          {member && community && (
+            <NotificationPanel
+              memberId={member.id}
+              communityId={community.id}
+              unreadCount={unreadCount ?? 0}
+            />
+          )}
         </header>
 
         {/* Main content area with optional right sidebar */}
