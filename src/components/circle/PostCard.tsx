@@ -33,7 +33,6 @@ function getVideoThumb(url: string | null) {
 export default function PostCard({ post, liked, onToggleLike, isMuted, showSpace = true }: PostCardProps) {
   const typeStyle = POST_TYPE_STYLES[post.post_type];
   const videoThumb = getVideoThumb(post.video_url);
-  const videoThumb = getVideoThumb(post.video_url);
 
   return (
     <Card className={cn(
