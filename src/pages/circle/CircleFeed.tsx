@@ -142,6 +142,53 @@ export default function CircleFeed() {
   const isMuted = member?.status === "MUTED";
   const isAdminMember = member?.role === "OWNER" || member?.role === "ADMIN" || member?.role === "MODERATOR";
 
+  // Space subscription
+  const { data: spaceSubscription } = useQuery({
+    queryKey: ["circle-space-sub", member?.id, currentSpaceId],
+    queryFn: async () => {
+      if (!member || !currentSpaceId) return null;
+      const { data } = await supabase
+        .from("community_space_subscriptions")
+        .select("*")
+        .eq("member_id", member.id)
+        .eq("space_id", currentSpaceId)
+        .maybeSingle();
+      return data;
+    },
+    enabled: !!member && !!currentSpaceId,
+  });
+
+  const toggleSubscription = useMutation({
+    mutationFn: async () => {
+      if (!member || !currentSpaceId) throw new Error("Missing");
+      if (spaceSubscription) {
+        // Toggle notify
+        await supabase
+          .from("community_space_subscriptions")
+          .update({ notify_new_posts: !spaceSubscription.notify_new_posts } as any)
+          .eq("member_id", member.id)
+          .eq("space_id", currentSpaceId);
+      } else {
+        // Create with notifications on
+        await supabase
+          .from("community_space_subscriptions")
+          .insert([{ member_id: member.id, space_id: currentSpaceId, notify_new_posts: true }] as any);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["circle-space-sub"] });
+      const isNowNotifying = spaceSubscription ? !spaceSubscription.notify_new_posts : true;
+      toast.success(isNowNotifying ? "Notificações ativadas" : "Notificações silenciadas");
+    },
+  });
+
+  // Pre-select space when on a space page
+  useEffect(() => {
+    if (currentSpaceId && !selectedSpace) {
+      setSelectedSpace(currentSpaceId);
+    }
+  }, [currentSpaceId, selectedSpace]);
+
   const createPost = useMutation({
     mutationFn: async () => {
       if (!community || !member || !selectedSpace || !newTitle.trim()) throw new Error("Missing data");
