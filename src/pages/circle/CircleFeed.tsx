@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,12 +11,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Heart, MessageCircle, Eye, Pin, Send, X, BarChart3 } from "lucide-react";
+import { Heart, MessageCircle, Eye, Pin, Send, X, BarChart3, Bell, BellOff, Pencil, Shield } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { getLevelInfo } from "@/components/circle/CircleLayout";
+import SpaceFormModal from "@/components/circle/SpaceFormModal";
 
 export default function CircleFeed() {
   const { currentWorkspace } = useWorkspace();
