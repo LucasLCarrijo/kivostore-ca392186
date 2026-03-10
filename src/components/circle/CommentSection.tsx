@@ -141,10 +141,20 @@ export default function CommentSection({
     mutationFn: async (commentId: string) => {
       await supabase.from("community_comments").update({ deleted_at: new Date().toISOString() }).eq("id", commentId);
     },
-    onSuccess: () => {
+    onSuccess: (_, commentId) => {
       queryClient.invalidateQueries({ queryKey: ["circle-comments", postId] });
       queryClient.invalidateQueries({ queryKey: ["circle-post", postId] });
-      toast.success("Comentário excluído");
+      toast.success("Comentário removido", {
+        action: {
+          label: "Desfazer",
+          onClick: async () => {
+            await supabase.from("community_comments").update({ deleted_at: null }).eq("id", commentId);
+            queryClient.invalidateQueries({ queryKey: ["circle-comments", postId] });
+            toast.success("Comentário restaurado!");
+          },
+        },
+        duration: 5000,
+      });
     },
   });
 
@@ -272,8 +282,8 @@ export default function CommentSection({
                           <CheckCircle className="h-3.5 w-3.5" />Melhor resposta
                         </button>
                       )}
-                      {/* More menu */}
-                      {isAdmin && (
+                      {/* More menu - show for admin OR author */}
+                      {(isAdmin || comment.author_id === member?.id) && (
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button variant="ghost" size="icon" className="h-6 w-6 ml-auto">
@@ -281,9 +291,24 @@ export default function CommentSection({
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
+                            {comment.author_id === member?.id && (
+                              <DropdownMenuItem
+                                onClick={() => {
+                                  const newBody = prompt("Editar comentário:", comment.body);
+                                  if (newBody && newBody.trim()) {
+                                    supabase.from("community_comments").update({ body: newBody.trim(), edited_at: new Date().toISOString() }).eq("id", comment.id).then(() => {
+                                      queryClient.invalidateQueries({ queryKey: ["circle-comments", postId] });
+                                      toast.success("Comentário editado");
+                                    });
+                                  }
+                                }}
+                              >
+                                ✏️ Editar
+                              </DropdownMenuItem>
+                            )}
                             <DropdownMenuItem
                               className="text-destructive"
-                              onClick={() => { if (confirm("Excluir comentário?")) deleteComment.mutate(comment.id); }}
+                              onClick={() => deleteComment.mutate(comment.id)}
                             >
                               <Trash2 className="h-3.5 w-3.5 mr-2" />Excluir
                             </DropdownMenuItem>
