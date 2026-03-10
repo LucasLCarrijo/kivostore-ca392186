@@ -36,7 +36,7 @@ interface CommentSectionProps {
 }
 
 export default function CommentSection({
-  postId, postType, isLocked, isMuted, isAdmin, isPostAuthor,
+  postId, postTitle, postAuthorId, postType, isLocked, isMuted, isAdmin, isPostAuthor,
   member, community, comments, userReactions,
 }: CommentSectionProps) {
   const queryClient = useQueryClient();
