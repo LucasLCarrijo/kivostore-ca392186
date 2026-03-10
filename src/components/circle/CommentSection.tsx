@@ -145,9 +145,26 @@ export default function CommentSection({
         await supabase.from("community_reactions").insert({ member_id: member.id, comment_id: commentId, emoji: "❤️" });
       }
     },
-    onSuccess: () => {
+    onSuccess: (_, commentId) => {
       queryClient.invalidateQueries({ queryKey: ["circle-post-reactions"] });
       queryClient.invalidateQueries({ queryKey: ["circle-comments", postId] });
+      // Notify comment author on like
+      const liked = userReactions?.commentLikes.includes(commentId);
+      if (!liked) {
+        const comment = comments?.find((c: any) => c.id === commentId);
+        if (comment && comment.author_id !== member?.id && community) {
+          createNotification({
+            communityId: community.id,
+            recipientId: comment.author_id,
+            actorId: member!.id,
+            type: "COMMENT_LIKE",
+            title: `${member?.display_name || "Alguém"} curtiu seu comentário`,
+            body: postTitle,
+            postId,
+            commentId,
+          });
+        }
+      }
     },
   });
 
