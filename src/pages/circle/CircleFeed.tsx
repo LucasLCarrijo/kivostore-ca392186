@@ -640,6 +640,16 @@ export default function CircleFeed() {
           })}
         </div>
       )}
+
+      {/* Edit Space Modal */}
+      {editingSpace && currentSpace && community && (
+        <SpaceFormModal
+          communityId={community.id}
+          spacesCount={spaces?.length || 0}
+          space={currentSpace}
+          onClose={() => setEditingSpace(false)}
+        />
+      )}
     </div>
   );
 }
