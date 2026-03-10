@@ -193,6 +193,10 @@ export default function CircleLayout({ children, showRightSidebar = true }: Circ
         toast.success("Solicitação enviada! Aguarde aprovação do admin.");
       } else {
         toast.success("Bem-vindo à comunidade!");
+        // Notify admins
+        if (community) {
+          notifyMemberJoined(community.id, user?.email?.split("@")[0] || "Novo membro", "");
+        }
       }
     },
     onError: () => toast.error("Erro ao entrar na comunidade"),
