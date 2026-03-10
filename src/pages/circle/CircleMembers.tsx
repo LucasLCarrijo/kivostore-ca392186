@@ -5,10 +5,11 @@ import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Users, Search } from "lucide-react";
+import { Users, Search, Flame } from "lucide-react";
 import { useState } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import LevelBadge from "@/components/circle/LevelBadge";
 
 export default function CircleMembers() {
   const { currentWorkspace } = useWorkspace();
