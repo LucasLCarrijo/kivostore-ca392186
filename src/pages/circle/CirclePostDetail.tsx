@@ -427,6 +427,8 @@ export default function CirclePostDetail() {
       {/* Comments Section */}
       <CommentSection
         postId={postId!}
+        postTitle={post.title}
+        postAuthorId={post.author_id}
         postType={post.post_type}
         isLocked={post.is_locked}
         isMuted={isMuted}
