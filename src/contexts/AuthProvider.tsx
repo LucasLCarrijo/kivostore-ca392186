@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, ReactNode, useRef } from "react";
+import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -22,12 +22,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
-  const initializedRef = useRef(false);
-
   useEffect(() => {
-    if (initializedRef.current) return;
-    initializedRef.current = true;
-
     let hasRedirectedOnce = false;
 
     // 1. Set up auth state listener FIRST (before getSession)
@@ -41,8 +36,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         if (event === 'SIGNED_IN' && !hasRedirectedOnce) {
           hasRedirectedOnce = true;
           const currentPath = window.location.pathname;
-          // Don't redirect if already on a known app page or public page
-          const skipRedirectPaths = ['/onboarding', '/checkout', '/order', '/upsell', '/member', '/affiliate', '/dashboard', '/products', '/earnings', '/coupons', '/store', '/analytics', '/clients', '/settings', '/affiliates', '/email-flows', '/leads', '/verify-email', '/resend-verification'];
+          const skipRedirectPaths = ['/onboarding', '/checkout', '/order', '/upsell', '/member', '/affiliate', '/dashboard', '/products', '/earnings', '/coupons', '/store', '/analytics', '/clients', '/settings', '/affiliates', '/email-flows', '/leads', '/verify-email', '/resend-verification', '/circle', '/appointments', '/customers', '/income', '/course'];
           const shouldSkip = skipRedirectPaths.some(p => currentPath.startsWith(p));
 
           if (!shouldSkip && session?.user) {
