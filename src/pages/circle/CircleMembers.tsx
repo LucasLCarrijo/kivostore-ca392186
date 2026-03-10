@@ -109,16 +109,17 @@ export default function CircleMembers() {
                   <div className="flex items-center gap-2">
                     <span className="font-medium text-sm truncate">{m.display_name || "Membro"}</span>
                     {role && <Badge variant={role.variant} className="text-[10px] h-5">{role.label}</Badge>}
+                    <LevelBadge points={m.total_points} size="sm" />
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    Nível {m.level} · {m.total_points} pts ·{" "}
+                    {m.total_points} pts ·{" "}
                     {m.last_active_at
                       ? `Ativo ${formatDistanceToNow(new Date(m.last_active_at), { addSuffix: true, locale: ptBR })}`
                       : ""}
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="text-xs text-muted-foreground">🔥 {m.current_streak}d</p>
+                  <p className="text-xs text-muted-foreground"><Flame className="h-3 w-3 inline text-orange-500" /> {m.current_streak}d</p>
                 </div>
               </Card>
             );
