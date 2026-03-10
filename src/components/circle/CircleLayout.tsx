@@ -219,6 +219,9 @@ export default function CircleLayout({ children, showRightSidebar = true }: Circ
   const isActive = (path: string) => location.pathname === path || location.pathname.startsWith(path + "/");
   const levelInfo = member ? getLevelInfo(member.total_points) : null;
 
+  // Track daily login, streak, and level-up
+  useDailyLogin(member, community);
+
   // Loading states
   if (authLoading || communityLoading || (user && memberLoading)) {
     return (
