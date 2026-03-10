@@ -108,7 +108,7 @@ export default function CircleFeed() {
 
       // Type filter
       if (filterType !== "all") {
-        query = query.eq("post_type", filterType);
+        query = query.eq("post_type", filterType as any);
       }
 
       // Sort
