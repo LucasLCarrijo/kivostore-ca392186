@@ -31,6 +31,7 @@ import { cn } from "@/lib/utils";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { toast } from "sonner";
 import CircleRightSidebar from "@/components/circle/CircleRightSidebar";
+import NotificationPanel from "@/components/circle/NotificationPanel";
 
 // Level thresholds
 export const LEVEL_THRESHOLDS = [
