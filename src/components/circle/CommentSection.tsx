@@ -17,7 +17,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { getLevelInfo } from "@/components/circle/CircleLayout";
+import LevelBadge from "@/components/circle/LevelBadge";
 
 interface CommentSectionProps {
   postId: string;
