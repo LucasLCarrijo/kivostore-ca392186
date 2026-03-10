@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useWorkspace } from "@/contexts/WorkspaceProvider";
 import { useAuth } from "@/contexts/AuthProvider";
@@ -7,10 +7,24 @@ import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Trophy } from "lucide-react";
+import { Trophy, TrendingUp, Flame } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getLevelInfo, LEVEL_THRESHOLDS } from "@/components/circle/CircleLayout";
 import { Progress } from "@/components/ui/progress";
+import LevelBadge from "@/components/circle/LevelBadge";
+import { formatDistanceToNow } from "date-fns";
+import { ptBR } from "date-fns/locale";
+
+const ACTION_LABELS: Record<string, string> = {
+  POST_CREATED: "Criou um post",
+  COMMENT_CREATED: "Comentou",
+  LIKE_RECEIVED: "Recebeu like",
+  DAILY_LOGIN: "Login diário",
+  STREAK_BONUS: "Bônus de streak",
+  ADMIN_BONUS: "Bônus admin",
+  COURSE_COMPLETED: "Completou curso",
+  EVENT_ATTENDED: "Participou de evento",
+};
 
 export default function CircleLeaderboard() {
   const { currentWorkspace } = useWorkspace();
@@ -22,10 +36,8 @@ export default function CircleLeaderboard() {
     queryFn: async () => {
       if (!currentWorkspace) return null;
       const { data } = await supabase
-        .from("communities")
-        .select("*")
-        .eq("workspace_id", currentWorkspace.id)
-        .single();
+        .from("communities").select("*")
+        .eq("workspace_id", currentWorkspace.id).single();
       return data;
     },
     enabled: !!currentWorkspace,
@@ -35,30 +47,25 @@ export default function CircleLeaderboard() {
     queryKey: ["circle-member", community?.id, user?.id],
     queryFn: async () => {
       if (!community || !user) return null;
-      const { data } = await supabase.from("community_members").select("*").eq("community_id", community.id).eq("user_id", user.id).single();
+      const { data } = await supabase.from("community_members").select("*")
+        .eq("community_id", community.id).eq("user_id", user.id).single();
       return data;
     },
     enabled: !!community && !!user,
   });
 
-  // All-time leaderboard
   const { data: allTimeMembers } = useQuery({
     queryKey: ["circle-leaderboard-alltime", community?.id],
     queryFn: async () => {
       if (!community) return [];
-      const { data } = await supabase
-        .from("community_members")
-        .select("*")
-        .eq("community_id", community.id)
-        .eq("status", "ACTIVE")
-        .order("total_points", { ascending: false })
-        .limit(50);
+      const { data } = await supabase.from("community_members").select("*")
+        .eq("community_id", community.id).eq("status", "ACTIVE")
+        .order("total_points", { ascending: false }).limit(50);
       return data || [];
     },
     enabled: !!community && period === "all",
   });
 
-  // Period leaderboard from points_log
   const { data: periodMembers } = useQuery({
     queryKey: ["circle-leaderboard-period", community?.id, period],
     queryFn: async () => {
@@ -68,36 +75,41 @@ export default function CircleLeaderboard() {
         ? new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
         : new Date(now.getFullYear(), now.getMonth(), 1);
 
-      const { data: logs } = await supabase
-        .from("community_points_log")
-        .select("member_id, points")
-        .eq("community_id", community.id)
+      const { data: logs } = await supabase.from("community_points_log")
+        .select("member_id, points").eq("community_id", community.id)
         .gte("created_at", start.toISOString());
 
       if (!logs) return [];
-
-      // Aggregate points per member
       const pointsMap = new Map<string, number>();
       logs.forEach((log: any) => {
         pointsMap.set(log.member_id, (pointsMap.get(log.member_id) || 0) + log.points);
       });
 
-      // Get member details
       const memberIds = Array.from(pointsMap.keys());
       if (memberIds.length === 0) return [];
 
-      const { data: members } = await supabase
-        .from("community_members")
-        .select("*")
-        .in("id", memberIds)
-        .eq("status", "ACTIVE");
+      const { data: members } = await supabase.from("community_members").select("*")
+        .in("id", memberIds).eq("status", "ACTIVE");
 
       return (members || [])
         .map((m: any) => ({ ...m, period_points: pointsMap.get(m.id) || 0 }))
         .sort((a: any, b: any) => b.period_points - a.period_points)
-        .slice(0, 10);
+        .slice(0, 50);
     },
     enabled: !!community && period !== "all",
+  });
+
+  // My points history
+  const { data: myPointsLog } = useQuery({
+    queryKey: ["circle-my-points", member?.id],
+    queryFn: async () => {
+      if (!member) return [];
+      const { data } = await supabase.from("community_points_log")
+        .select("*").eq("member_id", member.id)
+        .order("created_at", { ascending: false }).limit(20);
+      return data || [];
+    },
+    enabled: !!member,
   });
 
   const members = period === "all" ? allTimeMembers : periodMembers;
@@ -105,7 +117,6 @@ export default function CircleLeaderboard() {
 
   const medalColors = ["text-yellow-500", "text-gray-400", "text-amber-600"];
 
-  // Current user level progress
   const myLevel = member ? getLevelInfo(member.total_points) : null;
   const nextLevel = myLevel ? LEVEL_THRESHOLDS.find((l) => l.level === myLevel.level + 1) : null;
   const progress = myLevel && nextLevel
@@ -124,12 +135,17 @@ export default function CircleLeaderboard() {
       {member && myLevel && (
         <Card className="p-5">
           <div className="flex items-center gap-4">
-            <div className="h-14 w-14 rounded-full bg-primary/10 flex items-center justify-center text-xl font-bold text-primary">
-              {myLevel.level}
+            <div className="h-14 w-14 rounded-full bg-primary/10 flex items-center justify-center">
+              <LevelBadge points={member.total_points} size="md" />
             </div>
             <div className="flex-1">
-              <p className="font-semibold text-foreground">{myLevel.label}</p>
-              <p className="text-sm text-muted-foreground">{member.total_points} pontos · 🔥 {member.current_streak} dias</p>
+              <div className="flex items-center gap-2">
+                <p className="font-semibold text-foreground">{myLevel.label}</p>
+                <LevelBadge points={member.total_points} size="sm" />
+              </div>
+              <p className="text-sm text-muted-foreground">
+                {member.total_points} pontos · <Flame className="h-3.5 w-3.5 inline text-orange-500" /> {member.current_streak} dias · Recorde: {member.longest_streak}d
+              </p>
               {nextLevel && (
                 <div className="mt-2">
                   <div className="flex justify-between text-xs text-muted-foreground mb-1">
@@ -137,9 +153,12 @@ export default function CircleLeaderboard() {
                     <span>Nível {nextLevel.level} ({nextLevel.min} pts)</span>
                   </div>
                   <Progress value={progress} className="h-2" />
+                  <p className="text-[10px] text-muted-foreground mt-1">
+                    Faltam {nextLevel.min - member.total_points} pontos
+                  </p>
                 </div>
               )}
-              {!nextLevel && <p className="text-xs text-primary mt-1">🏆 Nível máximo atingido!</p>}
+              {!nextLevel && <p className="text-xs text-primary mt-1">👑 Nível máximo atingido!</p>}
             </div>
           </div>
         </Card>
@@ -147,29 +166,69 @@ export default function CircleLeaderboard() {
 
       {/* Level legend */}
       <Card className="p-4">
-        <p className="text-xs font-medium text-muted-foreground mb-2">Níveis</p>
-        <div className="flex flex-wrap gap-2">
+        <p className="text-xs font-medium text-muted-foreground mb-3">Níveis de progressão</p>
+        <div className="space-y-2">
           {LEVEL_THRESHOLDS.map((l) => (
-            <Badge key={l.level} variant={myLevel?.level === l.level ? "default" : "outline"} className="text-xs">
-              Lv.{l.level} {l.label} ({l.min}+ pts)
-            </Badge>
+            <div key={l.level} className={cn(
+              "flex items-center gap-3 px-3 py-2 rounded-lg text-sm",
+              myLevel?.level === l.level ? "bg-primary/10 border border-primary/20" : "bg-muted/30"
+            )}>
+              <LevelBadge points={l.min} size="sm" showLabel />
+              <span className="text-xs text-muted-foreground ml-auto">{l.min}+ pts</span>
+            </div>
           ))}
         </div>
       </Card>
 
+      {/* Points config info */}
+      {community && (
+        <Card className="p-4">
+          <p className="text-xs font-medium text-muted-foreground mb-2">Como ganhar pontos</p>
+          <div className="grid grid-cols-2 gap-2 text-xs">
+            <div className="flex justify-between p-2 bg-muted/30 rounded">
+              <span className="text-muted-foreground">Criar post</span>
+              <span className="font-semibold text-foreground">+{community.points_per_post}</span>
+            </div>
+            <div className="flex justify-between p-2 bg-muted/30 rounded">
+              <span className="text-muted-foreground">Comentar</span>
+              <span className="font-semibold text-foreground">+{community.points_per_comment}</span>
+            </div>
+            <div className="flex justify-between p-2 bg-muted/30 rounded">
+              <span className="text-muted-foreground">Receber like</span>
+              <span className="font-semibold text-foreground">+{community.points_per_like_received}</span>
+            </div>
+            <div className="flex justify-between p-2 bg-muted/30 rounded">
+              <span className="text-muted-foreground">Login diário</span>
+              <span className="font-semibold text-foreground">+{community.points_per_daily_login}</span>
+            </div>
+            <div className="flex justify-between p-2 bg-muted/30 rounded">
+              <span className="text-muted-foreground">Completar curso</span>
+              <span className="font-semibold text-foreground">+{community.points_per_course_completed}</span>
+            </div>
+            <div className="flex justify-between p-2 bg-muted/30 rounded">
+              <span className="text-muted-foreground">Melhor resposta</span>
+              <span className="font-semibold text-foreground">+5</span>
+            </div>
+            <div className="flex justify-between p-2 bg-muted/30 rounded">
+              <span className="text-muted-foreground">Participar de evento</span>
+              <span className="font-semibold text-foreground">+2</span>
+            </div>
+            <div className="flex justify-between p-2 bg-muted/30 rounded">
+              <span className="text-muted-foreground">Streak 7 dias</span>
+              <span className="font-semibold text-foreground">+3</span>
+            </div>
+          </div>
+        </Card>
+      )}
+
       {/* Period filter */}
       <div className="flex gap-2 justify-center">
-        {[
+        {([
           { key: "weekly" as const, label: "Semanal" },
           { key: "monthly" as const, label: "Mensal" },
           { key: "all" as const, label: "Geral" },
-        ].map((p) => (
-          <Button
-            key={p.key}
-            variant={period === p.key ? "default" : "outline"}
-            size="sm"
-            onClick={() => setPeriod(p.key)}
-          >
+        ]).map((p) => (
+          <Button key={p.key} variant={period === p.key ? "default" : "outline"} size="sm" onClick={() => setPeriod(p.key)}>
             {p.label}
           </Button>
         ))}
@@ -196,7 +255,8 @@ export default function CircleLeaderboard() {
                   </span>
                 </div>
                 <p className="text-sm font-semibold mt-2 truncate max-w-[80px] text-center">{m.display_name || "Membro"}</p>
-                <p className="text-xs text-muted-foreground">{getPoints(m)} pts</p>
+                <LevelBadge points={m.total_points} size="sm" />
+                <p className="text-xs text-muted-foreground mt-0.5">{getPoints(m)} pts</p>
               </div>
             );
           })}
@@ -205,33 +265,58 @@ export default function CircleLeaderboard() {
 
       {/* Full list */}
       <div className="space-y-2">
-        {members?.map((m: any, i: number) => {
-          const levelInfo = getLevelInfo(m.total_points);
-          return (
-            <Card key={m.id} className={cn("p-4 flex items-center gap-3", i < 3 && "border-primary/20")}>
-              <span className={cn("w-8 text-center font-bold text-sm", i < 3 ? medalColors[i] : "text-muted-foreground")}>
-                {i + 1}
-              </span>
-              <Avatar className="h-10 w-10">
-                <AvatarImage src={m.avatar_url || ""} />
-                <AvatarFallback className="bg-primary/10 text-primary text-xs">
-                  {(m.display_name || "U").charAt(0).toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex-1 min-w-0">
+        {members?.map((m: any, i: number) => (
+          <Card key={m.id} className={cn("p-4 flex items-center gap-3", i < 3 && "border-primary/20")}>
+            <span className={cn("w-8 text-center font-bold text-sm", i < 3 ? medalColors[i] : "text-muted-foreground")}>
+              {i + 1}
+            </span>
+            <Avatar className="h-10 w-10">
+              <AvatarImage src={m.avatar_url || ""} />
+              <AvatarFallback className="bg-primary/10 text-primary text-xs">
+                {(m.display_name || "U").charAt(0).toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-1.5">
                 <p className="font-medium text-sm truncate">{m.display_name || "Membro"}</p>
-                <p className="text-xs text-muted-foreground">{levelInfo.label} · 🔥 {m.current_streak}d</p>
+                <LevelBadge points={m.total_points} size="sm" />
               </div>
-              <span className="font-bold text-sm text-foreground">{getPoints(m)} pts</span>
-            </Card>
-          );
-        })}
+              <p className="text-xs text-muted-foreground">
+                <Flame className="h-3 w-3 inline text-orange-500" /> {m.current_streak}d
+              </p>
+            </div>
+            <span className="font-bold text-sm text-foreground">{getPoints(m)} pts</span>
+          </Card>
+        ))}
         {(!members || members.length === 0) && (
           <Card className="p-8 text-center">
             <p className="text-sm text-muted-foreground">Nenhum dado para o período selecionado.</p>
           </Card>
         )}
       </div>
+
+      {/* My points history */}
+      {myPointsLog && myPointsLog.length > 0 && (
+        <Card className="p-4 space-y-3">
+          <div className="flex items-center gap-2">
+            <TrendingUp className="h-4 w-4 text-primary" />
+            <h3 className="text-sm font-semibold text-foreground">Seu histórico de pontos</h3>
+          </div>
+          <div className="space-y-1.5">
+            {myPointsLog.map((log: any) => (
+              <div key={log.id} className="flex items-center justify-between py-1.5 px-2 rounded bg-muted/30 text-xs">
+                <div className="flex items-center gap-2">
+                  <span className="font-semibold text-green-600 dark:text-green-400">+{log.points}</span>
+                  <span className="text-muted-foreground">{log.description || ACTION_LABELS[log.action] || log.action}</span>
+                </div>
+                <span className="text-muted-foreground text-[10px]">
+                  {formatDistanceToNow(new Date(log.created_at), { addSuffix: true, locale: ptBR })}
+                </span>
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
     </div>
   );
 }
