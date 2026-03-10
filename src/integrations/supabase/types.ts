@@ -3844,6 +3844,7 @@ export type Database = {
         | "MEMBER_JOINED"
         | "LEVEL_UP"
         | "POST_PINNED"
+        | "EVENT_REMINDER"
       point_action:
         | "POST_CREATED"
         | "COMMENT_CREATED"
@@ -4008,6 +4009,7 @@ export const Constants = {
         "MEMBER_JOINED",
         "LEVEL_UP",
         "POST_PINNED",
+        "EVENT_REMINDER",
       ],
       point_action: [
         "POST_CREATED",
