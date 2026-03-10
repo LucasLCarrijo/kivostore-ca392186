@@ -195,7 +195,6 @@ export default function CirclePostDetail() {
 
   const totalPollVotes = pollVotes?.allVotes.length || 0;
   const getVoteCount = (optionId: string) => pollVotes?.allVotes.filter((v: any) => v.option_id === optionId).length || 0;
-  const authorLevel = getLevelInfo(post.author?.total_points || 0);
   const videoEmbed = getVideoEmbed(post.video_url);
 
   const POST_BORDER: Record<string, string> = {
