@@ -110,6 +110,18 @@ export default function CirclePostDetail() {
     enabled: !!member && !!postId && post?.post_type === "POLL",
   });
 
+  // Spaces for "move to" feature
+  const { data: spaces } = useQuery({
+    queryKey: ["circle-spaces", community?.id],
+    queryFn: async () => {
+      if (!community) return [];
+      const { data } = await supabase.from("community_spaces").select("id, name, emoji, slug")
+        .eq("community_id", community.id).order("position");
+      return data || [];
+    },
+    enabled: !!community,
+  });
+
   const isMuted = member?.status === "MUTED";
   const isAdmin = member?.role === "OWNER" || member?.role === "ADMIN" || member?.role === "MODERATOR";
   const isAuthor = post?.author?.user_id === user?.id;
@@ -153,7 +165,32 @@ export default function CirclePostDetail() {
     mutationFn: async () => {
       await supabase.from("community_posts").update({ deleted_at: new Date().toISOString() }).eq("id", postId!);
     },
-    onSuccess: () => { toast.success("Post excluído"); navigate("/circle/feed"); },
+    onSuccess: () => {
+      const undoTimeout = setTimeout(() => {}, 5000);
+      toast.success("Post excluído", {
+        action: {
+          label: "Desfazer",
+          onClick: async () => {
+            clearTimeout(undoTimeout);
+            await supabase.from("community_posts").update({ deleted_at: null }).eq("id", postId!);
+            queryClient.invalidateQueries({ queryKey: ["circle-post", postId] });
+            toast.success("Post restaurado!");
+          },
+        },
+        duration: 5000,
+      });
+      navigate("/circle/feed");
+    },
+  });
+
+  const movePost = useMutation({
+    mutationFn: async (spaceId: string) => {
+      await supabase.from("community_posts").update({ space_id: spaceId }).eq("id", postId!);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["circle-post", postId] });
+      toast.success("Post movido para outro espaço!");
+    },
   });
 
   const votePoll = useMutation({
