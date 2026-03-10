@@ -145,6 +145,18 @@ export default function CirclePostDetail() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["circle-post-reactions"] });
       queryClient.invalidateQueries({ queryKey: ["circle-post", postId] });
+      // Notify post author on like
+      if (!userReactions?.postLiked && post?.author_id && member && community) {
+        createNotification({
+          communityId: community.id,
+          recipientId: post.author_id,
+          actorId: member.id,
+          type: "POST_LIKE",
+          title: `${member.display_name || "Alguém"} curtiu seu post`,
+          body: post.title,
+          postId: postId!,
+        });
+      }
     },
   });
 
