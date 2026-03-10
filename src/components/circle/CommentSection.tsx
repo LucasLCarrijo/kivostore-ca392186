@@ -230,7 +230,7 @@ export default function CommentSection({
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="font-medium text-sm text-foreground">{comment.author?.display_name || "Membro"}</span>
-                      <span className="text-[10px] text-muted-foreground">Lv{commentLevel.level}</span>
+                      <LevelBadge points={comment.author?.total_points || 0} size="sm" />
                       <span className="text-xs text-muted-foreground">
                         {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true, locale: ptBR })}
                       </span>
