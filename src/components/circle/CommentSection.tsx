@@ -141,10 +141,20 @@ export default function CommentSection({
     mutationFn: async (commentId: string) => {
       await supabase.from("community_comments").update({ deleted_at: new Date().toISOString() }).eq("id", commentId);
     },
-    onSuccess: () => {
+    onSuccess: (_, commentId) => {
       queryClient.invalidateQueries({ queryKey: ["circle-comments", postId] });
       queryClient.invalidateQueries({ queryKey: ["circle-post", postId] });
-      toast.success("Comentário excluído");
+      toast.success("Comentário removido", {
+        action: {
+          label: "Desfazer",
+          onClick: async () => {
+            await supabase.from("community_comments").update({ deleted_at: null }).eq("id", commentId);
+            queryClient.invalidateQueries({ queryKey: ["circle-comments", postId] });
+            toast.success("Comentário restaurado!");
+          },
+        },
+        duration: 5000,
+      });
     },
   });
 
