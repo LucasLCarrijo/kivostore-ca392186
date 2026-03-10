@@ -396,6 +396,22 @@ export default function CirclePostDetail() {
                     <DropdownMenuItem onClick={() => lockPost.mutate()}>
                       <Lock className="h-3.5 w-3.5 mr-2" />{post.is_locked ? "Desbloquear" : "Bloquear comentários"}
                     </DropdownMenuItem>
+                    {/* Move to space */}
+                    {spaces && spaces.length > 1 && (
+                      <DropdownMenuSub>
+                        <DropdownMenuSubTrigger>
+                          <ArrowRightLeft className="h-3.5 w-3.5 mr-2" />Mover para espaço
+                        </DropdownMenuSubTrigger>
+                        <DropdownMenuSubContent>
+                          {spaces.filter((s: any) => s.id !== post.space_id).map((s: any) => (
+                            <DropdownMenuItem key={s.id} onClick={() => movePost.mutate(s.id)}>
+                              {s.emoji} {s.name}
+                            </DropdownMenuItem>
+                          ))}
+                        </DropdownMenuSubContent>
+                      </DropdownMenuSub>
+                    )}
+                    <DropdownMenuSeparator />
                   </>
                 )}
                 <DropdownMenuItem className="text-destructive" onClick={() => { if (confirm("Excluir este post?")) deletePost.mutate(); }}>
