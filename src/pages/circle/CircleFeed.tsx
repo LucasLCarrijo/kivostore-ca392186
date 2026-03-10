@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,12 +11,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Heart, MessageCircle, Eye, Pin, Send, X, BarChart3 } from "lucide-react";
+import { Heart, MessageCircle, Eye, Pin, Send, X, BarChart3, Bell, BellOff, Pencil, Shield } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { getLevelInfo } from "@/components/circle/CircleLayout";
+import SpaceFormModal from "@/components/circle/SpaceFormModal";
 
 export default function CircleFeed() {
   const { currentWorkspace } = useWorkspace();
@@ -35,6 +36,7 @@ export default function CircleFeed() {
 
   // Poll state
   const [pollOptions, setPollOptions] = useState<string[]>(["", ""]);
+  const [editingSpace, setEditingSpace] = useState(false);
 
   const { data: community } = useQuery({
     queryKey: ["community", currentWorkspace?.id],
@@ -139,6 +141,53 @@ export default function CircleFeed() {
 
   const isMuted = member?.status === "MUTED";
   const isAdminMember = member?.role === "OWNER" || member?.role === "ADMIN" || member?.role === "MODERATOR";
+
+  // Space subscription
+  const { data: spaceSubscription } = useQuery({
+    queryKey: ["circle-space-sub", member?.id, currentSpaceId],
+    queryFn: async () => {
+      if (!member || !currentSpaceId) return null;
+      const { data } = await supabase
+        .from("community_space_subscriptions")
+        .select("*")
+        .eq("member_id", member.id)
+        .eq("space_id", currentSpaceId)
+        .maybeSingle();
+      return data;
+    },
+    enabled: !!member && !!currentSpaceId,
+  });
+
+  const toggleSubscription = useMutation({
+    mutationFn: async () => {
+      if (!member || !currentSpaceId) throw new Error("Missing");
+      if (spaceSubscription) {
+        // Toggle notify
+        await supabase
+          .from("community_space_subscriptions")
+          .update({ notify_new_posts: !spaceSubscription.notify_new_posts } as any)
+          .eq("member_id", member.id)
+          .eq("space_id", currentSpaceId);
+      } else {
+        // Create with notifications on
+        await supabase
+          .from("community_space_subscriptions")
+          .insert([{ member_id: member.id, space_id: currentSpaceId, notify_new_posts: true }] as any);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["circle-space-sub"] });
+      const isNowNotifying = spaceSubscription ? !spaceSubscription.notify_new_posts : true;
+      toast.success(isNowNotifying ? "Notificações ativadas" : "Notificações silenciadas");
+    },
+  });
+
+  // Pre-select space when on a space page
+  useEffect(() => {
+    if (currentSpaceId && !selectedSpace) {
+      setSelectedSpace(currentSpaceId);
+    }
+  }, [currentSpaceId, selectedSpace]);
 
   const createPost = useMutation({
     mutationFn: async () => {
@@ -257,24 +306,60 @@ export default function CircleFeed() {
   };
 
   const currentSpace = spaceSlug ? spaces?.find((s: any) => s.slug === spaceSlug) : null;
+  const canPostInSpace = currentSpace?.only_admins_can_post ? isAdminMember : true;
 
   return (
-    <div className="max-w-2xl mx-auto p-4 md:p-6 space-y-6">
+    <div className="p-4 md:p-6 space-y-6">
       {/* Space header */}
       {currentSpace && (
         <div className="flex items-center gap-3">
-          <span className="text-2xl">{currentSpace.emoji}</span>
-          <div>
-            <h1 className="text-xl font-bold text-foreground">{currentSpace.name}</h1>
+          <span className="text-[40px] leading-none">{currentSpace.emoji}</span>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2">
+              <h1 className="text-xl font-bold text-foreground">{currentSpace.name}</h1>
+              {currentSpace.only_admins_can_post && (
+                <Badge variant="outline" className="text-[10px] text-destructive border-destructive/30">
+                  <Shield className="h-3 w-3 mr-0.5" />Admin only
+                </Badge>
+              )}
+            </div>
             {currentSpace.description && (
               <p className="text-sm text-muted-foreground">{currentSpace.description}</p>
+            )}
+            <p className="text-xs text-muted-foreground mt-0.5">{currentSpace.post_count} posts</p>
+          </div>
+          <div className="flex items-center gap-1">
+            {/* Subscription bell */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8"
+              onClick={() => toggleSubscription.mutate()}
+              title={spaceSubscription?.notify_new_posts === false ? "Ativar notificações" : "Silenciar notificações"}
+            >
+              {spaceSubscription?.notify_new_posts === false ? (
+                <BellOff className="h-4 w-4 text-muted-foreground" />
+              ) : (
+                <Bell className="h-4 w-4 text-primary" />
+              )}
+            </Button>
+            {/* Edit button for admins */}
+            {isAdminMember && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => setEditingSpace(true)}
+              >
+                <Pencil className="h-4 w-4 text-muted-foreground" />
+              </Button>
             )}
           </div>
         </div>
       )}
 
       {/* Compose */}
-      {!isMuted && (
+      {!isMuted && canPostInSpace && (
         <>
           {!showCompose ? (
             <Card
@@ -554,6 +639,16 @@ export default function CircleFeed() {
             );
           })}
         </div>
+      )}
+
+      {/* Edit Space Modal */}
+      {editingSpace && currentSpace && community && (
+        <SpaceFormModal
+          communityId={community.id}
+          spacesCount={spaces?.length || 0}
+          space={currentSpace}
+          onClose={() => setEditingSpace(false)}
+        />
       )}
     </div>
   );
