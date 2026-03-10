@@ -224,9 +224,7 @@ export default function CirclePostDetail() {
                   {post.author?.role === "OWNER" ? "Criador" : post.author?.role === "ADMIN" ? "Admin" : "Mod"}
                 </Badge>
               )}
-              <span className="text-[10px] text-muted-foreground font-medium">
-                Lv{authorLevel.level} {authorLevel.level >= 4 ? "🔥" : authorLevel.level >= 2 ? "⭐" : ""}
-              </span>
+              <LevelBadge points={post.author?.total_points || 0} size="sm" />
               <span className="text-xs text-muted-foreground">· {formatDistanceToNow(new Date(post.created_at), { addSuffix: true, locale: ptBR })}</span>
             </div>
             {post.space && (
