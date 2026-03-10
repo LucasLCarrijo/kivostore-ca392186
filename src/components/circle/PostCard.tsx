@@ -62,6 +62,11 @@ export default function PostCard({ post, liked, onToggleLike, isMuted, showSpace
                 {post.author.role === "OWNER" ? "Criador" : post.author.role === "ADMIN" ? "Admin" : "Mod"}
               </Badge>
             )}
+            <LevelBadge points={post.author?.total_points || 0} size="sm" />
+              <Badge variant="secondary" className="text-[10px] h-5">
+                {post.author.role === "OWNER" ? "Criador" : post.author.role === "ADMIN" ? "Admin" : "Mod"}
+              </Badge>
+            )}
             <span className="text-[10px] text-muted-foreground font-medium">
               Lv{authorLevel.level} {authorLevel.level >= 4 ? "🔥" : authorLevel.level >= 2 ? "⭐" : ""}
             </span>
