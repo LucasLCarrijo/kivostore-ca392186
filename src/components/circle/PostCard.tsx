@@ -6,7 +6,7 @@ import { Heart, MessageCircle, Eye, Pin, BarChart3, Play } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { getLevelInfo } from "@/components/circle/CircleLayout";
+import LevelBadge from "@/components/circle/LevelBadge";
 
 interface PostCardProps {
   post: any;
@@ -32,7 +32,6 @@ function getVideoThumb(url: string | null) {
 
 export default function PostCard({ post, liked, onToggleLike, isMuted, showSpace = true }: PostCardProps) {
   const typeStyle = POST_TYPE_STYLES[post.post_type];
-  const authorLevel = getLevelInfo(post.author?.total_points || 0);
   const videoThumb = getVideoThumb(post.video_url);
 
   return (
@@ -58,9 +57,7 @@ export default function PostCard({ post, liked, onToggleLike, isMuted, showSpace
                 {post.author.role === "OWNER" ? "Criador" : post.author.role === "ADMIN" ? "Admin" : "Mod"}
               </Badge>
             )}
-            <span className="text-[10px] text-muted-foreground font-medium">
-              Lv{authorLevel.level} {authorLevel.level >= 4 ? "🔥" : authorLevel.level >= 2 ? "⭐" : ""}
-            </span>
+            <LevelBadge points={post.author?.total_points || 0} size="sm" />
             <span className="text-xs text-muted-foreground">
               · {formatDistanceToNow(new Date(post.created_at), { addSuffix: true, locale: ptBR })}
             </span>

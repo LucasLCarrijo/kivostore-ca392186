@@ -19,7 +19,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { getLevelInfo } from "@/components/circle/CircleLayout";
+import LevelBadge from "@/components/circle/LevelBadge";
 import CommentSection from "@/components/circle/CommentSection";
 
 export default function CirclePostDetail() {
@@ -195,7 +195,6 @@ export default function CirclePostDetail() {
 
   const totalPollVotes = pollVotes?.allVotes.length || 0;
   const getVoteCount = (optionId: string) => pollVotes?.allVotes.filter((v: any) => v.option_id === optionId).length || 0;
-  const authorLevel = getLevelInfo(post.author?.total_points || 0);
   const videoEmbed = getVideoEmbed(post.video_url);
 
   const POST_BORDER: Record<string, string> = {
@@ -225,9 +224,7 @@ export default function CirclePostDetail() {
                   {post.author?.role === "OWNER" ? "Criador" : post.author?.role === "ADMIN" ? "Admin" : "Mod"}
                 </Badge>
               )}
-              <span className="text-[10px] text-muted-foreground font-medium">
-                Lv{authorLevel.level} {authorLevel.level >= 4 ? "🔥" : authorLevel.level >= 2 ? "⭐" : ""}
-              </span>
+              <LevelBadge points={post.author?.total_points || 0} size="sm" />
               <span className="text-xs text-muted-foreground">· {formatDistanceToNow(new Date(post.created_at), { addSuffix: true, locale: ptBR })}</span>
             </div>
             {post.space && (

@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useWorkspace } from "@/contexts/WorkspaceProvider";
 import { useAuth } from "@/contexts/AuthProvider";
+import { useDailyLogin } from "@/hooks/useDailyLogin";
 import {
   MessageSquare,
   Users,
@@ -217,6 +218,9 @@ export default function CircleLayout({ children, showRightSidebar = true }: Circ
   const isAdmin = member?.role === "OWNER" || member?.role === "ADMIN";
   const isActive = (path: string) => location.pathname === path || location.pathname.startsWith(path + "/");
   const levelInfo = member ? getLevelInfo(member.total_points) : null;
+
+  // Track daily login, streak, and level-up
+  useDailyLogin(member, community);
 
   // Loading states
   if (authLoading || communityLoading || (user && memberLoading)) {
