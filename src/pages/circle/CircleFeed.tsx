@@ -36,6 +36,7 @@ export default function CircleFeed() {
 
   // Poll state
   const [pollOptions, setPollOptions] = useState<string[]>(["", ""]);
+  const [editingSpace, setEditingSpace] = useState(false);
 
   const { data: community } = useQuery({
     queryKey: ["community", currentWorkspace?.id],
