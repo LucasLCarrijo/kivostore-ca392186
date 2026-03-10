@@ -18,6 +18,7 @@ import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import LevelBadge from "@/components/circle/LevelBadge";
+import { createNotification } from "@/lib/notifications";
 
 interface CommentSectionProps {
   postId: string;
