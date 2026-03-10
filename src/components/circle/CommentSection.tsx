@@ -18,9 +18,12 @@ import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import LevelBadge from "@/components/circle/LevelBadge";
+import { createNotification } from "@/lib/notifications";
 
 interface CommentSectionProps {
   postId: string;
+  postTitle: string;
+  postAuthorId: string;
   postType: string;
   isLocked: boolean;
   isMuted: boolean;
@@ -33,7 +36,7 @@ interface CommentSectionProps {
 }
 
 export default function CommentSection({
-  postId, postType, isLocked, isMuted, isAdmin, isPostAuthor,
+  postId, postTitle, postAuthorId, postType, isLocked, isMuted, isAdmin, isPostAuthor,
   member, community, comments, userReactions,
 }: CommentSectionProps) {
   const queryClient = useQueryClient();
@@ -88,7 +91,7 @@ export default function CommentSection({
 
       return comment;
     },
-    onSuccess: () => {
+    onSuccess: (comment, { parentId }) => {
       queryClient.invalidateQueries({ queryKey: ["circle-comments", postId] });
       queryClient.invalidateQueries({ queryKey: ["circle-post", postId] });
       queryClient.invalidateQueries({ queryKey: ["circle-member"] });
@@ -96,6 +99,38 @@ export default function CommentSection({
       setReplyTo(null);
       setReplyBody("");
       toast.success(`Comentário publicado! +${community?.points_per_comment || 1} pt`);
+
+      // Create notifications
+      if (parentId) {
+        // Reply to a comment → notify parent comment author
+        const parentComment = comments?.find((c: any) => c.id === parentId);
+        if (parentComment && parentComment.author_id !== member.id) {
+          createNotification({
+            communityId: community.id,
+            recipientId: parentComment.author_id,
+            actorId: member.id,
+            type: "COMMENT_REPLY",
+            title: `${member.display_name || "Alguém"} respondeu ao seu comentário`,
+            body: postTitle,
+            postId,
+            commentId: comment?.id,
+          });
+        }
+      } else {
+        // Top-level comment → notify post author
+        if (postAuthorId !== member.id) {
+          createNotification({
+            communityId: community.id,
+            recipientId: postAuthorId,
+            actorId: member.id,
+            type: "POST_REPLY",
+            title: `${member.display_name || "Alguém"} comentou no seu post`,
+            body: postTitle,
+            postId,
+            commentId: comment?.id,
+          });
+        }
+      }
     },
     onError: () => toast.error("Erro ao comentar"),
   });
@@ -110,9 +145,26 @@ export default function CommentSection({
         await supabase.from("community_reactions").insert({ member_id: member.id, comment_id: commentId, emoji: "❤️" });
       }
     },
-    onSuccess: () => {
+    onSuccess: (_, commentId) => {
       queryClient.invalidateQueries({ queryKey: ["circle-post-reactions"] });
       queryClient.invalidateQueries({ queryKey: ["circle-comments", postId] });
+      // Notify comment author on like
+      const liked = userReactions?.commentLikes.includes(commentId);
+      if (!liked) {
+        const comment = comments?.find((c: any) => c.id === commentId);
+        if (comment && comment.author_id !== member?.id && community) {
+          createNotification({
+            communityId: community.id,
+            recipientId: comment.author_id,
+            actorId: member!.id,
+            type: "COMMENT_LIKE",
+            title: `${member?.display_name || "Alguém"} curtiu seu comentário`,
+            body: postTitle,
+            postId,
+            commentId,
+          });
+        }
+      }
     },
   });
 

@@ -22,6 +22,7 @@ import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import LevelBadge from "@/components/circle/LevelBadge";
 import CommentSection from "@/components/circle/CommentSection";
+import { createNotification } from "@/lib/notifications";
 
 export default function CirclePostDetail() {
   const { id: postId } = useParams();
@@ -144,6 +145,18 @@ export default function CirclePostDetail() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["circle-post-reactions"] });
       queryClient.invalidateQueries({ queryKey: ["circle-post", postId] });
+      // Notify post author on like
+      if (!userReactions?.postLiked && post?.author_id && member && community) {
+        createNotification({
+          communityId: community.id,
+          recipientId: post.author_id,
+          actorId: member.id,
+          type: "POST_LIKE",
+          title: `${member.display_name || "Alguém"} curtiu seu post`,
+          body: post.title,
+          postId: postId!,
+        });
+      }
     },
   });
 
@@ -151,7 +164,22 @@ export default function CirclePostDetail() {
     mutationFn: async () => {
       await supabase.from("community_posts").update({ is_pinned: !post?.is_pinned }).eq("id", postId!);
     },
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["circle-post", postId] }); toast.success(post?.is_pinned ? "Post desfixado" : "Post fixado"); },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["circle-post", postId] });
+      toast.success(post?.is_pinned ? "Post desfixado" : "Post fixado");
+      // Notify post author on pin
+      if (!post?.is_pinned && post?.author_id && member && community) {
+        createNotification({
+          communityId: community.id,
+          recipientId: post.author_id,
+          actorId: member.id,
+          type: "POST_PINNED",
+          title: `📌 Seu post foi fixado por um admin`,
+          body: post.title,
+          postId: postId!,
+        });
+      }
+    },
   });
 
   const lockPost = useMutation({
@@ -426,6 +454,8 @@ export default function CirclePostDetail() {
       {/* Comments Section */}
       <CommentSection
         postId={postId!}
+        postTitle={post.title}
+        postAuthorId={post.author_id}
         postType={post.post_type}
         isLocked={post.is_locked}
         isMuted={isMuted}
