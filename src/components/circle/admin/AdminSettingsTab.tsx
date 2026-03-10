@@ -44,10 +44,10 @@ export default function AdminSettingsTab({ community }: Props) {
   const { data: products } = useQuery({
     queryKey: ["workspace-products", currentWorkspace?.id],
     queryFn: async () => {
-      if (!currentWorkspace) return [];
-      const { data } = await supabase.from("products").select("id, name, type")
-        .eq("workspace_id", currentWorkspace.id).eq("is_active" as any, true).order("name");
-      return (data as any[]) || [];
+      if (!currentWorkspace) return [] as Array<{id: string; name: string; type: string}>;
+      const { data } = await (supabase as any).from("products").select("id, name, type")
+        .eq("workspace_id", currentWorkspace.id).eq("is_active", true).order("name");
+      return (data || []) as Array<{id: string; name: string; type: string}>;
     },
     enabled: !!currentWorkspace && (settings.access_type === "FREE_WITH_PRODUCT" || settings.access_type === "PAID_SUBSCRIPTION"),
   });
