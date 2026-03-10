@@ -10,10 +10,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import {
   Heart, MessageCircle, ArrowLeft, Pin, Lock, Trash2, Link2,
-  MoreHorizontal, Eye, Play,
+  MoreHorizontal, Eye, Play, ArrowRightLeft,
 } from "lucide-react";
 import {
-  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
+  DropdownMenuSub, DropdownMenuSubTrigger, DropdownMenuSubContent,
 } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";

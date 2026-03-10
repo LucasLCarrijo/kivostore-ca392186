@@ -46,8 +46,8 @@ export default function AdminSettingsTab({ community }: Props) {
     queryFn: async () => {
       if (!currentWorkspace) return [];
       const { data } = await supabase.from("products").select("id, name, type")
-        .eq("workspace_id", currentWorkspace.id).eq("is_active", true).order("name");
-      return data || [];
+        .eq("workspace_id", currentWorkspace.id).eq("is_active" as any, true).order("name");
+      return (data as any[]) || [];
     },
     enabled: !!currentWorkspace && (settings.access_type === "FREE_WITH_PRODUCT" || settings.access_type === "PAID_SUBSCRIPTION"),
   });
