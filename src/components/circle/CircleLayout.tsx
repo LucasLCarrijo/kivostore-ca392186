@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useWorkspace } from "@/contexts/WorkspaceProvider";
 import { useAuth } from "@/contexts/AuthProvider";
 import { useDailyLogin } from "@/hooks/useDailyLogin";
+import { notifyMemberJoined } from "@/lib/notifications";
 import {
   MessageSquare,
   Users,
