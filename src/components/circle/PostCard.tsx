@@ -6,6 +6,9 @@ import { Heart, MessageCircle, Eye, Pin, BarChart3, Play } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import LevelBadge from "@/components/circle/LevelBadge";
+import { formatDistanceToNow } from "date-fns";
+import { ptBR } from "date-fns/locale";
 import { getLevelInfo } from "@/components/circle/CircleLayout";
 
 interface PostCardProps {
