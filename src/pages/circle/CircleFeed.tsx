@@ -228,16 +228,18 @@ export default function CircleFeed() {
             reference_type: "post",
             description: "Recebeu um like",
           });
-          await supabase.rpc("increment_member_points" as any, {
-            p_member_id: post.author_id,
-            p_points: community.points_per_like_received,
-          }).then(() => {}).catch(() => {
+          try {
+            await supabase.rpc("increment_member_points" as any, {
+              p_member_id: post.author_id,
+              p_points: community.points_per_like_received,
+            });
+          } catch {
             // Fallback: direct update
-            supabase
+            await supabase
               .from("community_members")
               .update({ total_points: (post.author?.total_points || 0) + community.points_per_like_received })
               .eq("id", post.author_id);
-          });
+          }
         }
       }
     },

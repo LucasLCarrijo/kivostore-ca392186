@@ -93,13 +93,13 @@ export default function CircleEvents() {
   });
 
   const rsvp = useMutation({
-    mutationFn: async ({ eventId, status }: { eventId: string; status: string }) => {
+    mutationFn: async ({ eventId, status }: { eventId: string; status: "GOING" | "MAYBE" | "NOT_GOING" }) => {
       if (!member) throw new Error("Not a member");
       const existing = userRsvps?.[eventId];
       if (existing) {
-        await supabase.from("community_event_rsvps").update({ status }).eq("event_id", eventId).eq("member_id", member.id);
+        await supabase.from("community_event_rsvps").update({ status } as any).eq("event_id", eventId).eq("member_id", member.id);
       } else {
-        await supabase.from("community_event_rsvps").insert({ event_id: eventId, member_id: member.id, status });
+        await supabase.from("community_event_rsvps").insert([{ event_id: eventId, member_id: member.id, status }] as any);
       }
     },
     onSuccess: () => {
