@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MessageSquare, Users, Trophy, Calendar, ArrowRight, Plus } from "lucide-react";
 import { toast } from "sonner";
+import { useEffect } from "react";
 
 export default function CircleDashboard() {
   const { currentWorkspace } = useWorkspace();
@@ -28,25 +29,17 @@ export default function CircleDashboard() {
     enabled: !!currentWorkspace,
   });
 
-  const { data: member } = useQuery({
-    queryKey: ["circle-member", community?.id, user?.id],
-    queryFn: async () => {
-      if (!community || !user) return null;
-      const { data } = await supabase
-        .from("community_members")
-        .select("*")
-        .eq("community_id", community.id)
-        .eq("user_id", user.id)
-        .maybeSingle();
-      return data;
-    },
-    enabled: !!community && !!user,
-  });
+  // Redirect to feed if community exists
+  useEffect(() => {
+    if (community) {
+      navigate("/circle/feed", { replace: true });
+    }
+  }, [community, navigate]);
 
   const createCommunity = useMutation({
     mutationFn: async () => {
       if (!currentWorkspace || !user) throw new Error("Missing data");
-      
+
       const slug = currentWorkspace.slug + "-circle";
       const { data: comm, error } = await supabase
         .from("communities")
@@ -73,23 +66,24 @@ export default function CircleDashboard() {
         });
       if (memberError) throw memberError;
 
-      // Create default space
+      // Create 4 default spaces
+      const defaultSpaces = [
+        { community_id: comm.id, name: "Geral", slug: "geral", emoji: "💬", is_default: true, position: 0 },
+        { community_id: comm.id, name: "Anúncios", slug: "anuncios", emoji: "📢", only_admins_can_post: true, position: 1 },
+        { community_id: comm.id, name: "Perguntas", slug: "perguntas", emoji: "❓", position: 2 },
+        { community_id: comm.id, name: "Conquistas", slug: "conquistas", emoji: "🏆", position: 3 },
+      ];
+
       const { error: spaceError } = await supabase
         .from("community_spaces")
-        .insert({
-          community_id: comm.id,
-          name: "Geral",
-          slug: "geral",
-          emoji: "💬",
-          is_default: true,
-          position: 0,
-        });
+        .insert(defaultSpaces);
       if (spaceError) throw spaceError;
 
       return comm;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["community"] });
+      queryClient.invalidateQueries({ queryKey: ["circle-member"] });
       toast.success("Comunidade criada com sucesso!");
     },
     onError: () => toast.error("Erro ao criar comunidade"),
@@ -122,67 +116,10 @@ export default function CircleDashboard() {
     );
   }
 
-  // Community exists - show dashboard
-  const stats = [
-    { label: "Posts", value: community.post_count, icon: MessageSquare, path: "/circle/feed" },
-    { label: "Membros", value: community.member_count, icon: Users, path: "/circle/members" },
-    { label: "Seus Pontos", value: member?.total_points || 0, icon: Trophy, path: "/circle/leaderboard" },
-  ];
-
+  // Will redirect to feed via useEffect
   return (
-    <div className="max-w-3xl mx-auto p-4 md:p-6 space-y-6">
-      {/* Hero */}
-      <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-primary/10 to-primary/5 p-6 md:p-8">
-        {community.cover_image_url && (
-          <img src={community.cover_image_url} alt="" className="absolute inset-0 w-full h-full object-cover opacity-20" />
-        )}
-        <div className="relative">
-          <h1 className="text-2xl md:text-3xl font-bold text-foreground">{community.name}</h1>
-          {community.description && (
-            <p className="text-muted-foreground mt-2">{community.description}</p>
-          )}
-          <div className="flex gap-3 mt-4">
-            <Button onClick={() => navigate("/circle/feed")}>
-              <MessageSquare className="h-4 w-4 mr-2" />
-              Ver Feed
-            </Button>
-          </div>
-        </div>
-      </div>
-
-      {/* Stats */}
-      <div className="grid grid-cols-3 gap-4">
-        {stats.map((s) => (
-          <Card
-            key={s.label}
-            className="p-4 cursor-pointer hover:shadow-md transition-shadow"
-            onClick={() => navigate(s.path)}
-          >
-            <s.icon className="h-5 w-5 text-primary mb-2" />
-            <p className="text-2xl font-bold text-foreground">{s.value}</p>
-            <p className="text-xs text-muted-foreground">{s.label}</p>
-          </Card>
-        ))}
-      </div>
-
-      {/* Quick links */}
-      <div className="space-y-2">
-        {[
-          { label: "Explorar Espaços", icon: MessageSquare, path: "/circle/spaces" },
-          { label: "Próximos Eventos", icon: Calendar, path: "/circle/events" },
-          { label: "Ranking", icon: Trophy, path: "/circle/leaderboard" },
-        ].map((link) => (
-          <Card
-            key={link.path}
-            className="p-4 flex items-center gap-3 cursor-pointer hover:bg-muted/50 transition-colors"
-            onClick={() => navigate(link.path)}
-          >
-            <link.icon className="h-5 w-5 text-muted-foreground" />
-            <span className="flex-1 text-sm font-medium">{link.label}</span>
-            <ArrowRight className="h-4 w-4 text-muted-foreground" />
-          </Card>
-        ))}
-      </div>
+    <div className="flex items-center justify-center min-h-[60vh]">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
     </div>
   );
 }
