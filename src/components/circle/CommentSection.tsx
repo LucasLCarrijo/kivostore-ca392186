@@ -212,7 +212,7 @@ export default function CommentSection({
           const isExpanded = expandedReplies.has(comment.id);
           const visibleReplies = isExpanded ? replies : replies.slice(0, 2);
           const hiddenCount = replies.length - 2;
-          const commentLevel = getLevelInfo(comment.author?.total_points || 0);
+          // Level badge handled by LevelBadge component
 
           return (
             <div key={comment.id}>
