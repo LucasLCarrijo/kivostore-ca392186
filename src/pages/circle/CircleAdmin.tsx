@@ -37,9 +37,6 @@ export default function CircleAdmin() {
   });
 
   const isAdmin = member?.role === "OWNER" || member?.role === "ADMIN";
-  if (!isAdmin) {
-    return <div className="p-6 text-center"><p className="text-muted-foreground">Acesso restrito a administradores.</p></div>;
-  }
 
   const { data: pendingCount } = useQuery({
     queryKey: ["circle-pending-count", community?.id],
@@ -48,8 +45,12 @@ export default function CircleAdmin() {
       const { count } = await supabase.from("community_members").select("*", { count: "exact", head: true }).eq("community_id", community.id).eq("status", "PENDING");
       return count || 0;
     },
-    enabled: !!community,
+    enabled: !!community && isAdmin,
   });
+
+  if (!isAdmin) {
+    return <div className="p-6 text-center"><p className="text-muted-foreground">Acesso restrito a administradores.</p></div>;
+  }
 
   return (
     <div className="max-w-4xl mx-auto p-4 md:p-6 space-y-6">
