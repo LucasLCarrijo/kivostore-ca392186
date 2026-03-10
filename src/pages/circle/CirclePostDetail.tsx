@@ -19,7 +19,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { getLevelInfo } from "@/components/circle/CircleLayout";
+import LevelBadge from "@/components/circle/LevelBadge";
 import CommentSection from "@/components/circle/CommentSection";
 
 export default function CirclePostDetail() {
