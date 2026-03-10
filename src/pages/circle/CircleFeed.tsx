@@ -359,7 +359,7 @@ export default function CircleFeed() {
       )}
 
       {/* Compose */}
-      {!isMuted && (
+      {!isMuted && canPostInSpace && (
         <>
           {!showCompose ? (
             <Card
