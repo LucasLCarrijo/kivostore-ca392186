@@ -274,16 +274,15 @@ const App = () => (
               />
 
               {/* Circle routes */}
-              <Route path="/circle" element={<ProtectedRoute><CircleLayout><CircleDashboard /></CircleLayout></ProtectedRoute>} />
+              <Route path="/circle" element={<ProtectedRoute><CircleLayout><Navigate to="/circle/feed" replace /></CircleLayout></ProtectedRoute>} />
               <Route path="/circle/feed" element={<ProtectedRoute><CircleLayout><CircleFeed /></CircleLayout></ProtectedRoute>} />
-              <Route path="/circle/spaces" element={<ProtectedRoute><CircleLayout><CircleSpaces /></CircleLayout></ProtectedRoute>} />
               <Route path="/circle/spaces/:slug" element={<ProtectedRoute><CircleLayout><CircleFeed /></CircleLayout></ProtectedRoute>} />
               <Route path="/circle/members" element={<ProtectedRoute><CircleLayout><CircleMembers /></CircleLayout></ProtectedRoute>} />
               <Route path="/circle/leaderboard" element={<ProtectedRoute><CircleLayout><CircleLeaderboard /></CircleLayout></ProtectedRoute>} />
               <Route path="/circle/events" element={<ProtectedRoute><CircleLayout><CircleEvents /></CircleLayout></ProtectedRoute>} />
               <Route path="/circle/classroom" element={<ProtectedRoute><CircleLayout><CircleDashboard /></CircleLayout></ProtectedRoute>} />
               <Route path="/circle/admin" element={<ProtectedRoute><CircleLayout><CircleAdmin /></CircleLayout></ProtectedRoute>} />
-              <Route path="/circle/post/:id" element={<ProtectedRoute><CircleLayout><CirclePostDetail /></CircleLayout></ProtectedRoute>} />
+              <Route path="/circle/post/:id" element={<ProtectedRoute><CircleLayout showRightSidebar={false}><CirclePostDetail /></CircleLayout></ProtectedRoute>} />
 
               {/* Root redirect */}
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
