@@ -23,6 +23,7 @@ import { ptBR } from "date-fns/locale";
 import LevelBadge from "@/components/circle/LevelBadge";
 import CommentSection from "@/components/circle/CommentSection";
 import { createNotification } from "@/lib/notifications";
+import { getVideoEmbed, POST_BORDER } from "@/lib/community-utils";
 
 export default function CirclePostDetail() {
   const { id: postId } = useParams();
@@ -239,18 +240,6 @@ export default function CirclePostDetail() {
     toast.success("Link copiado!");
   };
 
-  // Video embed helper
-  const getVideoEmbed = (url: string | null) => {
-    if (!url) return null;
-    const ytMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\s?]+)/);
-    if (ytMatch) return `https://www.youtube.com/embed/${ytMatch[1]}`;
-    const vimeoMatch = url.match(/vimeo\.com\/(\d+)/);
-    if (vimeoMatch) return `https://player.vimeo.com/video/${vimeoMatch[1]}`;
-    const loomMatch = url.match(/loom\.com\/share\/([a-z0-9]+)/i);
-    if (loomMatch) return `https://www.loom.com/embed/${loomMatch[1]}`;
-    return null;
-  };
-
   if (isLoading) {
     return <div className="flex items-center justify-center min-h-[40vh]"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" /></div>;
   }
@@ -262,11 +251,6 @@ export default function CirclePostDetail() {
   const totalPollVotes = pollVotes?.allVotes.length || 0;
   const getVoteCount = (optionId: string) => pollVotes?.allVotes.filter((v: any) => v.option_id === optionId).length || 0;
   const videoEmbed = getVideoEmbed(post.video_url);
-
-  const POST_BORDER: Record<string, string> = {
-    ANNOUNCEMENT: "border-l-4 border-l-primary",
-    WIN: "border-l-4 border-l-yellow-400",
-  };
 
   return (
     <div className="max-w-2xl mx-auto p-4 md:p-6 space-y-6">

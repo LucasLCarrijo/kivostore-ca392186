@@ -136,9 +136,14 @@ export default function CircleRightSidebar({ community, member }: CircleRightSid
               <p className="text-[10px] text-muted-foreground">Dias seguidos</p>
             </div>
           </div>
-          <p className="text-xs text-muted-foreground text-center">
-            Nível {getLevelInfo(member.total_points).level} — {getLevelInfo(member.total_points).label}
-          </p>
+          {(() => {
+            const level = getLevelInfo(member.total_points);
+            return (
+              <p className="text-xs text-muted-foreground text-center">
+                Nível {level.level} — {level.label}
+              </p>
+            );
+          })()}
         </Card>
       )}
     </div>

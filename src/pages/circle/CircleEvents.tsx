@@ -8,31 +8,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Calendar as CalendarIcon, Clock, Video, Users, Plus, List, CalendarDays } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
-import { format, isPast, isFuture, isWithinInterval, addHours, isSameDay } from "date-fns";
+import { format, isPast, addHours, isSameDay } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { getEventStatus, PLATFORM_LABELS, formatDuration } from "@/lib/community-utils";
 import EventFormModal from "@/components/circle/EventFormModal";
 import EventDetailModal from "@/components/circle/EventDetailModal";
-
-const PLATFORM_LABELS: Record<string, string> = {
-  zoom: "Zoom",
-  google_meet: "Google Meet",
-  teams: "Teams",
-  discord: "Discord",
-  custom: "Link",
-};
-
-function getEventStatus(event: any) {
-  const now = new Date();
-  const start = new Date(event.starts_at);
-  const end = event.ends_at ? new Date(event.ends_at) : addHours(start, 1);
-
-  if (event.status === "CANCELLED") return { label: "Cancelado", color: "bg-destructive/10 text-destructive", key: "cancelled" };
-  if (isPast(end)) return { label: "Encerrado", color: "bg-muted text-muted-foreground", key: "past" };
-  if (isWithinInterval(now, { start, end })) return { label: "🔴 Ao vivo", color: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300 animate-pulse", key: "live" };
-  return { label: "Em breve", color: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300", key: "upcoming" };
-}
 
 export default function CircleEvents() {
   const { currentWorkspace } = useWorkspace();
@@ -119,7 +101,6 @@ export default function CircleEvents() {
   // Filtered events
   const filteredEvents = useMemo(() => {
     if (!events) return [];
-    const now = new Date();
     return events.filter((e: any) => {
       const end = e.ends_at ? new Date(e.ends_at) : addHours(new Date(e.starts_at), 1);
       if (filter === "upcoming") return !isPast(end);
@@ -350,7 +331,7 @@ function EventCard({ event, myRsvp, onRsvp, rsvpPending, onClick, isAdmin, onEdi
           )}
           {duration && (
             <span className="flex items-center gap-1.5">
-              ⏱️ {duration >= 60 ? `${Math.floor(duration / 60)}h${duration % 60 > 0 ? `${duration % 60}m` : ""}` : `${duration}m`}
+              ⏱️ {formatDuration(duration)}
             </span>
           )}
           {event.meeting_platform && (

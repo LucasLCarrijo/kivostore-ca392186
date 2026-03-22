@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { getVideoEmbed } from "@/lib/community-utils";
 import { useAuth } from "@/contexts/AuthProvider";
 
 interface PostComposerProps {
@@ -89,17 +90,6 @@ export default function PostComposer({
 
   const removeImage = (idx: number) => {
     setImages((prev) => prev.filter((_, i) => i !== idx));
-  };
-
-  const getVideoEmbed = (url: string) => {
-    if (!url) return null;
-    const ytMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\s?]+)/);
-    if (ytMatch) return `https://www.youtube.com/embed/${ytMatch[1]}`;
-    const vimeoMatch = url.match(/vimeo\.com\/(\d+)/);
-    if (vimeoMatch) return `https://player.vimeo.com/video/${vimeoMatch[1]}`;
-    const loomMatch = url.match(/loom\.com\/share\/([a-z0-9]+)/i);
-    if (loomMatch) return `https://www.loom.com/embed/${loomMatch[1]}`;
-    return null;
   };
 
   const createPost = useMutation({
