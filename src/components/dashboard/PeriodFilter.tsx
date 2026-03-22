@@ -1,4 +1,3 @@
-import React from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -14,19 +13,22 @@ interface PeriodFilterProps {
   onPeriodChange: (period: number | "custom") => void;
 }
 
-export function PeriodFilter({ selectedPeriod, onPeriodChange }: PeriodFilterProps) {
+export function PeriodFilter({
+  selectedPeriod,
+  onPeriodChange,
+}: PeriodFilterProps) {
   return (
-    <div className="flex gap-1 p-1 bg-white border border-border/50 rounded-lg shadow-sm">
+    <div className="inline-flex items-center gap-0.5 rounded-lg bg-secondary p-1">
       {periods.map((period) => (
         <Button
           key={period.label}
           variant="ghost"
           size="sm"
           className={cn(
-            "px-4 py-1.5 text-sm font-medium rounded-md transition-all",
+            "h-7 px-3 text-xs font-medium rounded-md transition-all",
             selectedPeriod === period.value
-              ? "bg-primary text-primary-foreground shadow-sm"
-              : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+              ? "bg-background text-foreground shadow-sm"
+              : "text-muted-foreground hover:text-foreground hover:bg-transparent",
           )}
           onClick={() => onPeriodChange(period.value)}
         >

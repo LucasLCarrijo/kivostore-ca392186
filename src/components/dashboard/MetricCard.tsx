@@ -1,6 +1,5 @@
-import React from "react";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { LucideIcon } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { LucideIcon, TrendingUp, TrendingDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface MetricCardProps {
@@ -12,35 +11,54 @@ interface MetricCardProps {
   suffix?: string;
 }
 
-export function MetricCard({ title, value, icon: Icon, change, prefix = "", suffix = "" }: MetricCardProps) {
-  const formattedValue = typeof value === 'number' ? value.toLocaleString() : value;
-  
+export function MetricCard({
+  title,
+  value,
+  icon: Icon,
+  change,
+  prefix = "",
+  suffix = "",
+}: MetricCardProps) {
+  const formattedValue =
+    typeof value === "number" ? value.toLocaleString() : value;
+
   return (
-    <Card className="bg-white border border-border/50 shadow-sm rounded-xl hover:shadow-md transition-shadow">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <h3 className="text-sm font-medium text-muted-foreground">{title}</h3>
-        <Icon className="h-5 w-5 text-muted-foreground" />
-      </CardHeader>
-      <CardContent>
-        <div className="flex items-baseline gap-2">
-          <div className="text-2xl font-bold text-foreground">
-            {prefix}{formattedValue}{suffix}
+    <Card className="border-border/40 shadow-none hover:shadow-sm transition-shadow">
+      <CardContent className="p-5">
+        <div className="flex items-center justify-between mb-3">
+          <span className="text-[13px] font-medium text-muted-foreground">
+            {title}
+          </span>
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-secondary">
+            <Icon className="h-4 w-4 text-muted-foreground" />
           </div>
-          {change !== undefined && (
+        </div>
+        <p className="text-2xl font-semibold tracking-tight text-foreground">
+          {prefix}
+          {formattedValue}
+          {suffix}
+        </p>
+        {change !== undefined && (
+          <div className="mt-2 flex items-center gap-1">
+            {change >= 0 ? (
+              <TrendingUp className="h-3.5 w-3.5 text-emerald-500" />
+            ) : (
+              <TrendingDown className="h-3.5 w-3.5 text-rose-500" />
+            )}
             <span
               className={cn(
                 "text-xs font-medium",
-                change >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"
+                change >= 0 ? "text-emerald-600" : "text-rose-600",
               )}
             >
-              {change >= 0 ? "+" : ""}{change.toFixed(1)}%
+              {change >= 0 ? "+" : ""}
+              {change.toFixed(1)}%
             </span>
-          )}
-        </div>
-        <p className="text-xs text-muted-foreground mt-1">
-          {change !== undefined && change >= 0 ? "↗" : change !== undefined && change < 0 ? "↘" : ""}
-          {" "}vs período anterior
-        </p>
+            <span className="text-xs text-muted-foreground">
+              vs periodo anterior
+            </span>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
