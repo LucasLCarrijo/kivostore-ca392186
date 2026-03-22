@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { getLevelInfo } from "@/components/circle/CircleLayout";
+import { getLevelInfo } from "@/lib/community-utils";
 
 interface LevelBadgeProps {
   points: number;

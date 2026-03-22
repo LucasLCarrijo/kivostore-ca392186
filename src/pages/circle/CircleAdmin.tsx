@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useWorkspace } from "@/contexts/WorkspaceProvider";
 import { useAuth } from "@/contexts/AuthProvider";
@@ -47,6 +46,15 @@ export default function CircleAdmin() {
     },
     enabled: !!community && isAdmin,
   });
+
+  // Still loading — don't flash "access restricted" while queries are in flight
+  if (!community || !member) {
+    return (
+      <div className="flex items-center justify-center min-h-[40vh]">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+      </div>
+    );
+  }
 
   if (!isAdmin) {
     return <div className="p-6 text-center"><p className="text-muted-foreground">Acesso restrito a administradores.</p></div>;

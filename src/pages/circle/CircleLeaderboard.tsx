@@ -8,7 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Trophy, TrendingUp, Flame } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { getLevelInfo, LEVEL_THRESHOLDS } from "@/components/circle/CircleLayout";
+import { getLevelInfo, LEVEL_THRESHOLDS } from "@/lib/community-utils";
 import { Progress } from "@/components/ui/progress";
 import LevelBadge from "@/components/circle/LevelBadge";
 import MemberProfileModal from "@/components/circle/MemberProfileModal";

@@ -7,7 +7,7 @@ import { Users, MessageSquare, Calendar, Trophy } from "lucide-react";
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { getLevelInfo } from "@/components/circle/CircleLayout";
+import { getLevelInfo } from "@/lib/community-utils";
 
 interface CircleRightSidebarProps {
   community: any;

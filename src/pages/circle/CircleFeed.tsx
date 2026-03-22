@@ -11,7 +11,6 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import PostCard from "@/components/circle/PostCard";
 import PostComposer from "@/components/circle/PostComposer";
-import SpaceFormModal from "@/components/circle/SpaceFormModal";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 export default function CircleFeed() {
