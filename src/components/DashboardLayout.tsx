@@ -3,6 +3,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { BottomNavigation } from "@/components/BottomNavigation";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Separator } from "@/components/ui/separator";
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -13,23 +14,24 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex w-full">
-        {/* Desktop Sidebar */}
+      <div className="min-h-screen flex w-full bg-background">
+        {/* Dark sidebar */}
         <AppSidebar />
 
-        <div className="flex-1 flex flex-col">
-          {/* Header with sidebar trigger */}
-          <header className="h-14 flex items-center border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-            <div className="flex items-center px-4">
-              <SidebarTrigger className="lg:inline-flex" />
-              <div className="ml-4">
-                <h1 className="text-lg font-semibold text-primary lg:hidden">Kivo</h1>
-              </div>
-            </div>
+        <div className="flex-1 flex flex-col min-w-0">
+          {/* Clean minimal header */}
+          <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b bg-background/80 backdrop-blur-sm px-4 lg:px-6">
+            <SidebarTrigger className="h-8 w-8 shrink-0" />
+            <Separator orientation="vertical" className="h-5 hidden lg:block" />
+            <h1 className="text-base font-semibold text-primary lg:hidden tracking-tight">
+              Kivo
+            </h1>
           </header>
 
           {/* Main content */}
-          <main className={`flex-1 bg-[#FAFAFA] ${isMobile ? 'pb-20' : ''}`}>
+          <main
+            className={`flex-1 overflow-y-auto bg-secondary/50 ${isMobile ? "pb-20" : ""}`}
+          >
             {children}
           </main>
         </div>
