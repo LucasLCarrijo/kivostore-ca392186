@@ -49,7 +49,7 @@ import NotFound from "./pages/NotFound";
 import CircleLayout from "./components/circle/CircleLayout";
 import CircleDashboard from "./pages/circle/CircleDashboard";
 import CircleFeed from "./pages/circle/CircleFeed";
-import CircleSpaces from "./pages/circle/CircleSpaces";
+// CircleSpaces removed — spaces are now inline pills in CircleFeed
 import CircleMembers from "./pages/circle/CircleMembers";
 import CircleLeaderboard from "./pages/circle/CircleLeaderboard";
 import CircleEvents from "./pages/circle/CircleEvents";
