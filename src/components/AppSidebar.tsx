@@ -38,7 +38,7 @@ const mainNavItems = [
   { title: "Home", url: "/dashboard", icon: Home },
   { title: "Produtos", url: "/products", icon: Package },
   { title: "Minha Loja", url: "/store", icon: Store },
-  { title: "Circles", url: "/circle", icon: MessagesSquare },
+  { title: "Comunidade", url: "/circle", icon: MessagesSquare },
 ];
 
 const businessNavItems = [

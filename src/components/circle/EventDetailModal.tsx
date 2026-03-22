@@ -4,9 +4,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, Clock, Video, Users, ExternalLink, MapPin } from "lucide-react";
-import { format, differenceInMinutes, isPast, isFuture, isWithinInterval, addHours } from "date-fns";
+import { Calendar, Clock, Video, Users, ExternalLink } from "lucide-react";
+import { format, differenceInMinutes, isPast, addHours } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { getEventStatus, buildGCalUrl, PLATFORM_LABELS, formatDuration } from "@/lib/community-utils";
 
 interface EventDetailModalProps {
   event: any;
@@ -15,32 +16,6 @@ interface EventDetailModalProps {
   myRsvp?: string;
   onRsvp: (eventId: string, status: "GOING" | "MAYBE" | "NOT_GOING") => void;
   rsvpPending?: boolean;
-}
-
-const PLATFORM_LABELS: Record<string, string> = {
-  zoom: "Zoom",
-  google_meet: "Google Meet",
-  teams: "Microsoft Teams",
-  discord: "Discord",
-  custom: "Link personalizado",
-};
-
-function buildGCalUrl(event: any) {
-  const start = new Date(event.starts_at);
-  const end = event.ends_at ? new Date(event.ends_at) : new Date(start.getTime() + 60 * 60 * 1000);
-  const fmt = (d: Date) => d.toISOString().replace(/[-:]/g, "").replace(/\.\d+/, "");
-  return `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.title)}&dates=${fmt(start)}/${fmt(end)}&details=${encodeURIComponent(event.description || "")}&location=${encodeURIComponent(event.meeting_url || "")}`;
-}
-
-function getEventStatus(event: any) {
-  const now = new Date();
-  const start = new Date(event.starts_at);
-  const end = event.ends_at ? new Date(event.ends_at) : addHours(start, 1);
-
-  if (event.status === "CANCELLED") return { label: "Cancelado", color: "bg-destructive/10 text-destructive", isLive: false };
-  if (isPast(end)) return { label: "Encerrado", color: "bg-muted text-muted-foreground", isLive: false };
-  if (isWithinInterval(now, { start, end })) return { label: "🔴 Ao vivo", color: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300 animate-pulse", isLive: true };
-  return { label: "Em breve", color: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300", isLive: false };
 }
 
 export default function EventDetailModal({ event, open, onOpenChange, myRsvp, onRsvp, rsvpPending }: EventDetailModalProps) {
@@ -113,7 +88,7 @@ export default function EventDetailModal({ event, open, onOpenChange, myRsvp, on
                 <span>
                   {format(start, "HH:mm")}
                   {end && ` – ${format(end, "HH:mm")}`}
-                  {duration && ` (${duration >= 60 ? `${Math.floor(duration / 60)}h${duration % 60 > 0 ? `${duration % 60}min` : ""}` : `${duration}min`})`}
+                  {duration && ` (${formatDuration(duration)})`}
                 </span>
               </div>
             )}

@@ -12,19 +12,9 @@ import { getLevelInfo, LEVEL_THRESHOLDS } from "@/components/circle/CircleLayout
 import { Progress } from "@/components/ui/progress";
 import LevelBadge from "@/components/circle/LevelBadge";
 import MemberProfileModal from "@/components/circle/MemberProfileModal";
+import { ACTION_LABELS } from "@/lib/community-utils";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
-
-const ACTION_LABELS: Record<string, string> = {
-  POST_CREATED: "Criou um post",
-  COMMENT_CREATED: "Comentou",
-  LIKE_RECEIVED: "Recebeu like",
-  DAILY_LOGIN: "Login diário",
-  STREAK_BONUS: "Bônus de streak",
-  ADMIN_BONUS: "Bônus admin",
-  COURSE_COMPLETED: "Completou curso",
-  EVENT_ATTENDED: "Participou de evento",
-};
 
 const PODIUM_GRADIENTS = [
   "bg-gradient-to-b from-yellow-50 to-transparent dark:from-yellow-950/20",

@@ -45,6 +45,8 @@ export default function CommentSection({
   const [replyBody, setReplyBody] = useState("");
   const [sortBy, setSortBy] = useState<"recent" | "popular">("recent");
   const [expandedReplies, setExpandedReplies] = useState<Set<string>>(new Set());
+  const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
+  const [editBody, setEditBody] = useState("");
 
   const topComments = (comments || []).filter((c: any) => !c.parent_id);
   const getReplies = (parentId: string) =>
@@ -189,6 +191,19 @@ export default function CommentSection({
     },
   });
 
+  const editComment = useMutation({
+    mutationFn: async ({ commentId, body }: { commentId: string; body: string }) => {
+      await supabase.from("community_comments").update({ body: body.trim(), edited_at: new Date().toISOString() }).eq("id", commentId);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["circle-comments", postId] });
+      setEditingCommentId(null);
+      setEditBody("");
+      toast.success("Comentário editado");
+    },
+    onError: () => toast.error("Erro ao editar comentário"),
+  });
+
   const deleteComment = useMutation({
     mutationFn: async (commentId: string) => {
       await supabase.from("community_comments").update({ deleted_at: new Date().toISOString() }).eq("id", commentId);
@@ -297,7 +312,27 @@ export default function CommentSection({
                         {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true, locale: ptBR })}
                       </span>
                     </div>
-                    <p className="text-sm text-foreground mt-1 whitespace-pre-wrap">{comment.body}</p>
+                    {editingCommentId === comment.id ? (
+                      <div className="mt-1 space-y-2">
+                        <Textarea
+                          value={editBody}
+                          onChange={(e) => setEditBody(e.target.value)}
+                          rows={2}
+                          className="text-sm"
+                          autoFocus
+                        />
+                        <div className="flex gap-2">
+                          <Button size="sm" onClick={() => editComment.mutate({ commentId: comment.id, body: editBody })} disabled={!editBody.trim() || editComment.isPending}>
+                            Salvar
+                          </Button>
+                          <Button variant="ghost" size="sm" onClick={() => { setEditingCommentId(null); setEditBody(""); }}>
+                            Cancelar
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="text-sm text-foreground mt-1 whitespace-pre-wrap">{comment.body}</p>
+                    )}
 
                     {/* Comment images */}
                     {comment.images && (comment.images as string[]).length > 0 && (
@@ -346,13 +381,8 @@ export default function CommentSection({
                             {comment.author_id === member?.id && (
                               <DropdownMenuItem
                                 onClick={() => {
-                                  const newBody = prompt("Editar comentário:", comment.body);
-                                  if (newBody && newBody.trim()) {
-                                    supabase.from("community_comments").update({ body: newBody.trim(), edited_at: new Date().toISOString() }).eq("id", comment.id).then(() => {
-                                      queryClient.invalidateQueries({ queryKey: ["circle-comments", postId] });
-                                      toast.success("Comentário editado");
-                                    });
-                                  }
+                                  setEditingCommentId(comment.id);
+                                  setEditBody(comment.body);
                                 }}
                               >
                                 ✏️ Editar
