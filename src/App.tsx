@@ -282,7 +282,7 @@ const App = () => (
               <Route path="/circle/events" element={<ProtectedRoute><CircleLayout><CircleEvents /></CircleLayout></ProtectedRoute>} />
               <Route path="/circle/classroom" element={<ProtectedRoute><CircleLayout><CircleDashboard /></CircleLayout></ProtectedRoute>} />
               <Route path="/circle/admin" element={<ProtectedRoute><CircleLayout><CircleAdmin /></CircleLayout></ProtectedRoute>} />
-              <Route path="/circle/post/:id" element={<ProtectedRoute><CircleLayout showRightSidebar={false}><CirclePostDetail /></CircleLayout></ProtectedRoute>} />
+              <Route path="/circle/post/:id" element={<ProtectedRoute><CircleLayout><CirclePostDetail /></CircleLayout></ProtectedRoute>} />
 
               {/* Root redirect */}
               <Route path="/" element={<Navigate to="/dashboard" replace />} />

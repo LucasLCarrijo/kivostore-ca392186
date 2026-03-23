@@ -31,26 +31,11 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import NotificationPanel from "@/components/circle/NotificationPanel";
 import LevelBadge from "@/components/circle/LevelBadge";
-
-// Level thresholds
-export const LEVEL_THRESHOLDS = [
-  { level: 1, min: 0, label: "Iniciante" },
-  { level: 2, min: 50, label: "Engajado" },
-  { level: 3, min: 150, label: "Contribuidor" },
-  { level: 4, min: 350, label: "Expert" },
-  { level: 5, min: 750, label: "Lenda" },
-];
-
-export function getLevelInfo(points: number) {
-  for (let i = LEVEL_THRESHOLDS.length - 1; i >= 0; i--) {
-    if (points >= LEVEL_THRESHOLDS[i].min) return LEVEL_THRESHOLDS[i];
-  }
-  return LEVEL_THRESHOLDS[0];
-}
+// Re-export from community-utils for backwards compatibility
+export { getLevelInfo, LEVEL_THRESHOLDS } from "@/lib/community-utils";
 
 interface CircleLayoutProps {
   children: ReactNode;
-  showRightSidebar?: boolean;
 }
 
 const tabItems = [
@@ -373,7 +358,7 @@ export default function CircleLayout({ children }: CircleLayoutProps) {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Fixed Header */}
-      <header className="sticky top-0 z-30 bg-card border-b border-border">
+      <header className="sticky top-0 z-40 bg-card border-b border-border">
         <div className="flex items-center h-14 px-4 max-w-5xl mx-auto">
           {/* Left: back + community info */}
           <div className="flex items-center gap-3 min-w-0">

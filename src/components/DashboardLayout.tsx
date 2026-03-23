@@ -2,7 +2,6 @@ import { ReactNode } from "react";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { BottomNavigation } from "@/components/BottomNavigation";
-import { useIsMobile } from "@/hooks/use-mobile";
 import { Separator } from "@/components/ui/separator";
 
 interface DashboardLayoutProps {
@@ -10,8 +9,6 @@ interface DashboardLayoutProps {
 }
 
 export function DashboardLayout({ children }: DashboardLayoutProps) {
-  const isMobile = useIsMobile();
-
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-background">
@@ -28,10 +25,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             </h1>
           </header>
 
-          {/* Main content */}
-          <main
-            className={`flex-1 overflow-y-auto bg-secondary/50 ${isMobile ? "pb-20" : ""}`}
-          >
+          {/* Main content — pb-20 on any viewport where BottomNavigation is visible (< lg) */}
+          <main className="flex-1 overflow-y-auto bg-secondary/50 pb-20 lg:pb-0">
             {children}
           </main>
         </div>

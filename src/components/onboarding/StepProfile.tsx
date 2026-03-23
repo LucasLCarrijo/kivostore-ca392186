@@ -28,7 +28,7 @@ export function StepProfile({ data, onUpdate, onNext, user }: StepProfileProps) 
   const [usernameStatus, setUsernameStatus] = useState<'checking' | 'available' | 'taken' | null>(null);
   const [isValid, setIsValid] = useState(false);
   const { toast } = useToast();
-  const { currentWorkspace, refreshWorkspaces } = useWorkspace();
+  const { currentWorkspace, refreshWorkspaces, createWorkspace } = useWorkspace();
 
   useEffect(() => {
     // Pre-fill with user data (including Google OAuth avatar)
@@ -141,17 +141,23 @@ export function StepProfile({ data, onUpdate, onNext, user }: StepProfileProps) 
   const handleSubmit = async () => {
     if (!isValid) return;
 
-    // Use currentWorkspace from context instead of app_metadata
-    if (!currentWorkspace) {
-      toast({
-        title: "Erro",
-        description: "Workspace não encontrado. Tente recarregar a página.",
-        variant: "destructive",
-      });
-      return;
-    }
-
     try {
+      let workspaceId = currentWorkspace?.id;
+
+      // Create workspace if it doesn't exist yet (new user)
+      if (!workspaceId) {
+        const newWorkspace = await createWorkspace(formData.display_name);
+        if (!newWorkspace) {
+          toast({
+            title: "Erro",
+            description: "Não foi possível criar o workspace. Tente novamente.",
+            variant: "destructive",
+          });
+          return;
+        }
+        workspaceId = newWorkspace.id;
+      }
+
       // Update workspace name and slug
       const { error } = await supabase
         .from('workspaces')
@@ -159,20 +165,39 @@ export function StepProfile({ data, onUpdate, onNext, user }: StepProfileProps) 
           name: formData.display_name,
           slug: formData.username,
         })
-        .eq('id', currentWorkspace.id);
+        .eq('id', workspaceId);
 
       if (error) throw error;
 
-      // Update storefront using workspace_id (not slug, since slug just changed)
-      await supabase
+      // Ensure storefront exists (upsert)
+      const { data: existingStorefront } = await supabase
         .from('storefronts')
-        .update({
-          title: formData.display_name,
-          bio: formData.bio,
-          avatar_url: formData.avatar_url || null,
-          slug: formData.username,
-        })
-        .eq('workspace_id', currentWorkspace.id);
+        .select('id')
+        .eq('workspace_id', workspaceId)
+        .maybeSingle();
+
+      if (existingStorefront) {
+        await supabase
+          .from('storefronts')
+          .update({
+            title: formData.display_name,
+            bio: formData.bio,
+            avatar_url: formData.avatar_url || null,
+            slug: formData.username,
+          })
+          .eq('workspace_id', workspaceId);
+      } else {
+        await supabase
+          .from('storefronts')
+          .insert({
+            workspace_id: workspaceId,
+            title: formData.display_name,
+            bio: formData.bio,
+            avatar_url: formData.avatar_url || null,
+            slug: formData.username,
+            is_published: false,
+          });
+      }
 
       // Refresh workspace data so the rest of onboarding has updated info
       await refreshWorkspaces();
