@@ -32,10 +32,20 @@ export function OnboardingChecklist() {
           .eq("workspace_id", currentWorkspace.id)
           .limit(1);
 
-        const { data: theme } = await supabase
-          .from("storefront_themes")
+        // Get user's storefront to check theme
+        const { data: userStorefront } = await supabase
+          .from("storefronts")
           .select("id")
-          .limit(1);
+          .eq("workspace_id", currentWorkspace.id)
+          .maybeSingle();
+
+        const { data: theme } = userStorefront
+          ? await supabase
+              .from("storefront_themes")
+              .select("id")
+              .eq("storefront_id", userStorefront.id)
+              .limit(1)
+          : { data: null };
 
         const { data: sales } = await supabase
           .from("orders")
@@ -76,7 +86,7 @@ export function OnboardingChecklist() {
           {
             id: "publish",
             title: "Publicar loja",
-            description: "Torne sua loja visivel para clientes",
+            description: "Torne sua loja visível para clientes",
             completed: storefront?.is_published || false,
             action: "Publicar",
             href: "/store?tab=settings",
@@ -84,7 +94,7 @@ export function OnboardingChecklist() {
           {
             id: "sale",
             title: "Fazer primeira venda",
-            description: "Compartilhe sua loja e faca sua primeira venda",
+            description: "Compartilhe sua loja e faça sua primeira venda",
             completed: (sales?.length || 0) > 0,
             action: "Compartilhar loja",
             href: "/store?tab=share",
@@ -115,10 +125,10 @@ export function OnboardingChecklist() {
         <div className="flex items-center justify-between">
           <div>
             <CardTitle className="text-base font-semibold">
-              Complete sua configuracao
+              Complete sua configuração
             </CardTitle>
             <p className="text-xs text-muted-foreground mt-1">
-              {completedCount} de {totalCount} etapas concluidas
+              {completedCount} de {totalCount} etapas concluídas
             </p>
           </div>
           <Button
