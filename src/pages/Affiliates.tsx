@@ -13,7 +13,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { toast } from "sonner";
 import { Users, DollarSign, CreditCard, Copy, Check, X, Pause, Loader2, Link2, Crown } from "lucide-react";
 import { usePlanLimits } from "@/hooks/usePlanLimits";
-import { UpgradeModal } from "@/components/UpgradeModal";
 
 interface AffiliateProgram {
   id: string;
@@ -62,7 +61,6 @@ export default function Affiliates() {
   const [saving, setSaving] = useState(false);
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [commissionFilter, setCommissionFilter] = useState("ALL");
-  const [upgradeOpen, setUpgradeOpen] = useState(false);
   const planInfo = usePlanLimits();
 
   useEffect(() => {
@@ -121,15 +119,11 @@ export default function Affiliates() {
           O programa de afiliados está disponível a partir do plano Creator. 
           Faça upgrade para gerenciar seus afiliados e comissões.
         </p>
-        <Button onClick={() => setUpgradeOpen(true)} className="gap-2">
-          <Crown className="w-4 h-4" /> Fazer Upgrade
+        <Button asChild className="gap-2">
+          <a href="/pricing?source_ui=affiliates_blocked&plan=creator">
+            <Crown className="w-4 h-4" /> Fazer Upgrade
+          </a>
         </Button>
-        <UpgradeModal
-          open={upgradeOpen}
-          onOpenChange={setUpgradeOpen}
-          currentPlan={planInfo.plan}
-          feature="usar o programa de afiliados"
-        />
       </div>
     );
   }

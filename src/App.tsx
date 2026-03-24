@@ -42,6 +42,7 @@ import Settings from "./pages/Settings";
 import Coupons from "./pages/Coupons";
 import EmailFlows from "./pages/EmailFlows";
 import Appointments from "./pages/Appointments";
+import Pricing from "./pages/Pricing";
 import BookAppointment from "./pages/BookAppointment";
 import NotFound from "./pages/NotFound";
 
@@ -268,6 +269,17 @@ const App = () => (
                   <ProtectedRoute>
                     <DashboardLayout>
                       <Appointments />
+                    </DashboardLayout>
+                  </ProtectedRoute>
+                } 
+              />
+
+              <Route 
+                path="/pricing" 
+                element={
+                  <ProtectedRoute>
+                    <DashboardLayout>
+                      <Pricing />
                     </DashboardLayout>
                   </ProtectedRoute>
                 } 

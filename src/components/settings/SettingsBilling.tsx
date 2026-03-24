@@ -50,7 +50,7 @@ export function SettingsBilling() {
             <Button variant="outline" className="text-destructive border-destructive/30 hover:bg-destructive/10">
               Cancelar Assinatura
             </Button>
-            <Button onClick={() => setShowPlanModal(true)}>Trocar Plano</Button>
+            <Button asChild><a href="/pricing?source_ui=settings_billing">Trocar Plano</a></Button>
           </div>
         </CardContent>
       </Card>

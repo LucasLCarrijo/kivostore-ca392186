@@ -16,7 +16,6 @@ import {
   Plus, Mail, Play, Pause, Trash2, GripVertical, Clock, Users, Eye, MousePointerClick, UserMinus, ChevronDown, ChevronUp, Sparkles, Loader2, Crown,
 } from "lucide-react";
 import { usePlanLimits } from "@/hooks/usePlanLimits";
-import { UpgradeModal } from "@/components/UpgradeModal";
 
 const TRIGGER_LABELS: Record<string, string> = {
   lead_captured: "Quando lead é capturado",
@@ -93,7 +92,6 @@ export default function EmailFlows() {
   const qc = useQueryClient();
   const workspaceId = currentWorkspace?.id;
   const planInfo = usePlanLimits();
-  const [upgradeOpen, setUpgradeOpen] = useState(false);
 
   const [showCreate, setShowCreate] = useState(false);
   const [expandedSeq, setExpandedSeq] = useState<string | null>(null);
@@ -279,15 +277,11 @@ export default function EmailFlows() {
           Email marketing está disponível a partir do plano Creator. 
           Crie sequências automáticas para converter seus leads.
         </p>
-        <Button onClick={() => setUpgradeOpen(true)} className="gap-2">
-          <Crown className="w-4 h-4" /> Fazer Upgrade
+        <Button asChild className="gap-2">
+          <a href="/pricing?source_ui=email_flows_blocked&plan=creator">
+            <Crown className="w-4 h-4" /> Fazer Upgrade
+          </a>
         </Button>
-        <UpgradeModal
-          open={upgradeOpen}
-          onOpenChange={setUpgradeOpen}
-          currentPlan={planInfo.plan}
-          feature="usar email marketing"
-        />
       </div>
     );
   }

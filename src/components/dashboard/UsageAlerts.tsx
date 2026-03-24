@@ -60,7 +60,7 @@ export function UsageAlerts() {
                     </span>
                   </div>
                   <a
-                    href={`/billing/upgrade-flow?source_ui=dashboard_usage_alert&plan=creator&feature=${encodeURIComponent(info.feature)}`}
+                    href={`/pricing?source_ui=dashboard_usage_alert&plan=creator&feature=${encodeURIComponent(info.feature)}`}
                     className="inline-flex h-7 items-center gap-1 rounded-md border px-2 text-xs hover:bg-accent"
                     onClickCapture={(e) => {
                       e.stopPropagation();
@@ -95,7 +95,7 @@ export function UsageAlerts() {
                   </p>
                 </div>
                 <a
-                  href="/billing/upgrade-flow?source_ui=dashboard_upgrade_card&plan=creator&feature=desbloquear%20todos%20os%20recursos"
+                  href="/pricing?source_ui=dashboard_upgrade_card&plan=creator&feature=desbloquear%20todos%20os%20recursos"
                   className="inline-flex items-center gap-1 rounded-md bg-primary px-3 py-2 text-sm text-primary-foreground hover:opacity-90"
                   onClickCapture={(e) => {
                     e.stopPropagation();
