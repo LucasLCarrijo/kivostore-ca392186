@@ -278,7 +278,7 @@ export default function EmailFlows() {
           Crie sequências automáticas para converter seus leads.
         </p>
         <Button asChild className="gap-2">
-          <a href="/pricing?source_ui=email_flows_blocked&plan=creator">
+          <a href="/#pricing?source_ui=email_flows_blocked&plan=creator">
             <Crown className="w-4 h-4" /> Fazer Upgrade
           </a>
         </Button>

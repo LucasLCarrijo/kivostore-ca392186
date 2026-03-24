@@ -120,7 +120,7 @@ export default function Affiliates() {
           Faça upgrade para gerenciar seus afiliados e comissões.
         </p>
         <Button asChild className="gap-2">
-          <a href="/pricing?source_ui=affiliates_blocked&plan=creator">
+          <a href="/#pricing?source_ui=affiliates_blocked&plan=creator">
             <Crown className="w-4 h-4" /> Fazer Upgrade
           </a>
         </Button>
