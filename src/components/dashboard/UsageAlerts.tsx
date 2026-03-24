@@ -1,10 +1,7 @@
 import { AlertTriangle, ArrowRight, Crown } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { usePlanLimits, PLAN_LABELS, type PlanType } from "@/hooks/usePlanLimits";
-import { useState } from "react";
-import { UpgradeModal } from "@/components/UpgradeModal";
+import { usePlanLimits, PLAN_LABELS } from "@/hooks/usePlanLimits";
 
 const USAGE_LABELS: Record<string, { label: string; feature: string }> = {
   products: { label: "Produtos", feature: "criar mais produtos" },
@@ -14,9 +11,7 @@ const USAGE_LABELS: Record<string, { label: string; feature: string }> = {
 };
 
 export function UsageAlerts() {
-  const { plan, limits, usage, getUsagePercent, isNearLimit, loading } = usePlanLimits();
-  const [upgradeOpen, setUpgradeOpen] = useState(false);
-  const [upgradeFeature, setUpgradeFeature] = useState("");
+  const { plan, limits, usage, getUsagePercent, loading } = usePlanLimits();
 
   if (loading || plan === "CREATOR_PRO") return null;
 
@@ -49,7 +44,6 @@ export function UsageAlerts() {
   if (alerts.length === 0 && blockedFeatures.length === 0) return null;
 
   return (
-    <>
       <div className="space-y-3">
         {alerts.map(({ key, percent, current, max }) => {
           const info = USAGE_LABELS[key];
@@ -65,17 +59,15 @@ export function UsageAlerts() {
                       {info.label}: {current}/{max}
                     </span>
                   </div>
-                  <Button 
-                    size="sm" 
-                    variant="outline"
-                    className="h-7 text-xs gap-1"
-                    onClick={() => {
-                      setUpgradeFeature(info.feature);
-                      setUpgradeOpen(true);
+                  <a
+                    href={`/billing/upgrade-flow?source_ui=dashboard_usage_alert&plan=creator&feature=${encodeURIComponent(info.feature)}`}
+                    className="inline-flex h-7 items-center gap-1 rounded-md border px-2 text-xs hover:bg-accent"
+                    onClickCapture={(e) => {
+                      e.stopPropagation();
                     }}
                   >
                     <Crown className="w-3 h-3" /> Upgrade
-                  </Button>
+                  </a>
                 </div>
                 <Progress value={percent} className="h-2" />
                 <p className="text-xs text-muted-foreground mt-1">
@@ -102,28 +94,19 @@ export function UsageAlerts() {
                     {blockedFeatures.join(", ")}
                   </p>
                 </div>
-                <Button 
-                  size="sm" 
-                  className="gap-1"
-                  onClick={() => {
-                    setUpgradeFeature("desbloquear todos os recursos");
-                    setUpgradeOpen(true);
+                <a
+                  href="/billing/upgrade-flow?source_ui=dashboard_upgrade_card&plan=creator&feature=desbloquear%20todos%20os%20recursos"
+                  className="inline-flex items-center gap-1 rounded-md bg-primary px-3 py-2 text-sm text-primary-foreground hover:opacity-90"
+                  onClickCapture={(e) => {
+                    e.stopPropagation();
                   }}
                 >
                   Upgrade <ArrowRight className="w-3 h-3" />
-                </Button>
+                </a>
               </div>
             </CardContent>
           </Card>
         )}
       </div>
-
-      <UpgradeModal
-        open={upgradeOpen}
-        onOpenChange={setUpgradeOpen}
-        currentPlan={plan}
-        feature={upgradeFeature}
-      />
-    </>
   );
 }
