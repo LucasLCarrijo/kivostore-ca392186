@@ -48,7 +48,7 @@ export default function Pricing() {
     <div className="p-6 space-y-6 max-w-5xl">
       <div>
         <h1 className="text-2xl font-bold">Pricing</h1>
-        <p className="text-muted-foreground">Plano > Pagamento > Confirmação</p>
+        <p className="text-muted-foreground">Plano → Pagamento → Confirmação</p>
       </div>
 
       <div className="flex gap-2 text-sm">
