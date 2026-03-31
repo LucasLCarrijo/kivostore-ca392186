@@ -14,6 +14,7 @@ import {
   BookOpen,
   Settings,
   Bell,
+  Info,
   ChevronLeft,
   LogIn,
   ShieldX,
@@ -39,12 +40,12 @@ interface CircleLayoutProps {
 }
 
 const getTabItems = (basePath: string) => [
-  { label: "Community", icon: MessageSquare, path: `${basePath}/feed` },
+  { label: "Comunidade", icon: MessageSquare, path: `${basePath}/feed` },
   { label: "Classroom", icon: BookOpen, path: `${basePath}/classroom` },
-  { label: "Calendar", icon: Calendar, path: `${basePath}/events` },
-  { label: "Members", icon: Users, path: `${basePath}/members` },
-  { label: "Leaderboard", icon: Trophy, path: `${basePath}/leaderboard` },
-  { label: "About", icon: BookOpen, path: `${basePath}/about` },
+  { label: "Calendário", icon: Calendar, path: `${basePath}/events` },
+  { label: "Membros", icon: Users, path: `${basePath}/members` },
+  { label: "Ranking", icon: Trophy, path: `${basePath}/leaderboard` },
+  { label: "Sobre", icon: Info, path: `${basePath}/about` },
 ];
 
 export default function CircleLayout({ children }: CircleLayoutProps) {

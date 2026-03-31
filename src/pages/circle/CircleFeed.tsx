@@ -195,7 +195,7 @@ export default function CircleFeed() {
                     {(member?.display_name || user?.email || "U").charAt(0).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
-                <span className="text-muted-foreground text-sm flex-1">Write a post...</span>
+                <span className="text-muted-foreground text-sm flex-1">Escreva algo...</span>
               </div>
             </Card>
           ) : community && member && (
@@ -218,8 +218,8 @@ export default function CircleFeed() {
       {/* Sort filter — minimal */}
       <div className="flex gap-1">
         {([
-          { key: "recent" as const, label: "Recent" },
-          { key: "popular" as const, label: "Top" },
+          { key: "recent" as const, label: "Recentes" },
+          { key: "popular" as const, label: "Em alta" },
         ]).map((f) => (
           <button
             key={f.key}
@@ -255,8 +255,8 @@ export default function CircleFeed() {
       ) : posts?.length === 0 ? (
         <Card className="p-12 text-center">
           <MessageCircle className="h-12 w-12 text-muted-foreground/30 mx-auto mb-3" />
-          <h3 className="font-semibold text-foreground">No posts yet</h3>
-          <p className="text-sm text-muted-foreground mt-1">Be the first to share something! 🎉</p>
+          <h3 className="font-semibold text-foreground">Ainda não há posts</h3>
+          <p className="text-sm text-muted-foreground mt-1">Seja o primeiro a compartilhar algo! 🎉</p>
         </Card>
       ) : (
         <div className="space-y-3">
