@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMemo, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthProvider";
@@ -14,6 +15,8 @@ export default function CircleJoin() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
 
+  const [answers, setAnswers] = useState<Record<string, string>>({});
+
   const { data: community, isLoading } = useQuery({
     queryKey: ["join-community", slug],
     queryFn: async () => {
@@ -24,6 +27,26 @@ export default function CircleJoin() {
     enabled: !!slug,
   });
 
+  const { data: joinQuestions = [] } = useQuery({
+    queryKey: ["community-join-questions", community?.id],
+    queryFn: async () => {
+      if (!community?.id) return [];
+      const { data, error } = await supabase
+        .from("community_join_questions" as any)
+        .select("id, question, required, position")
+        .eq("community_id", community.id)
+        .order("position", { ascending: true });
+      if (error) return [];
+      return (data || []) as any[];
+    },
+    enabled: !!community?.id,
+  });
+
+  const requiredMissing = useMemo(
+    () => joinQuestions.some((q: any) => q.required && !String(answers[q.id] || "").trim()),
+    [joinQuestions, answers]
+  );
+
   const join = useMutation({
     mutationFn: async () => {
       if (!community || !user) throw new Error("Missing");
@@ -33,14 +56,32 @@ export default function CircleJoin() {
       }
 
       const status = community.require_approval ? "PENDING" : "ACTIVE";
-      const { error } = await supabase.from("community_members").insert({
+      const { data: inserted, error } = await supabase.from("community_members").insert({
         community_id: community.id,
         user_id: user.id,
         role: "MEMBER",
         status,
         display_name: user.email?.split("@")[0] || "Membro",
-      });
+      }).select("id").single();
       if (error) throw error;
+
+      if (status === "PENDING" && inserted?.id) {
+        const payload = joinQuestions.map((q: any) => ({
+          question_id: q.id,
+          question: q.question,
+          answer: answers[q.id] || "",
+        }));
+
+        await supabase.from("community_join_applications" as any).insert({
+          community_id: community.id,
+          member_id: inserted.id,
+          user_id: user.id,
+          answers: payload,
+          invite_code: invite,
+          status: "PENDING",
+        } as any);
+      }
+
       return status;
     },
     onSuccess: (status) => {
@@ -89,12 +130,31 @@ export default function CircleJoin() {
         <p className="text-sm text-muted-foreground">{community.description || "Você foi convidado para essa comunidade."}</p>
         {invite ? <p className="text-xs text-muted-foreground">Convite: {invite}</p> : null}
 
+        {joinQuestions.length > 0 && community.access_type === "OPEN" ? (
+          <div className="space-y-3">
+            <p className="text-sm font-medium">Responda para entrar</p>
+            {joinQuestions.map((q: any) => (
+              <div key={q.id} className="space-y-1">
+                <label className="text-sm">
+                  {q.question} {q.required ? <span className="text-destructive">*</span> : null}
+                </label>
+                <textarea
+                  className="w-full min-h-20 rounded-md border bg-background p-2 text-sm"
+                  value={answers[q.id] || ""}
+                  onChange={(e) => setAnswers((prev) => ({ ...prev, [q.id]: e.target.value }))}
+                  placeholder="Sua resposta"
+                />
+              </div>
+            ))}
+          </div>
+        ) : null}
+
         {!user ? (
           <Button className="w-full" onClick={() => navigate(`/member/login?redirect=${encodeURIComponent(`/join/${slug}${invite ? `?invite=${invite}` : ""}`)}`)}>
             Fazer login para entrar
           </Button>
         ) : (
-          <Button className="w-full" onClick={() => join.mutate()} disabled={join.isPending}>
+          <Button className="w-full" onClick={() => join.mutate()} disabled={join.isPending || (community.access_type === "OPEN" && requiredMissing)}>
             {join.isPending ? "Processando..." : community.access_type === "OPEN" ? "Entrar na comunidade" : "Ver planos"}
           </Button>
         )}

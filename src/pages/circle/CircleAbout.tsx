@@ -3,6 +3,7 @@ import { useWorkspace } from "@/contexts/WorkspaceProvider";
 import { useParams, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Users, MessageSquare, ShieldCheck } from "lucide-react";
 
 export default function CircleAbout() {
@@ -44,12 +45,18 @@ export default function CircleAbout() {
         <Card className="p-4"><div className="flex items-center gap-2"><ShieldCheck className="h-4 w-4" /> {community.require_approval ? "Entrada com aprovação" : "Entrada livre"}</div></Card>
       </div>
 
-      <Card className="p-4">
-        <h2 className="font-semibold mb-2">Navegação rápida</h2>
-        <div className="flex gap-4 text-sm">
-          <Link className="text-primary hover:underline" to={`${basePath}/feed`}>Feed</Link>
-          <Link className="text-primary hover:underline" to={`${basePath}/members`}>Membros</Link>
-          <Link className="text-primary hover:underline" to={`${basePath}/leaderboard`}>Ranking</Link>
+      <Card className="p-4 space-y-3">
+        <h2 className="font-semibold">Começar</h2>
+        <div className="flex flex-wrap gap-2">
+          <Button asChild>
+            <Link to={`/join/${community.slug}`}>{community.access_type === "OPEN" ? "Entrar na comunidade" : "Ver planos"}</Link>
+          </Button>
+          <Button variant="outline" asChild>
+            <Link to={`${basePath}/feed`}>Ver feed</Link>
+          </Button>
+          <Button variant="ghost" asChild>
+            <Link to={`${basePath}/members`}>Membros</Link>
+          </Button>
         </div>
       </Card>
     </div>

@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Save, AlertTriangle, Upload } from "lucide-react";
+import { Save, AlertTriangle, Upload, Plus, Trash2 } from "lucide-react";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
@@ -40,6 +40,8 @@ export default function AdminSettingsTab({ community }: Props) {
     points_per_daily_login: community.points_per_daily_login,
   });
 
+  const [newJoinQuestion, setNewJoinQuestion] = useState("");
+
   // Fetch workspace products for linking
   const { data: products } = useQuery({
     queryKey: ["workspace-products", currentWorkspace?.id],
@@ -50,6 +52,58 @@ export default function AdminSettingsTab({ community }: Props) {
       return (data || []) as Array<{id: string; name: string; type: string}>;
     },
     enabled: !!currentWorkspace && (settings.access_type === "FREE_WITH_PRODUCT" || settings.access_type === "PAID_SUBSCRIPTION"),
+  });
+
+  const { data: joinQuestions = [] } = useQuery({
+    queryKey: ["community-join-questions", community.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("community_join_questions" as any)
+        .select("id, question, required, position")
+        .eq("community_id", community.id)
+        .order("position", { ascending: true });
+      if (error) return [];
+      return (data || []) as any[];
+    },
+  });
+
+  const addJoinQuestion = useMutation({
+    mutationFn: async () => {
+      if (!newJoinQuestion.trim()) return;
+      const position = joinQuestions.length;
+      const { error } = await supabase.from("community_join_questions" as any).insert({
+        community_id: community.id,
+        question: newJoinQuestion.trim(),
+        required: true,
+        position,
+      } as any);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      setNewJoinQuestion("");
+      queryClient.invalidateQueries({ queryKey: ["community-join-questions", community.id] });
+      toast.success("Pergunta adicionada");
+    },
+    onError: () => toast.error("Não foi possível adicionar pergunta"),
+  });
+
+  const removeJoinQuestion = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("community_join_questions" as any).delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["community-join-questions", community.id] });
+      toast.success("Pergunta removida");
+    },
+  });
+
+  const toggleJoinQuestionRequired = useMutation({
+    mutationFn: async ({ id, required }: { id: string; required: boolean }) => {
+      const { error } = await supabase.from("community_join_questions" as any).update({ required }).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["community-join-questions", community.id] }),
   });
 
   const updateSettings = useMutation({
@@ -178,6 +232,41 @@ export default function AdminSettingsTab({ community }: Props) {
             <Label>Membros podem criar eventos</Label>
             <Switch checked={settings.allow_member_events} onCheckedChange={(v) => set("allow_member_events", v)} />
           </div>
+        </div>
+      </Card>
+
+      {/* Join Questions */}
+      <Card className="p-6 space-y-4">
+        <h3 className="font-semibold text-foreground">Perguntas para entrada</h3>
+        <p className="text-sm text-muted-foreground">Essas perguntas aparecem no fluxo de entrada quando a comunidade exige aprovação.</p>
+
+        <div className="space-y-2">
+          {joinQuestions.map((q: any) => (
+            <div key={q.id} className="flex items-center gap-2 rounded-lg border p-2">
+              <div className="flex-1 text-sm">{q.question}</div>
+              <div className="flex items-center gap-2 text-xs">
+                <span>Obrigatória</span>
+                <Switch
+                  checked={!!q.required}
+                  onCheckedChange={(v) => toggleJoinQuestionRequired.mutate({ id: q.id, required: v })}
+                />
+              </div>
+              <Button variant="ghost" size="icon" onClick={() => removeJoinQuestion.mutate(q.id)}>
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </div>
+          ))}
+        </div>
+
+        <div className="flex gap-2">
+          <Input
+            placeholder="Ex: Qual seu objetivo principal na comunidade?"
+            value={newJoinQuestion}
+            onChange={(e) => setNewJoinQuestion(e.target.value)}
+          />
+          <Button onClick={() => addJoinQuestion.mutate()} disabled={!newJoinQuestion.trim() || addJoinQuestion.isPending}>
+            <Plus className="h-4 w-4 mr-1" />Adicionar
+          </Button>
         </div>
       </Card>
 
