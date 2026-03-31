@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useWorkspace } from "@/contexts/WorkspaceProvider";
 import { useAuth } from "@/contexts/AuthProvider";
@@ -16,7 +16,11 @@ import { useIsMobile } from "@/hooks/use-mobile";
 export default function CircleFeed() {
   const { currentWorkspace } = useWorkspace();
   const { user } = useAuth();
-  const { slug: spaceSlug } = useParams();
+  const location = useLocation();
+  const params = useParams();
+  const isSlugRoute = location.pathname.startsWith("/c/");
+  const communitySlug = isSlugRoute ? params.slug : undefined;
+  const spaceSlug = isSlugRoute ? params.spaceSlug : params.slug;
   const queryClient = useQueryClient();
   const isMobile = useIsMobile();
   const [showCompose, setShowCompose] = useState(false);
@@ -24,15 +28,19 @@ export default function CircleFeed() {
   const [activeSpaceId, setActiveSpaceId] = useState<string>("all");
 
   const { data: community } = useQuery({
-    queryKey: ["community", currentWorkspace?.id],
+    queryKey: ["community", communitySlug || currentWorkspace?.id],
     queryFn: async () => {
+      if (communitySlug) {
+        const { data } = await supabase.from("communities").select("*").eq("slug", communitySlug).maybeSingle();
+        return data;
+      }
       if (!currentWorkspace) return null;
       const { data } = await supabase
         .from("communities").select("*")
         .eq("workspace_id", currentWorkspace.id).single();
       return data;
     },
-    enabled: !!currentWorkspace,
+    enabled: !!communitySlug || !!currentWorkspace,
   });
 
   const { data: member } = useQuery({

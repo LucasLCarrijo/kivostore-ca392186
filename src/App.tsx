@@ -56,6 +56,8 @@ import CircleLeaderboard from "./pages/circle/CircleLeaderboard";
 import CircleEvents from "./pages/circle/CircleEvents";
 import CircleAdmin from "./pages/circle/CircleAdmin";
 import CirclePostDetail from "./pages/circle/CirclePostDetail";
+import CircleAbout from "./pages/circle/CircleAbout";
+import CirclesDiscover from "./pages/circle/CirclesDiscover";
 
 const queryClient = new QueryClient();
 
@@ -285,7 +287,10 @@ const App = () => (
                 } 
               />
 
-              {/* Circle routes */}
+              {/* Circles discover */}
+              <Route path="/circles" element={<CirclesDiscover />} />
+
+              {/* Circle routes (legacy) */}
               <Route path="/circle" element={<ProtectedRoute><CircleLayout><Navigate to="/circle/feed" replace /></CircleLayout></ProtectedRoute>} />
               <Route path="/circle/feed" element={<ProtectedRoute><CircleLayout><CircleFeed /></CircleLayout></ProtectedRoute>} />
               <Route path="/circle/spaces/:slug" element={<ProtectedRoute><CircleLayout><CircleFeed /></CircleLayout></ProtectedRoute>} />
@@ -293,8 +298,21 @@ const App = () => (
               <Route path="/circle/leaderboard" element={<ProtectedRoute><CircleLayout><CircleLeaderboard /></CircleLayout></ProtectedRoute>} />
               <Route path="/circle/events" element={<ProtectedRoute><CircleLayout><CircleEvents /></CircleLayout></ProtectedRoute>} />
               <Route path="/circle/classroom" element={<ProtectedRoute><CircleLayout><CircleDashboard /></CircleLayout></ProtectedRoute>} />
+              <Route path="/circle/about" element={<ProtectedRoute><CircleLayout><CircleAbout /></CircleLayout></ProtectedRoute>} />
               <Route path="/circle/admin" element={<ProtectedRoute><CircleLayout><CircleAdmin /></CircleLayout></ProtectedRoute>} />
               <Route path="/circle/post/:id" element={<ProtectedRoute><CircleLayout><CirclePostDetail /></CircleLayout></ProtectedRoute>} />
+
+              {/* Circle routes (slug-first, skool-like) */}
+              <Route path="/c/:slug" element={<ProtectedRoute><CircleLayout><Navigate to="feed" replace /></CircleLayout></ProtectedRoute>} />
+              <Route path="/c/:slug/feed" element={<ProtectedRoute><CircleLayout><CircleFeed /></CircleLayout></ProtectedRoute>} />
+              <Route path="/c/:slug/spaces/:spaceSlug" element={<ProtectedRoute><CircleLayout><CircleFeed /></CircleLayout></ProtectedRoute>} />
+              <Route path="/c/:slug/members" element={<ProtectedRoute><CircleLayout><CircleMembers /></CircleLayout></ProtectedRoute>} />
+              <Route path="/c/:slug/leaderboard" element={<ProtectedRoute><CircleLayout><CircleLeaderboard /></CircleLayout></ProtectedRoute>} />
+              <Route path="/c/:slug/events" element={<ProtectedRoute><CircleLayout><CircleEvents /></CircleLayout></ProtectedRoute>} />
+              <Route path="/c/:slug/classroom" element={<ProtectedRoute><CircleLayout><CircleDashboard /></CircleLayout></ProtectedRoute>} />
+              <Route path="/c/:slug/about" element={<ProtectedRoute><CircleLayout><CircleAbout /></CircleLayout></ProtectedRoute>} />
+              <Route path="/c/:slug/admin" element={<ProtectedRoute><CircleLayout><CircleAdmin /></CircleLayout></ProtectedRoute>} />
+              <Route path="/c/:slug/post/:id" element={<ProtectedRoute><CircleLayout><CirclePostDetail /></CircleLayout></ProtectedRoute>} />
 
               {/* Root redirect */}
               <Route path="/" element={<Navigate to="/dashboard" replace />} />

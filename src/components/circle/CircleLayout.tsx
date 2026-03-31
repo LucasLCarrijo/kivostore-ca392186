@@ -1,5 +1,5 @@
 import { ReactNode, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useWorkspace } from "@/contexts/WorkspaceProvider";
@@ -38,24 +38,33 @@ interface CircleLayoutProps {
   children: ReactNode;
 }
 
-const tabItems = [
-  { label: "Community", icon: MessageSquare, path: "/circle/feed" },
-  { label: "Classroom", icon: BookOpen, path: "/circle/classroom" },
-  { label: "Calendar", icon: Calendar, path: "/circle/events" },
-  { label: "Members", icon: Users, path: "/circle/members" },
-  { label: "Leaderboard", icon: Trophy, path: "/circle/leaderboard" },
+const getTabItems = (basePath: string) => [
+  { label: "Community", icon: MessageSquare, path: `${basePath}/feed` },
+  { label: "Classroom", icon: BookOpen, path: `${basePath}/classroom` },
+  { label: "Calendar", icon: Calendar, path: `${basePath}/events` },
+  { label: "Members", icon: Users, path: `${basePath}/members` },
+  { label: "Leaderboard", icon: Trophy, path: `${basePath}/leaderboard` },
+  { label: "About", icon: BookOpen, path: `${basePath}/about` },
 ];
 
 export default function CircleLayout({ children }: CircleLayoutProps) {
   const location = useLocation();
   const navigate = useNavigate();
+  const { slug } = useParams();
   const { currentWorkspace } = useWorkspace();
   const { user, loading: authLoading } = useAuth();
   const queryClient = useQueryClient();
 
+  const basePath = slug ? `/c/${slug}` : "/circle";
+  const tabItems = getTabItems(basePath);
+
   const { data: community, isLoading: communityLoading } = useQuery({
-    queryKey: ["community", currentWorkspace?.id],
+    queryKey: ["community", slug || currentWorkspace?.id],
     queryFn: async () => {
+      if (slug) {
+        const { data } = await supabase.from("communities").select("*").eq("slug", slug).maybeSingle();
+        return data;
+      }
       if (!currentWorkspace) return null;
       const { data } = await supabase
         .from("communities")
@@ -64,7 +73,7 @@ export default function CircleLayout({ children }: CircleLayoutProps) {
         .maybeSingle();
       return data;
     },
-    enabled: !!currentWorkspace,
+    enabled: !!slug || !!currentWorkspace,
   });
 
   const { data: member, isLoading: memberLoading } = useQuery({
@@ -176,8 +185,8 @@ export default function CircleLayout({ children }: CircleLayoutProps) {
 
   const isAdmin = member?.role === "OWNER" || member?.role === "ADMIN";
   const isActive = (path: string) => {
-    if (path === "/circle/feed") {
-      return location.pathname === "/circle/feed" || location.pathname === "/circle" || location.pathname.startsWith("/circle/spaces/") || location.pathname.startsWith("/circle/post/");
+    if (path === `${basePath}/feed`) {
+      return location.pathname === `${basePath}/feed` || location.pathname === basePath || location.pathname.startsWith(`${basePath}/spaces/`) || location.pathname.startsWith(`${basePath}/post/`);
     }
     return location.pathname === path || location.pathname.startsWith(path + "/");
   };
@@ -201,7 +210,7 @@ export default function CircleLayout({ children }: CircleLayoutProps) {
           <LogIn className="h-12 w-12 text-primary mx-auto" />
           <h1 className="text-xl font-bold text-foreground">Faça login para acessar</h1>
           <p className="text-sm text-muted-foreground">Você precisa estar logado para acessar a comunidade.</p>
-          <Button onClick={() => navigate("/member/login?redirect=/circle")} className="w-full">
+          <Button onClick={() => navigate(`/member/login?redirect=${encodeURIComponent(location.pathname)}`)} className="w-full">
             <LogIn className="h-4 w-4 mr-2" />Fazer Login
           </Button>
         </Card>
@@ -435,10 +444,10 @@ export default function CircleLayout({ children }: CircleLayoutProps) {
           })}
           {isAdmin && (
             <Link
-              to="/circle/admin"
+              to={`${basePath}/admin`}
               className={cn(
                 "flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ml-auto",
-                isActive("/circle/admin")
+                isActive(`${basePath}/admin`)
                   ? "border-primary text-primary"
                   : "border-transparent text-muted-foreground hover:text-foreground hover:border-muted-foreground/30"
               )}
