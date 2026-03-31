@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
@@ -41,6 +41,8 @@ export default function AdminSettingsTab({ community }: Props) {
   });
 
   const [newJoinQuestion, setNewJoinQuestion] = useState("");
+  const [newTag, setNewTag] = useState("");
+  const [categoryDraft, setCategoryDraft] = useState("");
 
   // Fetch workspace products for linking
   const { data: products } = useQuery({
@@ -104,6 +106,41 @@ export default function AdminSettingsTab({ community }: Props) {
       if (error) throw error;
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["community-join-questions", community.id] }),
+  });
+
+  const { data: discoveryMeta, refetch: refetchDiscoveryMeta } = useQuery({
+    queryKey: ["community-discovery-meta", community.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("community_discovery_meta" as any)
+        .select("*")
+        .eq("community_id", community.id)
+        .maybeSingle();
+      if (error) return null;
+      return data as any;
+    },
+  });
+
+  const tags = useMemo(() => (Array.isArray(discoveryMeta?.tags) ? discoveryMeta.tags : []), [discoveryMeta]);
+
+  const saveDiscoveryMeta = useMutation({
+    mutationFn: async (patch: any) => {
+      const payload = {
+        community_id: community.id,
+        is_discoverable: discoveryMeta?.is_discoverable ?? true,
+        category: discoveryMeta?.category ?? null,
+        tags: tags,
+        ...patch,
+      };
+
+      const { error } = await supabase.from("community_discovery_meta" as any).upsert(payload, { onConflict: "community_id" });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      refetchDiscoveryMeta();
+      toast.success("Discovery atualizado");
+    },
+    onError: () => toast.error("Tabela de discovery não encontrada. Crie community_discovery_meta no Lovable."),
   });
 
   const updateSettings = useMutation({
@@ -267,6 +304,66 @@ export default function AdminSettingsTab({ community }: Props) {
           <Button onClick={() => addJoinQuestion.mutate()} disabled={!newJoinQuestion.trim() || addJoinQuestion.isPending}>
             <Plus className="h-4 w-4 mr-1" />Adicionar
           </Button>
+        </div>
+      </Card>
+
+      {/* Discovery config */}
+      <Card className="p-6 space-y-4">
+        <h3 className="font-semibold text-foreground">Discovery</h3>
+        <p className="text-sm text-muted-foreground">Defina como sua comunidade aparece em /circles.</p>
+
+        <div className="flex items-center justify-between">
+          <Label>Aparecer no Discovery</Label>
+          <Switch
+            checked={discoveryMeta?.is_discoverable ?? true}
+            onCheckedChange={(v) => saveDiscoveryMeta.mutate({ is_discoverable: v })}
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label>Categoria</Label>
+          <div className="flex gap-2">
+            <Input
+              placeholder={discoveryMeta?.category || "Ex: Marketing, Fitness, Tech"}
+              value={categoryDraft}
+              onChange={(e) => setCategoryDraft(e.target.value)}
+            />
+            <Button type="button" variant="outline" onClick={() => saveDiscoveryMeta.mutate({ category: categoryDraft.trim() || null })}>
+              Salvar
+            </Button>
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <Label>Tags</Label>
+          <div className="flex gap-2">
+            <Input placeholder="Ex: lançamentos" value={newTag} onChange={(e) => setNewTag(e.target.value)} />
+            <Button
+              type="button"
+              onClick={() => {
+                const t = newTag.trim();
+                if (!t) return;
+                const next = Array.from(new Set([...(tags || []), t])).slice(0, 10);
+                saveDiscoveryMeta.mutate({ tags: next });
+                setNewTag("");
+              }}
+            >
+              <Plus className="h-4 w-4 mr-1" />Adicionar
+            </Button>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {tags.map((t: string) => (
+              <span key={t} className="inline-flex items-center gap-1 text-xs rounded-full border px-2 py-1">
+                {t}
+                <button
+                  className="text-muted-foreground hover:text-foreground"
+                  onClick={() => saveDiscoveryMeta.mutate({ tags: tags.filter((x: string) => x !== t) })}
+                >
+                  <Trash2 className="h-3 w-3" />
+                </button>
+              </span>
+            ))}
+          </div>
         </div>
       </Card>
 

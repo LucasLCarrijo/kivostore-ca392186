@@ -19,13 +19,28 @@ export default function CirclesDiscover() {
         .from("communities")
         .select("id,name,slug,description,icon_url,member_count,post_count,access_type,require_approval,is_active,created_at")
         .eq("is_active", true);
-      return data || [];
+
+      const base = data || [];
+      const ids = base.map((c: any) => c.id);
+      if (!ids.length) return base;
+
+      const { data: metas } = await supabase
+        .from("community_discovery_meta" as any)
+        .select("community_id,is_discoverable,category,tags")
+        .in("community_id", ids);
+
+      const metaMap = new Map((metas || []).map((m: any) => [m.community_id, m]));
+
+      return base
+        .map((c: any) => ({ ...c, meta: metaMap.get(c.id) || null }))
+        .filter((c: any) => c.meta?.is_discoverable !== false);
     },
   });
 
   const filtered = useMemo(() => {
     const list = communities.filter((c: any) => {
-      const text = `${c.name} ${c.description || ""}`.toLowerCase();
+      const tags = Array.isArray(c.meta?.tags) ? c.meta.tags.join(" ") : "";
+      const text = `${c.name} ${c.description || ""} ${c.meta?.category || ""} ${tags}`.toLowerCase();
       const matchesText = text.includes(q.toLowerCase());
       const matchesAccess =
         access === "ALL" ||
@@ -77,8 +92,12 @@ export default function CirclesDiscover() {
                 <Badge variant="secondary">{c.access_type === "OPEN" ? "Grátis" : "Pago"}</Badge>
               </div>
               <p className="text-sm text-muted-foreground line-clamp-2 mt-1">{c.description || "Sem descrição"}</p>
-              <div className="flex items-center gap-2 mt-2">
+              <div className="flex items-center gap-2 mt-2 flex-wrap">
                 <Badge variant="outline" className="text-[10px]">{c.require_approval ? "Entrada com aprovação" : "Entrada livre"}</Badge>
+                {c.meta?.category ? <Badge variant="outline" className="text-[10px]">{c.meta.category}</Badge> : null}
+                {Array.isArray(c.meta?.tags) ? c.meta.tags.slice(0, 2).map((t: string) => (
+                  <Badge key={`${c.id}-${t}`} variant="secondary" className="text-[10px]">#{t}</Badge>
+                )) : null}
               </div>
               <div className="flex items-center justify-between mt-3 text-sm">
                 <span className="text-muted-foreground inline-flex items-center gap-1"><Users className="h-4 w-4" />{c.member_count}</span>
