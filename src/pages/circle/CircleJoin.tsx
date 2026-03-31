@@ -27,6 +27,11 @@ export default function CircleJoin() {
   const join = useMutation({
     mutationFn: async () => {
       if (!community || !user) throw new Error("Missing");
+
+      if (community.access_type !== "OPEN") {
+        return "REDIRECT_PLANS" as const;
+      }
+
       const status = community.require_approval ? "PENDING" : "ACTIVE";
       const { error } = await supabase.from("community_members").insert({
         community_id: community.id,
@@ -39,6 +44,11 @@ export default function CircleJoin() {
       return status;
     },
     onSuccess: (status) => {
+      if (status === "REDIRECT_PLANS") {
+        navigate(`/c/${slug}/plans`);
+        return;
+      }
+
       queryClient.invalidateQueries({ queryKey: ["community"] });
       queryClient.invalidateQueries({ queryKey: ["circle-member"] });
       if (status === "PENDING") {
@@ -85,7 +95,7 @@ export default function CircleJoin() {
           </Button>
         ) : (
           <Button className="w-full" onClick={() => join.mutate()} disabled={join.isPending}>
-            {join.isPending ? "Entrando..." : "Entrar na comunidade"}
+            {join.isPending ? "Processando..." : community.access_type === "OPEN" ? "Entrar na comunidade" : "Ver planos"}
           </Button>
         )}
       </Card>

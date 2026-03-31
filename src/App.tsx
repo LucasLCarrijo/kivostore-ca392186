@@ -307,7 +307,7 @@ const App = () => (
               <Route path="/circle/post/:id" element={<ProtectedRoute><CircleLayout><CirclePostDetail /></CircleLayout></ProtectedRoute>} />
 
               {/* Circle routes (slug-first, skool-like) */}
-              <Route path="/c/:slug" element={<ProtectedRoute><CircleLayout><Navigate to="feed" replace /></CircleLayout></ProtectedRoute>} />
+              <Route path="/c/:slug" element={<CircleLayout><Navigate to="about" replace /></CircleLayout>} />
               <Route path="/c/:slug/feed" element={<ProtectedRoute><CircleLayout><CircleFeed /></CircleLayout></ProtectedRoute>} />
               <Route path="/c/:slug/spaces/:spaceSlug" element={<ProtectedRoute><CircleLayout><CircleFeed /></CircleLayout></ProtectedRoute>} />
               <Route path="/c/:slug/members" element={<ProtectedRoute><CircleLayout><CircleMembers /></CircleLayout></ProtectedRoute>} />
