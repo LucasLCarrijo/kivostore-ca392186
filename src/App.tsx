@@ -58,6 +58,8 @@ import CircleAdmin from "./pages/circle/CircleAdmin";
 import CirclePostDetail from "./pages/circle/CirclePostDetail";
 import CircleAbout from "./pages/circle/CircleAbout";
 import CirclesDiscover from "./pages/circle/CirclesDiscover";
+import CirclePlans from "./pages/circle/CirclePlans";
+import CircleJoin from "./pages/circle/CircleJoin";
 
 const queryClient = new QueryClient();
 
@@ -289,6 +291,7 @@ const App = () => (
 
               {/* Circles discover */}
               <Route path="/circles" element={<CirclesDiscover />} />
+              <Route path="/join/:slug" element={<CircleJoin />} />
 
               {/* Circle routes (legacy) */}
               <Route path="/circle" element={<ProtectedRoute><CircleLayout><Navigate to="/circle/feed" replace /></CircleLayout></ProtectedRoute>} />
@@ -298,7 +301,8 @@ const App = () => (
               <Route path="/circle/leaderboard" element={<ProtectedRoute><CircleLayout><CircleLeaderboard /></CircleLayout></ProtectedRoute>} />
               <Route path="/circle/events" element={<ProtectedRoute><CircleLayout><CircleEvents /></CircleLayout></ProtectedRoute>} />
               <Route path="/circle/classroom" element={<ProtectedRoute><CircleLayout><CircleDashboard /></CircleLayout></ProtectedRoute>} />
-              <Route path="/circle/about" element={<ProtectedRoute><CircleLayout><CircleAbout /></CircleLayout></ProtectedRoute>} />
+              <Route path="/circle/about" element={<CircleLayout><CircleAbout /></CircleLayout>} />
+              <Route path="/circle/plans" element={<CircleLayout><CirclePlans /></CircleLayout>} />
               <Route path="/circle/admin" element={<ProtectedRoute><CircleLayout><CircleAdmin /></CircleLayout></ProtectedRoute>} />
               <Route path="/circle/post/:id" element={<ProtectedRoute><CircleLayout><CirclePostDetail /></CircleLayout></ProtectedRoute>} />
 
@@ -310,7 +314,8 @@ const App = () => (
               <Route path="/c/:slug/leaderboard" element={<ProtectedRoute><CircleLayout><CircleLeaderboard /></CircleLayout></ProtectedRoute>} />
               <Route path="/c/:slug/events" element={<ProtectedRoute><CircleLayout><CircleEvents /></CircleLayout></ProtectedRoute>} />
               <Route path="/c/:slug/classroom" element={<ProtectedRoute><CircleLayout><CircleDashboard /></CircleLayout></ProtectedRoute>} />
-              <Route path="/c/:slug/about" element={<ProtectedRoute><CircleLayout><CircleAbout /></CircleLayout></ProtectedRoute>} />
+              <Route path="/c/:slug/about" element={<CircleLayout><CircleAbout /></CircleLayout>} />
+              <Route path="/c/:slug/plans" element={<CircleLayout><CirclePlans /></CircleLayout>} />
               <Route path="/c/:slug/admin" element={<ProtectedRoute><CircleLayout><CircleAdmin /></CircleLayout></ProtectedRoute>} />
               <Route path="/c/:slug/post/:id" element={<ProtectedRoute><CircleLayout><CirclePostDetail /></CircleLayout></ProtectedRoute>} />
 

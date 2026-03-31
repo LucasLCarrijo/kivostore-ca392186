@@ -202,8 +202,10 @@ export default function CircleLayout({ children }: CircleLayoutProps) {
     );
   }
 
+  const isPublicLandingPath = location.pathname.endsWith("/about") || location.pathname.endsWith("/plans") || /^\/c\/[^/]+$/.test(location.pathname) || location.pathname === "/circle";
+
   // Not logged in
-  if (!user) {
+  if (!user && !isPublicLandingPath) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <Card className="max-w-md p-8 text-center space-y-4">
@@ -293,7 +295,18 @@ export default function CircleLayout({ children }: CircleLayoutProps) {
           {community.description && <p className="text-muted-foreground mb-6">{community.description}</p>}
           <div className="mb-8">
             {community.access_type === "OPEN" && (
-              <Button size="lg" onClick={() => joinCommunity.mutate()} disabled={joinCommunity.isPending} className="w-full md:w-auto">
+              <Button
+                size="lg"
+                onClick={() => {
+                  if (!user) {
+                    navigate(`/member/login?redirect=${encodeURIComponent(location.pathname)}`);
+                    return;
+                  }
+                  joinCommunity.mutate();
+                }}
+                disabled={joinCommunity.isPending}
+                className="w-full md:w-auto"
+              >
                 <UserPlus className="h-5 w-5 mr-2" />
                 {community.require_approval ? "Solicitar Entrada" : "Entrar na Comunidade"}
               </Button>
@@ -309,8 +322,8 @@ export default function CircleLayout({ children }: CircleLayoutProps) {
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <Lock className="h-4 w-4" /><span>Acesso incluso na compra do produto vinculado</span>
                     </div>
-                    <Button size="lg" onClick={() => navigate(`/checkout/${community.linked_product_id}`)} className="w-full md:w-auto">
-                      <ShoppingCart className="h-5 w-5 mr-2" />Comprar para Acessar
+                    <Button size="lg" onClick={() => navigate(`${basePath}/plans`)} className="w-full md:w-auto">
+                      <ShoppingCart className="h-5 w-5 mr-2" />Ver planos
                     </Button>
                   </div>
                 )}
@@ -322,8 +335,8 @@ export default function CircleLayout({ children }: CircleLayoutProps) {
                   <Lock className="h-4 w-4" /><span>Assinatura necessária para acesso</span>
                 </div>
                 {community.linked_product_id && (
-                  <Button size="lg" onClick={() => navigate(`/checkout/${community.linked_product_id}`)} className="w-full md:w-auto">
-                    <ShoppingCart className="h-5 w-5 mr-2" />Assinar para Acessar
+                  <Button size="lg" onClick={() => navigate(`${basePath}/plans`)} className="w-full md:w-auto">
+                    <ShoppingCart className="h-5 w-5 mr-2" />Ver planos
                   </Button>
                 )}
               </div>
